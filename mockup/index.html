@@ -3,152 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Money App Mockup</title>
+<title>Money App Mockup v2</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
-  body { background: #eef1f5; display: flex; justify-content: center; padding: 40px 16px; }
+  body { background: #eef1f5; display: flex; flex-direction: column; align-items: center; padding: 40px 16px; gap: 32px; }
 
-  .phone {
-    width: 380px;
-    background: #fff;
-    border-radius: 36px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    overflow: hidden;
-    border: 8px solid #1a1a1a;
-  }
-  .screen { height: 720px; overflow-y: auto; background: #f7f8fc; }
+  /* ---------- Icon style gallery ---------- */
+  .gallery { width: 380px; max-width: 100%; background: #fff; border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+  .gallery h2 { font-size: 15px; margin-bottom: 4px; }
+  .gallery p { font-size: 12.5px; color: #888; margin-bottom: 14px; }
+  .style-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 6px; border-radius: 12px; }
+  .style-row:nth-child(odd) { background: #fafafb; }
+  .style-icons { display: flex; gap: 8px; }
+  .style-label { font-size: 12.5px; font-weight: 600; color: #333; min-width: 92px; }
 
-  .header {
-    background: linear-gradient(135deg,#6c5ce7,#a29bfe);
-    color: #fff;
-    padding: 28px 20px 24px;
-    border-radius: 0 0 28px 28px;
-  }
+  .icon-box { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .icon-box svg { width: 19px; height: 19px; }
+
+  .icon-outline { background: #fff; border: 1.5px solid #e3e3e6; }
+  .icon-outline svg { fill: none; stroke: #333; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  .icon-solid svg { fill: #fff; stroke: none; }
+  .icon-duotone { background: #fff; border: 1px solid #eee; }
+  .icon-duotone svg { stroke-width: 1; stroke-linejoin: round; }
+  .icon-gradient svg { fill: #fff; stroke: none; }
+
+  .accent-bills { --light:#ffe3d1; --bold:#ff8a3d; --g1:#ff9966; --g2:#ff5e3a; }
+  .accent-subs  { --light:#dbe6ff; --bold:#5b8def; --g1:#74b9ff; --g2:#4361ee; }
+  .accent-dine  { --light:#ffe0e0; --bold:#ff6b6b; --g1:#ff9a8b; --g2:#ff6b6b; }
+  .accent-trans { --light:#d7f7e3; --bold:#2ecc71; --g1:#43e97b; --g2:#0fb98d; }
+
+  .icon-solid.accent-bills, .icon-gradient.accent-bills { background: var(--bold); }
+  .icon-solid.accent-subs, .icon-gradient.accent-subs { background: var(--bold); }
+  .icon-solid.accent-dine, .icon-gradient.accent-dine { background: var(--bold); }
+  .icon-solid.accent-trans, .icon-gradient.accent-trans { background: var(--bold); }
+  .icon-gradient.accent-bills { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(255,94,58,.35); }
+  .icon-gradient.accent-subs { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(67,97,238,.35); }
+  .icon-gradient.accent-dine { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(255,107,107,.35); }
+  .icon-gradient.accent-trans { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(15,185,141,.35); }
+  .icon-gradient { border-radius: 13px; }
+
+  .icon-duotone.accent-bills svg { fill: var(--light); stroke: var(--bold); }
+  .icon-duotone.accent-subs svg { fill: var(--light); stroke: var(--bold); }
+  .icon-duotone.accent-dine svg { fill: var(--light); stroke: var(--bold); }
+  .icon-duotone.accent-trans svg { fill: var(--light); stroke: var(--bold); }
+
+  .pick-btn { font-size: 11px; color: #6c5ce7; background: #f1efff; border: none; border-radius: 8px; padding: 5px 9px; font-weight: 700; cursor: pointer; }
+
+  /* ---------- Phone ---------- */
+  .phone { width: 380px; background: #fff; border-radius: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; border: 8px solid #1a1a1a; }
+  .screen { height: 760px; overflow-y: auto; background: #f7f8fc; }
+
+  .header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 28px 20px 24px; border-radius: 0 0 28px 28px; }
   .header .greeting { font-size: 14px; opacity: .85; }
   .header .balance { font-size: 32px; font-weight: 700; margin-top: 4px; }
   .header .sub { font-size: 13px; opacity: .9; margin-top: 6px; }
 
-  .ai-bubble {
-    margin: -18px 16px 0;
-    background: #fff;
-    border-radius: 16px;
-    padding: 14px 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    font-size: 13.5px;
-    color: #333;
-    position: relative;
-    z-index: 2;
-  }
+  .ai-bubble { margin: -18px 16px 0; background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); font-size: 13.5px; color: #333; position: relative; z-index: 2; }
   .ai-bubble .tag { font-size: 11px; color: #6c5ce7; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
   .ai-bubble .msg { margin-top: 4px; line-height: 1.4; }
 
   .section { padding: 20px 16px 4px; }
   .section h2 { font-size: 15px; color: #1a1a1a; margin-bottom: 10px; }
 
-  .category {
-    background: #fff;
-    border-radius: 14px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    overflow: hidden;
-  }
-  .category-row {
-    display: flex;
-    align-items: center;
-    padding: 14px 14px;
-    cursor: pointer;
-    user-select: none;
-  }
+  /* ---------- Pie chart ---------- */
+  .pie-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 16px; }
+  .pie-card svg { width: 120px; height: 120px; flex-shrink: 0; }
+  .pie-slice { transition: opacity .15s; cursor: pointer; }
+  .pie-slice:hover, .pie-slice:focus { opacity: .78; }
+  .pie-center-label { font-size: 11px; fill: #999; text-anchor: middle; }
+  .pie-center-amount { font-size: 15px; font-weight: 700; fill: #1a1a1a; text-anchor: middle; }
+  .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+  .legend a { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #333; text-decoration: none; }
+  .legend .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .legend .pct { margin-left: auto; color: #999; font-weight: 600; }
+
+  /* ---------- Categories via native <details> (no JS required to open) ---------- */
+  details.category { background: #fff; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+  summary { list-style: none; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  .category-row { display: flex; align-items: center; padding: 14px 14px; user-select: none; }
   .category-row:active { background: #f3f1ff; }
-  .cat-icon {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-  .cat-info { flex: 1; }
+  .cat-info { flex: 1; margin-left: 12px; }
   .cat-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
   .cat-meta { font-size: 12px; color: #888; margin-top: 2px; }
   .cat-amount { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-right: 8px; text-align: right; }
-  .chevron { font-size: 12px; color: #aaa; transition: transform .2s; }
-  .category.open .chevron { transform: rotate(180deg); }
+  .chevron { font-size: 12px; color: #aaa; transition: transform .2s; display: inline-block; }
+  details.category[open] > summary .chevron { transform: rotate(180deg); }
+  details.category[open] > summary .category-row { background: #faf9ff; }
+  .category-content { border-top: 1px solid #f0f0f0; padding: 6px 0; }
 
-  .bills-dropdown {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .25s ease;
-    border-top: 1px solid #f0f0f0;
-  }
-  .category.open .bills-dropdown { max-height: 400px; }
+  details.subcategory { border-top: 1px solid #f5f5f7; }
+  details.subcategory:first-child { border-top: none; }
+  .subcategory-row { display: flex; justify-content: space-between; padding: 9px 14px 9px 50px; font-size: 12.5px; font-weight: 600; color: #555; }
+  .subcategory-row .chevron { margin-left: 8px; }
+  details.subcategory[open] > summary .chevron { transform: rotate(180deg); }
+  .sub-content { padding-bottom: 4px; }
 
-  .bill-row {
-    display: flex;
-    align-items: center;
-    padding: 10px 14px 10px 62px;
-    font-size: 13px;
-    border-top: 1px solid #f5f5f7;
-  }
+  .bill-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 64px; font-size: 12.5px; border-top: 1px solid #f7f7f9; flex-wrap: wrap; }
   .bill-row:first-child { border-top: none; }
-  .bill-merchant { flex: 1; color: #333; }
-  .bill-date { color: #999; font-size: 11.5px; margin-right: 10px; min-width: 56px; }
+  .bill-date { color: #999; font-size: 11px; min-width: 48px; }
+  .bill-merchant { flex: 1; color: #333; min-width: 90px; }
   .bill-amount { font-weight: 600; color: #1a1a1a; }
-  .bill-recurring {
-    font-size: 10px;
-    background: #eef0ff;
-    color: #6c5ce7;
-    border-radius: 6px;
-    padding: 1px 6px;
-    margin-left: 6px;
-    font-weight: 600;
-  }
+  .bill-recurring { font-size: 9.5px; background: #eef0ff; color: #6c5ce7; border-radius: 6px; padding: 1px 5px; margin-left: 5px; font-weight: 600; }
 
-  .goal-card {
-    background: #fff; border-radius: 14px; padding: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px;
-  }
+  /* category reassignment chip + popover */
+  details.cat-picker { position: relative; }
+  .cat-chip { font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
+  details.cat-picker[open] .cat-chip { background: #e9e6ff; color: #6c5ce7; }
+  .picker-list { position: absolute; right: 0; top: 24px; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); padding: 6px; display: flex; flex-direction: column; gap: 3px; z-index: 10; min-width: 120px; }
+  .picker-chip { text-align: left; border: none; background: none; padding: 6px 8px; font-size: 12px; border-radius: 6px; cursor: pointer; color: #333; }
+  .picker-chip:hover { background: #f3f1ff; color: #6c5ce7; }
+
+  /* inline add-forms */
+  details.add-form { border-top: 1px dashed #eee; }
+  details.add-form summary { padding: 10px 14px 10px 64px; font-size: 12.5px; color: #6c5ce7; font-weight: 700; }
+  .inline-form { display: flex; gap: 6px; padding: 4px 14px 12px 64px; flex-wrap: wrap; }
+  .inline-form input { flex: 1; min-width: 80px; border: 1px solid #e3e3e6; border-radius: 8px; padding: 7px 9px; font-size: 12.5px; }
+  .inline-form input.emoji-input { flex: 0 0 50px; text-align: center; }
+  .inline-form button { border: none; background: #6c5ce7; color: #fff; border-radius: 8px; padding: 7px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+
+  details.category.add-category-card { border: 1.5px dashed #d9d3ff; box-shadow: none; }
+  details.category.add-category-card > summary .category-row { color: #6c5ce7; font-weight: 700; font-size: 13.5px; justify-content: flex-start; gap: 10px; }
+
+  /* ---------- Goals / chat / nav (unchanged) ---------- */
+  .goal-card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px; }
   .goal-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
   .goal-top .label { font-weight: 600; color: #1a1a1a; }
   .goal-top .value { color: #6c5ce7; font-weight: 700; }
   .bar-track { background: #eee; height: 8px; border-radius: 6px; overflow: hidden; }
   .bar-fill { background: linear-gradient(90deg,#6c5ce7,#a29bfe); height: 100%; border-radius: 6px; }
 
-  .chat-fab {
-    position: sticky;
-    bottom: 70px;
-    margin: 16px auto 0;
-    width: calc(100% - 32px);
-    background: #1a1a1a;
-    color: #fff;
-    border-radius: 14px;
-    padding: 12px 16px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  }
+  .chat-fab { position: sticky; bottom: 70px; margin: 16px auto 0; width: calc(100% - 32px); background: #1a1a1a; color: #fff; border-radius: 14px; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 
-  .navbar {
-    position: sticky; bottom: 0;
-    background: #fff;
-    display: flex;
-    justify-content: space-around;
-    padding: 12px 0 10px;
-    border-top: 1px solid #eee;
-  }
+  .navbar { position: sticky; bottom: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; }
   .nav-item { font-size: 11px; color: #999; text-align: center; }
   .nav-item.active { color: #6c5ce7; font-weight: 700; }
   .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
 
-  .hint {
-    text-align: center; color: #999; font-size: 12px; margin-top: 16px; max-width: 380px;
-  }
+  .hint { text-align: center; color: #999; font-size: 12px; max-width: 380px; }
 </style>
 </head>
 <body>
 
+<!-- ================= ICON STYLE GALLERY ================= -->
+<div class="gallery">
+  <h2>Icon style options</h2>
+  <p>The app below uses style 3 (Duotone) by default. Tell me a number to switch.</p>
+
+  <div class="style-row">
+    <div class="style-label">1. Outline</div>
+    <div class="style-icons">
+      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
+      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
+      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
+    </div>
+    <button class="pick-btn">Pick</button>
+  </div>
+
+  <div class="style-row">
+    <div class="style-label">2. Solid</div>
+    <div class="style-icons">
+      <div class="icon-box icon-solid accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
+      <div class="icon-box icon-solid accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="icon-box icon-solid accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
+      <div class="icon-box icon-solid accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
+    </div>
+    <button class="pick-btn">Pick</button>
+  </div>
+
+  <div class="style-row">
+    <div class="style-label">3. Duotone ✓</div>
+    <div class="style-icons">
+      <div class="icon-box icon-duotone accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
+      <div class="icon-box icon-duotone accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="icon-box icon-duotone accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
+      <div class="icon-box icon-duotone accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
+    </div>
+    <button class="pick-btn">Pick</button>
+  </div>
+
+  <div class="style-row">
+    <div class="style-label">4. Gradient</div>
+    <div class="style-icons">
+      <div class="icon-box icon-gradient accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
+      <div class="icon-box icon-gradient accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="icon-box icon-gradient accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
+      <div class="icon-box icon-gradient accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
+    </div>
+    <button class="pick-btn">Pick</button>
+  </div>
+</div>
+
+<!-- ================= PHONE MOCKUP ================= -->
 <div>
   <div class="phone">
     <div class="screen">
@@ -165,164 +213,212 @@
       </div>
 
       <div class="section">
-        <h2>Spending by category</h2>
-
-        <div class="category" id="cat-bills">
-          <div class="category-row" onclick="toggle('cat-bills')">
-            <div class="cat-icon" style="background:#ffe9e0;">💡</div>
-            <div class="cat-info">
-              <div class="cat-name">Bills &amp; Utilities</div>
-              <div class="cat-meta">5 transactions</div>
-            </div>
-            <div class="cat-amount">$318.40</div>
-            <div class="chevron">▾</div>
-          </div>
-          <div class="bills-dropdown">
-            <div class="bill-row">
-              <div class="bill-date">12 Jun</div>
-              <div class="bill-merchant">AGL Electricity <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$142.10</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">8 Jun</div>
-              <div class="bill-merchant">Telstra Mobile <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$65.00</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">5 Jun</div>
-              <div class="bill-merchant">Sydney Water</div>
-              <div class="bill-amount">$58.30</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">3 Jun</div>
-              <div class="bill-merchant">Internet - Aussie BB <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$79.00</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">1 Jun</div>
-              <div class="bill-merchant">Council Rates Direct Debit</div>
-              <div class="bill-amount">($26.00) split</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="category" id="cat-subs">
-          <div class="category-row" onclick="toggle('cat-subs')">
-            <div class="cat-icon" style="background:#e6f0ff;">📺</div>
-            <div class="cat-info">
-              <div class="cat-name">Subscriptions</div>
-              <div class="cat-meta">4 transactions</div>
-            </div>
-            <div class="cat-amount">$64.97</div>
-            <div class="chevron">▾</div>
-          </div>
-          <div class="bills-dropdown">
-            <div class="bill-row">
-              <div class="bill-date">24 Jun</div>
-              <div class="bill-merchant">Netflix <span class="bill-recurring">due in 3d</span></div>
-              <div class="bill-amount">$24.99</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">15 Jun</div>
-              <div class="bill-merchant">Spotify <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$12.99</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">10 Jun</div>
-              <div class="bill-merchant">iCloud Storage <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$2.99</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">2 Jun</div>
-              <div class="bill-merchant">Amazon Prime <span class="bill-recurring">recurring</span></div>
-              <div class="bill-amount">$9.00</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="category" id="cat-food">
-          <div class="category-row" onclick="toggle('cat-food')">
-            <div class="cat-icon" style="background:#fff3d6;">🍔</div>
-            <div class="cat-info">
-              <div class="cat-name">Dining &amp; Takeout</div>
-              <div class="cat-meta">11 transactions</div>
-            </div>
-            <div class="cat-amount">$287.55</div>
-            <div class="chevron">▾</div>
-          </div>
-          <div class="bills-dropdown">
-            <div class="bill-row">
-              <div class="bill-date">20 Jun</div>
-              <div class="bill-merchant">Menulog - Thai Spice</div>
-              <div class="bill-amount">$38.20</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">18 Jun</div>
-              <div class="bill-merchant">Mecca Espresso</div>
-              <div class="bill-amount">$6.50</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">17 Jun</div>
-              <div class="bill-merchant">UberEats - Guzman y Gomez</div>
-              <div class="bill-amount">$29.90</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">14 Jun</div>
-              <div class="bill-merchant">+ 8 more transactions</div>
-              <div class="bill-amount">$212.95</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="category" id="cat-transport">
-          <div class="category-row" onclick="toggle('cat-transport')">
-            <div class="cat-icon" style="background:#e3f9ec;">🚆</div>
-            <div class="cat-info">
-              <div class="cat-name">Transport</div>
-              <div class="cat-meta">6 transactions</div>
-            </div>
-            <div class="cat-amount">$96.20</div>
-            <div class="chevron">▾</div>
-          </div>
-          <div class="bills-dropdown">
-            <div class="bill-row">
-              <div class="bill-date">19 Jun</div>
-              <div class="bill-merchant">Opal Top Up</div>
-              <div class="bill-amount">$40.00</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">11 Jun</div>
-              <div class="bill-merchant">Uber Trip</div>
-              <div class="bill-amount">$18.40</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">6 Jun</div>
-              <div class="bill-merchant">Opal Top Up</div>
-              <div class="bill-amount">$30.00</div>
-            </div>
-            <div class="bill-row">
-              <div class="bill-date">1 Jun</div>
-              <div class="bill-merchant">+ 3 more transactions</div>
-              <div class="bill-amount">$7.80</div>
-            </div>
+        <h2>This month, by category</h2>
+        <div class="pie-card">
+          <svg viewBox="0 0 200 200">
+            <a href="#cat-bills"><path class="pie-slice" fill="#ff8a3d" d="M 100,10 A 90,90 0 0,1 131.82,184.21 L 119.44,151.46 A 55,55 0 0,0 100,45 Z"/></a>
+            <a href="#cat-subs"><path class="pie-slice" fill="#5b8def" d="M 131.82,184.21 A 90,90 0 0,1 96.23,189.92 L 97.70,154.95 A 55,55 0 0,0 119.44,151.46 Z"/></a>
+            <a href="#cat-dine"><path class="pie-slice" fill="#ff6b6b" d="M 96.23,189.92 A 90,90 0 0,1 36.95,35.78 L 61.47,60.75 A 55,55 0 0,0 97.70,154.95 Z"/></a>
+            <a href="#cat-transport"><path class="pie-slice" fill="#2ecc71" d="M 36.95,35.78 A 90,90 0 0,1 100,10 L 100,45 A 55,55 0 0,0 61.47,60.75 Z"/></a>
+            <text x="100" y="96" class="pie-center-label">spent</text>
+            <text x="100" y="114" class="pie-center-amount">$778</text>
+          </svg>
+          <div class="legend">
+            <a href="#cat-bills"><span class="dot" style="background:#ff8a3d;"></span>Bills &amp; Utilities <span class="pct">44%</span></a>
+            <a href="#cat-subs"><span class="dot" style="background:#5b8def;"></span>Subscriptions <span class="pct">6%</span></a>
+            <a href="#cat-dine"><span class="dot" style="background:#ff6b6b;"></span>Dining &amp; Takeout <span class="pct">37%</span></a>
+            <a href="#cat-transport"><span class="dot" style="background:#2ecc71;"></span>Transport <span class="pct">12%</span></a>
           </div>
         </div>
       </div>
 
       <div class="section">
+        <h2>Spending by category</h2>
+
+        <details class="category" id="cat-bills">
+          <summary><div class="category-row">
+            <div class="icon-box icon-duotone accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Bills &amp; Utilities</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount">$344.40</div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content">
+
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>⚡ Electricity</span><span>$142.10<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">12 Jun</div><div class="bill-merchant">AGL Electricity <span class="bill-recurring">recurring</span></div><div class="bill-amount">$142.10</div>
+                  <details class="cat-picker"><summary class="cat-chip">Bills ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>💧 Water</span><span>$58.30<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">5 Jun</div><div class="bill-merchant">Sydney Water</div><div class="bill-amount">$58.30</div>
+                  <details class="cat-picker"><summary class="cat-chip">Bills ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>📶 Internet</span><span>$79.00<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">3 Jun</div><div class="bill-merchant">Aussie Broadband <span class="bill-recurring">recurring</span></div><div class="bill-amount">$79.00</div>
+                  <details class="cat-picker"><summary class="cat-chip">Bills ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>📱 Mobile</span><span>$65.00<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">8 Jun</div><div class="bill-merchant">Telstra Mobile <span class="bill-recurring">recurring</span></div><div class="bill-amount">$65.00</div>
+                  <details class="cat-picker"><summary class="cat-chip">Bills ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+
+            <details class="add-form"><summary>+ Add subcategory</summary>
+              <div class="inline-form"><input type="text" placeholder="e.g. Gas" class="sub-name-input"><button type="button" data-action="add-subcategory">Add</button></div>
+            </details>
+          </div>
+        </details>
+
+        <details class="category" id="cat-subs">
+          <summary><div class="category-row">
+            <div class="icon-box icon-duotone accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Subscriptions</div><div class="cat-meta">3 subcategories</div></div>
+            <div class="cat-amount">$49.97</div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content">
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>📺 Streaming</span><span>$24.99<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">24 Jun</div><div class="bill-merchant">Netflix <span class="bill-recurring">due in 3d</span></div><div class="bill-amount">$24.99</div>
+                  <details class="cat-picker"><summary class="cat-chip">Subs ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>🎵 Music</span><span>$12.99<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">15 Jun</div><div class="bill-merchant">Spotify <span class="bill-recurring">recurring</span></div><div class="bill-amount">$12.99</div>
+                  <details class="cat-picker"><summary class="cat-chip">Subs ▾</summary><div class="picker-list">
+                    <button class="picker-chip" data-cat="Bills">Bills</button><button class="picker-chip" data-cat="Subscriptions">Subscriptions</button>
+                    <button class="picker-chip" data-cat="Dining">Dining</button><button class="picker-chip" data-cat="Transport">Transport</button>
+                  </div></details>
+                </div>
+              </div>
+            </details>
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>☁️ Cloud &amp; other</span><span>$11.99<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">10 Jun</div><div class="bill-merchant">iCloud Storage <span class="bill-recurring">recurring</span></div><div class="bill-amount">$2.99</div></div>
+                <div class="bill-row"><div class="bill-date">2 Jun</div><div class="bill-merchant">Amazon Prime <span class="bill-recurring">recurring</span></div><div class="bill-amount">$9.00</div></div>
+              </div>
+            </details>
+            <details class="add-form"><summary>+ Add subcategory</summary>
+              <div class="inline-form"><input type="text" placeholder="e.g. Gaming" class="sub-name-input"><button type="button" data-action="add-subcategory">Add</button></div>
+            </details>
+          </div>
+        </details>
+
+        <details class="category" id="cat-dine">
+          <summary><div class="category-row">
+            <div class="icon-box icon-duotone accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Dining &amp; Takeout</div><div class="cat-meta">3 subcategories</div></div>
+            <div class="cat-amount">$287.75</div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content">
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>🛵 Takeout Delivery</span><span>$68.10<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">20 Jun</div><div class="bill-merchant">Menulog - Thai Spice</div><div class="bill-amount">$38.20</div></div>
+                <div class="bill-row"><div class="bill-date">17 Jun</div><div class="bill-merchant">UberEats - Guzman y Gomez</div><div class="bill-amount">$29.90</div></div>
+              </div>
+            </details>
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>☕ Coffee</span><span>$11.70<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">18 Jun</div><div class="bill-merchant">Mecca Espresso</div><div class="bill-amount">$6.50</div></div>
+                <div class="bill-row"><div class="bill-date">9 Jun</div><div class="bill-merchant">Mecca Espresso</div><div class="bill-amount">$5.20</div></div>
+              </div>
+            </details>
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>🍽️ Restaurants</span><span>$207.95<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">14 Jun</div><div class="bill-merchant">+ 8 more transactions</div><div class="bill-amount">$207.95</div></div>
+              </div>
+            </details>
+            <details class="add-form"><summary>+ Add subcategory</summary>
+              <div class="inline-form"><input type="text" placeholder="e.g. Lunch at work" class="sub-name-input"><button type="button" data-action="add-subcategory">Add</button></div>
+            </details>
+          </div>
+        </details>
+
+        <details class="category" id="cat-transport">
+          <summary><div class="category-row">
+            <div class="icon-box icon-duotone accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Transport</div><div class="cat-meta">2 subcategories</div></div>
+            <div class="cat-amount">$96.20</div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content">
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>🚆 Public Transit</span><span>$77.80<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">19 Jun</div><div class="bill-merchant">Opal Top Up</div><div class="bill-amount">$40.00</div></div>
+                <div class="bill-row"><div class="bill-date">6 Jun</div><div class="bill-merchant">Opal Top Up</div><div class="bill-amount">$30.00</div></div>
+                <div class="bill-row"><div class="bill-date">1 Jun</div><div class="bill-merchant">+ 3 more transactions</div><div class="bill-amount">$7.80</div></div>
+              </div>
+            </details>
+            <details class="subcategory">
+              <summary><div class="subcategory-row"><span>🚕 Rideshare</span><span>$18.40<span class="chevron">▾</span></span></div></summary>
+              <div class="sub-content">
+                <div class="bill-row"><div class="bill-date">11 Jun</div><div class="bill-merchant">Uber Trip</div><div class="bill-amount">$18.40</div></div>
+              </div>
+            </details>
+            <details class="add-form"><summary>+ Add subcategory</summary>
+              <div class="inline-form"><input type="text" placeholder="e.g. Parking" class="sub-name-input"><button type="button" data-action="add-subcategory">Add</button></div>
+            </details>
+          </div>
+        </details>
+
+        <details class="category add-category-card" id="cat-add-new">
+          <summary><div class="category-row"><span style="font-size:18px;">＋</span><div class="cat-info"><div class="cat-name">Add custom category</div></div></div></summary>
+          <div class="category-content">
+            <div class="inline-form" style="padding-left:14px;">
+              <input type="text" placeholder="Category name" class="cat-name-input">
+              <input type="text" placeholder="🏷️" class="emoji-input cat-emoji-input" maxlength="2">
+              <button type="button" data-action="add-category">Create</button>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="section">
         <h2>Goals</h2>
         <div class="goal-card">
-          <div class="goal-top">
-            <div class="label">🏖️ Bali trip</div>
-            <div class="value">$1,240 / $2,000</div>
-          </div>
+          <div class="goal-top"><div class="label">🏖️ Bali trip</div><div class="value">$1,240 / $2,000</div></div>
           <div class="bar-track"><div class="bar-fill" style="width:62%;"></div></div>
         </div>
         <div class="goal-card">
-          <div class="goal-top">
-            <div class="label">🛟 Emergency fund</div>
-            <div class="value">$3,800 / $5,000</div>
-          </div>
+          <div class="goal-top"><div class="label">🛟 Emergency fund</div><div class="value">$3,800 / $5,000</div></div>
           <div class="bar-track"><div class="bar-fill" style="width:76%;"></div></div>
         </div>
       </div>
@@ -338,13 +434,56 @@
 
     </div>
   </div>
-  <div class="hint">Click any category above to expand the bills/transactions underneath it.</div>
+  <p class="hint">Category rows use native HTML &lt;details&gt; so they open/close even with JS disabled. Click a pie slice or legend item to jump straight to that category, expanded.</p>
 </div>
 
 <script>
-  function toggle(id) {
-    document.getElementById(id).classList.toggle('open');
-  }
+  document.addEventListener('click', function (e) {
+    var chip = e.target.closest('.picker-chip');
+    if (chip) {
+      var picker = chip.closest('details.cat-picker');
+      picker.querySelector('summary.cat-chip').textContent = chip.dataset.cat + ' ▾';
+      picker.removeAttribute('open');
+      return;
+    }
+
+    var subBtn = e.target.closest('[data-action="add-subcategory"]');
+    if (subBtn) {
+      var form = subBtn.closest('details.add-form');
+      var input = form.querySelector('.sub-name-input');
+      var name = input.value.trim();
+      if (!name) return;
+      var html = '<details class="subcategory" open><summary><div class="subcategory-row"><span>' + name +
+        '</span><span>$0.00<span class="chevron">▾</span></span></div></summary>' +
+        '<div class="sub-content"><div class="bill-row" style="color:#aaa;">No transactions yet</div></div></details>';
+      form.insertAdjacentHTML('beforebegin', html);
+      input.value = '';
+      form.removeAttribute('open');
+      return;
+    }
+
+    var catBtn = e.target.closest('[data-action="add-category"]');
+    if (catBtn) {
+      var card = catBtn.closest('details.category');
+      var nameInput = card.querySelector('.cat-name-input');
+      var emojiInput = card.querySelector('.cat-emoji-input');
+      var name = nameInput.value.trim();
+      var emoji = emojiInput.value.trim() || '🏷️';
+      if (!name) return;
+      var id = 'cat-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      var html = '<details class="category" id="' + id + '"><summary><div class="category-row">' +
+        '<div class="icon-box" style="background:#f1efff;display:flex;align-items:center;justify-content:center;font-size:18px;">' + emoji + '</div>' +
+        '<div class="cat-info"><div class="cat-name">' + name + '</div><div class="cat-meta">0 subcategories</div></div>' +
+        '<div class="cat-amount">$0.00</div><div class="chevron">▾</div></div></summary>' +
+        '<div class="category-content"><div class="bill-row" style="color:#aaa;">No transactions yet</div>' +
+        '<details class="add-form"><summary>+ Add subcategory</summary><div class="inline-form">' +
+        '<input type="text" placeholder="Subcategory name" class="sub-name-input"><button type="button" data-action="add-subcategory">Add</button></div></details></div></details>';
+      card.insertAdjacentHTML('beforebegin', html);
+      nameInput.value = '';
+      emojiInput.value = '';
+      card.removeAttribute('open');
+    }
+  });
 </script>
 </body>
 </html>
