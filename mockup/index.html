@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money App Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { background: #eef1f5; display: flex; justify-content: center; padding: 40px 16px; }
+
+  .phone {
+    width: 380px;
+    background: #fff;
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+    border: 8px solid #1a1a1a;
+  }
+  .screen { height: 720px; overflow-y: auto; background: #f7f8fc; }
+
+  .header {
+    background: linear-gradient(135deg,#6c5ce7,#a29bfe);
+    color: #fff;
+    padding: 28px 20px 24px;
+    border-radius: 0 0 28px 28px;
+  }
+  .header .greeting { font-size: 14px; opacity: .85; }
+  .header .balance { font-size: 32px; font-weight: 700; margin-top: 4px; }
+  .header .sub { font-size: 13px; opacity: .9; margin-top: 6px; }
+
+  .ai-bubble {
+    margin: -18px 16px 0;
+    background: #fff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    font-size: 13.5px;
+    color: #333;
+    position: relative;
+    z-index: 2;
+  }
+  .ai-bubble .tag { font-size: 11px; color: #6c5ce7; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  .ai-bubble .msg { margin-top: 4px; line-height: 1.4; }
+
+  .section { padding: 20px 16px 4px; }
+  .section h2 { font-size: 15px; color: #1a1a1a; margin-bottom: 10px; }
+
+  .category {
+    background: #fff;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  .category-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .category-row:active { background: #f3f1ff; }
+  .cat-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .cat-info { flex: 1; }
+  .cat-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .cat-meta { font-size: 12px; color: #888; margin-top: 2px; }
+  .cat-amount { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-right: 8px; text-align: right; }
+  .chevron { font-size: 12px; color: #aaa; transition: transform .2s; }
+  .category.open .chevron { transform: rotate(180deg); }
+
+  .bills-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease;
+    border-top: 1px solid #f0f0f0;
+  }
+  .category.open .bills-dropdown { max-height: 400px; }
+
+  .bill-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px 10px 62px;
+    font-size: 13px;
+    border-top: 1px solid #f5f5f7;
+  }
+  .bill-row:first-child { border-top: none; }
+  .bill-merchant { flex: 1; color: #333; }
+  .bill-date { color: #999; font-size: 11.5px; margin-right: 10px; min-width: 56px; }
+  .bill-amount { font-weight: 600; color: #1a1a1a; }
+  .bill-recurring {
+    font-size: 10px;
+    background: #eef0ff;
+    color: #6c5ce7;
+    border-radius: 6px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    font-weight: 600;
+  }
+
+  .goal-card {
+    background: #fff; border-radius: 14px; padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px;
+  }
+  .goal-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+  .goal-top .label { font-weight: 600; color: #1a1a1a; }
+  .goal-top .value { color: #6c5ce7; font-weight: 700; }
+  .bar-track { background: #eee; height: 8px; border-radius: 6px; overflow: hidden; }
+  .bar-fill { background: linear-gradient(90deg,#6c5ce7,#a29bfe); height: 100%; border-radius: 6px; }
+
+  .chat-fab {
+    position: sticky;
+    bottom: 70px;
+    margin: 16px auto 0;
+    width: calc(100% - 32px);
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .navbar {
+    position: sticky; bottom: 0;
+    background: #fff;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 10px;
+    border-top: 1px solid #eee;
+  }
+  .nav-item { font-size: 11px; color: #999; text-align: center; }
+  .nav-item.active { color: #6c5ce7; font-weight: 700; }
+  .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+  .hint {
+    text-align: center; color: #999; font-size: 12px; margin-top: 16px; max-width: 380px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="phone">
+    <div class="screen">
+
+      <div class="header">
+        <div class="greeting">Good morning, Diogo 👋</div>
+        <div class="balance">$2,340.18</div>
+        <div class="sub">Available across 2 accounts</div>
+      </div>
+
+      <div class="ai-bubble">
+        <div class="tag">Heads up</div>
+        <div class="msg">You've spent $42 more on takeout this month than your usual. Netflix renews in 3 days for $24.99. 🍕</div>
+      </div>
+
+      <div class="section">
+        <h2>Spending by category</h2>
+
+        <div class="category" id="cat-bills">
+          <div class="category-row" onclick="toggle('cat-bills')">
+            <div class="cat-icon" style="background:#ffe9e0;">💡</div>
+            <div class="cat-info">
+              <div class="cat-name">Bills &amp; Utilities</div>
+              <div class="cat-meta">5 transactions</div>
+            </div>
+            <div class="cat-amount">$318.40</div>
+            <div class="chevron">▾</div>
+          </div>
+          <div class="bills-dropdown">
+            <div class="bill-row">
+              <div class="bill-date">12 Jun</div>
+              <div class="bill-merchant">AGL Electricity <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$142.10</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">8 Jun</div>
+              <div class="bill-merchant">Telstra Mobile <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$65.00</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">5 Jun</div>
+              <div class="bill-merchant">Sydney Water</div>
+              <div class="bill-amount">$58.30</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">3 Jun</div>
+              <div class="bill-merchant">Internet - Aussie BB <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$79.00</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">1 Jun</div>
+              <div class="bill-merchant">Council Rates Direct Debit</div>
+              <div class="bill-amount">($26.00) split</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="category" id="cat-subs">
+          <div class="category-row" onclick="toggle('cat-subs')">
+            <div class="cat-icon" style="background:#e6f0ff;">📺</div>
+            <div class="cat-info">
+              <div class="cat-name">Subscriptions</div>
+              <div class="cat-meta">4 transactions</div>
+            </div>
+            <div class="cat-amount">$64.97</div>
+            <div class="chevron">▾</div>
+          </div>
+          <div class="bills-dropdown">
+            <div class="bill-row">
+              <div class="bill-date">24 Jun</div>
+              <div class="bill-merchant">Netflix <span class="bill-recurring">due in 3d</span></div>
+              <div class="bill-amount">$24.99</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">15 Jun</div>
+              <div class="bill-merchant">Spotify <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$12.99</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">10 Jun</div>
+              <div class="bill-merchant">iCloud Storage <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$2.99</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">2 Jun</div>
+              <div class="bill-merchant">Amazon Prime <span class="bill-recurring">recurring</span></div>
+              <div class="bill-amount">$9.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="category" id="cat-food">
+          <div class="category-row" onclick="toggle('cat-food')">
+            <div class="cat-icon" style="background:#fff3d6;">🍔</div>
+            <div class="cat-info">
+              <div class="cat-name">Dining &amp; Takeout</div>
+              <div class="cat-meta">11 transactions</div>
+            </div>
+            <div class="cat-amount">$287.55</div>
+            <div class="chevron">▾</div>
+          </div>
+          <div class="bills-dropdown">
+            <div class="bill-row">
+              <div class="bill-date">20 Jun</div>
+              <div class="bill-merchant">Menulog - Thai Spice</div>
+              <div class="bill-amount">$38.20</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">18 Jun</div>
+              <div class="bill-merchant">Mecca Espresso</div>
+              <div class="bill-amount">$6.50</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">17 Jun</div>
+              <div class="bill-merchant">UberEats - Guzman y Gomez</div>
+              <div class="bill-amount">$29.90</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">14 Jun</div>
+              <div class="bill-merchant">+ 8 more transactions</div>
+              <div class="bill-amount">$212.95</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="category" id="cat-transport">
+          <div class="category-row" onclick="toggle('cat-transport')">
+            <div class="cat-icon" style="background:#e3f9ec;">🚆</div>
+            <div class="cat-info">
+              <div class="cat-name">Transport</div>
+              <div class="cat-meta">6 transactions</div>
+            </div>
+            <div class="cat-amount">$96.20</div>
+            <div class="chevron">▾</div>
+          </div>
+          <div class="bills-dropdown">
+            <div class="bill-row">
+              <div class="bill-date">19 Jun</div>
+              <div class="bill-merchant">Opal Top Up</div>
+              <div class="bill-amount">$40.00</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">11 Jun</div>
+              <div class="bill-merchant">Uber Trip</div>
+              <div class="bill-amount">$18.40</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">6 Jun</div>
+              <div class="bill-merchant">Opal Top Up</div>
+              <div class="bill-amount">$30.00</div>
+            </div>
+            <div class="bill-row">
+              <div class="bill-date">1 Jun</div>
+              <div class="bill-merchant">+ 3 more transactions</div>
+              <div class="bill-amount">$7.80</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Goals</h2>
+        <div class="goal-card">
+          <div class="goal-top">
+            <div class="label">🏖️ Bali trip</div>
+            <div class="value">$1,240 / $2,000</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:62%;"></div></div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-top">
+            <div class="label">🛟 Emergency fund</div>
+            <div class="value">$3,800 / $5,000</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:76%;"></div></div>
+        </div>
+      </div>
+
+      <div class="chat-fab">💬 Ask about your money — "How much did I spend on coffee?"</div>
+
+      <div class="navbar">
+        <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">📊</span>Insights</div>
+        <div class="nav-item"><span class="nav-icon">💬</span>Chat</div>
+        <div class="nav-item"><span class="nav-icon">🎯</span>Goals</div>
+      </div>
+
+    </div>
+  </div>
+  <div class="hint">Click any category above to expand the bills/transactions underneath it.</div>
+</div>
+
+<script>
+  function toggle(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+</script>
+</body>
+</html>
