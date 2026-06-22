@@ -8,55 +8,16 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
   body { background: #eef1f5; display: flex; flex-direction: column; align-items: center; padding: 40px 16px; gap: 32px; }
 
-  /* ---------- Icon style gallery ---------- */
-  .gallery { width: 380px; max-width: 100%; background: #fff; border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-  .gallery h2 { font-size: 15px; margin-bottom: 4px; }
-  .gallery p { font-size: 12.5px; color: #888; margin-bottom: 14px; }
-  .style-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 6px; border-radius: 12px; }
-  .style-row:nth-child(odd) { background: #fafafb; }
-  .style-icons { display: flex; gap: 8px; }
-  .style-label { font-size: 12.5px; font-weight: 600; color: #333; min-width: 92px; }
-
   .icon-box { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .icon-box svg { width: 19px; height: 19px; }
 
-  .icon-outline { background: #fff; border: 1.5px solid #e3e3e6; }
-  .icon-outline svg { fill: none; stroke: #333; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-
-  .icon-solid svg { fill: #fff; stroke: none; }
-  .icon-duotone { background: #fff; border: 1px solid #eee; }
-  .icon-duotone svg { stroke-width: 1; stroke-linejoin: round; }
-  .icon-gradient svg { fill: #fff; stroke: none; }
-
-  .accent-bills { --light:#ffe3d1; --bold:#ff8a3d; --g1:#ff9966; --g2:#ff5e3a; }
-  .accent-subs  { --light:#dbe6ff; --bold:#5b8def; --g1:#74b9ff; --g2:#4361ee; }
-  .accent-dine  { --light:#ffe0e0; --bold:#ff6b6b; --g1:#ff9a8b; --g2:#ff6b6b; }
-  .accent-trans { --light:#d7f7e3; --bold:#2ecc71; --g1:#43e97b; --g2:#0fb98d; }
-
-  .icon-solid.accent-bills, .icon-gradient.accent-bills { background: var(--bold); }
-  .icon-solid.accent-subs, .icon-gradient.accent-subs { background: var(--bold); }
-  .icon-solid.accent-dine, .icon-gradient.accent-dine { background: var(--bold); }
-  .icon-solid.accent-trans, .icon-gradient.accent-trans { background: var(--bold); }
-  .icon-gradient.accent-bills { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(255,94,58,.35); }
-  .icon-gradient.accent-subs { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(67,97,238,.35); }
-  .icon-gradient.accent-dine { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(255,107,107,.35); }
-  .icon-gradient.accent-trans { background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 4px 10px rgba(15,185,141,.35); }
-  .icon-gradient { border-radius: 13px; }
-
-  .icon-duotone.accent-bills svg { fill: var(--light); stroke: var(--bold); }
-  .icon-duotone.accent-subs svg { fill: var(--light); stroke: var(--bold); }
-  .icon-duotone.accent-dine svg { fill: var(--light); stroke: var(--bold); }
-  .icon-duotone.accent-trans svg { fill: var(--light); stroke: var(--bold); }
-
-  /* style 5: bold monochrome outline, matching the reference screenshot */
+  /* bold monochrome outline icon style, matching the reference screenshot */
   .icon-bold { background: #f2f3f6; }
   .icon-bold svg { fill: none; stroke: #2d3748; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-  .pick-btn { font-size: 11px; color: #6c5ce7; background: #f1efff; border: none; border-radius: 8px; padding: 5px 9px; font-weight: 700; cursor: pointer; }
-
   /* ---------- Phone ---------- */
-  .phone { width: 380px; background: #fff; border-radius: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; border: 8px solid #1a1a1a; }
-  .screen { height: 760px; overflow-y: auto; background: #f7f8fc; }
+  .phone { width: 380px; height: 760px; background: #fff; border-radius: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 8px solid #1a1a1a; display: flex; flex-direction: column; overflow: hidden; }
+  .screen { flex: 1 1 auto; min-height: 0; overflow-y: auto; background: #f7f8fc; }
 
   .header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 28px 20px 24px; border-radius: 0 0 28px 28px; }
   .header .greeting { font-size: 14px; opacity: .85; }
@@ -155,9 +116,9 @@
   .bar-track { background: #eee; height: 8px; border-radius: 6px; overflow: hidden; }
   .bar-fill { background: linear-gradient(90deg,#6c5ce7,#a29bfe); height: 100%; border-radius: 6px; }
 
-  .chat-fab { position: sticky; bottom: 70px; margin: 16px auto 0; width: calc(100% - 32px); background: #1a1a1a; color: #fff; border-radius: 14px; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+  .chat-fab { margin: 10px 16px 0; background: #1a1a1a; color: #fff; border-radius: 14px; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 
-  .navbar { position: sticky; bottom: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; }
+  .navbar { flex-shrink: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; }
   .nav-item { font-size: 11px; color: #999; text-align: center; }
   .nav-item.active { color: #6c5ce7; font-weight: 700; }
   .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
@@ -166,67 +127,6 @@
 </style>
 </head>
 <body>
-
-<!-- ================= ICON STYLE GALLERY ================= -->
-<div class="gallery">
-  <h2>Icon style options</h2>
-  <p>The app below now uses style 5 (Bold Outline), matching your screenshot. Tell me a number to switch.</p>
-
-  <div class="style-row">
-    <div class="style-label">1. Outline</div>
-    <div class="style-icons">
-      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
-      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
-      <div class="icon-box icon-outline"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
-    </div>
-    <button class="pick-btn">Pick</button>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">2. Solid</div>
-    <div class="style-icons">
-      <div class="icon-box icon-solid accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
-      <div class="icon-box icon-solid accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <div class="icon-box icon-solid accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
-      <div class="icon-box icon-solid accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
-    </div>
-    <button class="pick-btn">Pick</button>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">3. Duotone</div>
-    <div class="style-icons">
-      <div class="icon-box icon-duotone accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
-      <div class="icon-box icon-duotone accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <div class="icon-box icon-duotone accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
-      <div class="icon-box icon-duotone accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
-    </div>
-    <button class="pick-btn">Pick</button>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">4. Gradient</div>
-    <div class="style-icons">
-      <div class="icon-box icon-gradient accent-bills"><svg viewBox="0 0 24 24"><path d="M12 2L3 13h6l-1 9 10-13h-6l1-9z"/></svg></div>
-      <div class="icon-box icon-gradient accent-subs"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <div class="icon-box icon-gradient accent-dine"><svg viewBox="0 0 24 24"><path d="M4 8h12l-1 9a3 3 0 01-3 3H8a3 3 0 01-3-3L4 8z M3 6h14v2H3z M16 10h2a2 2 0 010 4h-2"/></svg></div>
-      <div class="icon-box icon-gradient accent-trans"><svg viewBox="0 0 24 24"><path d="M4 16l1.5-6.5A3 3 0 018.4 7h7.2a3 3 0 012.9 2.5L20 16v3a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H7v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-3z M7 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z M17 18.5a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z"/></svg></div>
-    </div>
-    <button class="pick-btn">Pick</button>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">5. Bold Outline ✓ (from your screenshot)</div>
-    <div class="style-icons">
-      <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z" stroke-width="1.8"/></svg></div>
-      <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M5 4v16l15-8z" stroke-width="1.8"/></svg></div>
-      <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M5 9h12l-1 9a3 3 0 01-3 3H9a3 3 0 01-3-3L5 9z"/><path d="M4 7h14"/><path d="M17 11h1a2 2 0 010 4h-1"/></svg></div>
-      <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="#2d3748" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="#2d3748" stroke="none"/></svg></div>
-    </div>
-    <button class="pick-btn">Pick</button>
-  </div>
-</div>
 
 <!-- ================= PHONE MOCKUP ================= -->
 <div>
@@ -447,16 +347,17 @@
         </div>
       </div>
 
-      <div class="chat-fab">💬 Ask about your money — "How much did I spend on coffee?"</div>
-
-      <div class="navbar">
-        <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
-        <div class="nav-item"><span class="nav-icon">📊</span>Insights</div>
-        <div class="nav-item"><span class="nav-icon">💬</span>Chat</div>
-        <div class="nav-item"><span class="nav-icon">🎯</span>Goals</div>
-      </div>
-
     </div>
+
+    <div class="chat-fab">💬 Ask about your money — "How much did I spend on coffee?"</div>
+
+    <div class="navbar">
+      <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+      <div class="nav-item"><span class="nav-icon">📊</span>Insights</div>
+      <div class="nav-item"><span class="nav-icon">💬</span>Chat</div>
+      <div class="nav-item"><span class="nav-icon">🎯</span>Goals</div>
+    </div>
+
   </div>
   <p class="hint">Click a pie slice or legend item to jump straight to that category, expanded. Click any bill's category chip to move it, or to create a brand-new category/subcategory right from that bill.</p>
 </div>
