@@ -23,6 +23,13 @@
   .phone { width: 380px; height: 760px; background: #fff; border-radius: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 8px solid #1a1a1a; display: flex; flex-direction: column; overflow: hidden; position: relative; }
   .screen { flex: 1 1 auto; min-height: 0; overflow-y: auto; background: #f7f8fc; }
 
+  /* on real phone screens, drop the desktop "frame" look and just fill the viewport */
+  @media (max-width: 460px) {
+    body { padding: 0; gap: 0; }
+    .hint { display: none; }
+    .phone { width: 100vw; height: 100dvh; border-radius: 0; border: none; box-shadow: none; }
+  }
+
   .header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 28px 20px 24px; border-radius: 0 0 28px 28px; }
   .header .greeting { font-size: 14px; opacity: .85; }
   .header .balance { font-size: 32px; font-weight: 700; margin-top: 4px; }
@@ -41,8 +48,16 @@
   details.safe-spend-card[open] > summary .chevron { transform: rotate(180deg); }
   .safe-spend-breakdown { border-top: 1px solid #f0f0f0; padding: 10px 16px 14px; }
   .breakdown-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 5px 0; color: #555; }
+  .breakdown-row[hidden] { display: none; }
   .breakdown-row.minus span:last-child { color: #e74c3c; font-weight: 600; }
   .breakdown-row.total { border-top: 1px solid #eee; margin-top: 4px; padding-top: 8px; font-weight: 800; color: #1a1a1a; }
+
+  /* ---------- Month switcher (header) ---------- */
+  .month-switcher { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
+  .month-switcher button { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .month-switcher button:disabled { opacity: .3; cursor: default; }
+  .month-switcher .month-label { font-size: 13px; font-weight: 700; min-width: 92px; text-align: center; }
+  .month-empty-state { padding: 60px 24px; text-align: center; color: #999; font-size: 13px; line-height: 1.5; }
 
   .section { padding: 20px 16px 4px; }
   .section h2 { font-size: 15px; color: #1a1a1a; margin-bottom: 10px; }
@@ -81,22 +96,17 @@
   details.subcategory[open] > summary .chevron { transform: rotate(180deg); }
   .sub-content { padding-bottom: 4px; }
 
-  .bill-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 64px; font-size: 12.5px; border-top: 1px solid #f7f7f9; flex-wrap: wrap; }
+  .bill-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 64px; font-size: 12.5px; border-top: 1px solid #f7f7f9; flex-wrap: wrap; cursor: pointer; }
   .bill-row:first-child { border-top: none; }
   .bill-date { color: #999; font-size: 11px; min-width: 48px; }
   .bill-merchant { flex: 1; color: #333; min-width: 90px; }
   .bill-amount { font-weight: 600; color: #1a1a1a; }
   .bill-recurring { font-size: 9.5px; background: #eef0ff; color: #6c5ce7; border-radius: 6px; padding: 1px 5px; margin-left: 5px; font-weight: 600; }
 
-  /* category reassignment chip + popover */
-  details.cat-picker { position: relative; }
-  .cat-chip { font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
-  details.cat-picker[open] .cat-chip { background: #e9e6ff; color: #6c5ce7; }
-  .picker-list { position: absolute; right: 0; top: 24px; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); padding: 6px; display: flex; flex-direction: column; gap: 3px; z-index: 10; min-width: 172px; }
-  .picker-chip { text-align: left; border: none; background: none; padding: 6px 8px; font-size: 12px; border-radius: 6px; cursor: pointer; color: #333; }
-  .picker-chip:hover { background: #f3f1ff; color: #6c5ce7; }
-  .picker-section-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: .04em; color: #aaa; font-weight: 700; padding: 4px 8px 2px; }
-  .picker-divider { height: 1px; background: #eee; margin: 4px 2px; }
+  /* static category badge shown on every transaction row (click the row to recategorize) */
+  .cat-chip { font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; margin-left: auto; }
+  .cat-chip-uncategorized { background: #fff3e8; color: #e07b1a; }
+
   details.picker-new-form summary { font-size: 11.5px; color: #6c5ce7; font-weight: 700; padding: 6px 8px; cursor: pointer; list-style: none; }
   details.picker-new-form summary::-webkit-details-marker { display: none; }
   details.picker-new-form .inline-form { padding: 4px 4px 6px; }
@@ -106,13 +116,35 @@
   .inline-form input, .inline-form select { flex: 1; min-width: 80px; border: 1px solid #e3e3e6; border-radius: 8px; padding: 7px 9px; font-size: 12.5px; }
   .inline-form button { border: none; background: #6c5ce7; color: #fff; border-radius: 8px; padding: 7px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
 
+  /* ---------- Categorize modal (tap a transaction to recategorize it) ---------- */
+  .modal-overlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: flex-end; }
+  .modal-overlay[hidden] { display: none; }
+  .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .modal-sheet { position: relative; width: 100%; max-height: 80%; background: #fff; border-radius: 20px 20px 0 0; padding: 10px 16px 20px; display: flex; flex-direction: column; overflow-y: auto; z-index: 1; }
+  .modal-handle { width: 36px; height: 4px; background: #e3e3e6; border-radius: 3px; margin: 0 auto 12px; }
+  .modal-merchant { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .modal-meta { font-size: 12px; color: #999; margin-top: 2px; margin-bottom: 14px; }
+  .modal-section-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: #999; font-weight: 700; margin-bottom: 8px; }
+  .modal-cat-btn { display: block; text-align: left; border: none; background: #f7f7fa; color: #333; padding: 10px 12px; font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; margin-bottom: 6px; width: 100%; }
+  .modal-cat-btn.active { background: #e9e6ff; color: #6c5ce7; }
+  details.modal-cat { border-bottom: 1px solid #f3f3f5; }
+  .modal-cat-summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; }
+  .modal-cat-summary::-webkit-details-marker { display: none; }
+  .modal-cat-name { font-size: 13.5px; font-weight: 700; color: #1a1a1a; }
+  .modal-cat-name.active { color: #6c5ce7; }
+  details.modal-cat[open] > .modal-cat-summary .chevron { transform: rotate(180deg); }
+  .modal-sub-list { padding: 0 4px 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .modal-sub-btn { text-align: left; border: none; background: none; color: #555; padding: 7px 8px; font-size: 12.5px; border-radius: 8px; cursor: pointer; }
+  .modal-sub-btn:hover { background: #f3f1ff; color: #6c5ce7; }
+  .modal-sub-btn.active { background: #e9e6ff; color: #6c5ce7; font-weight: 700; }
+  .modal-sheet .inline-form { padding: 4px 0 8px; }
+  .modal-close { margin-top: 14px; border: none; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+
   /* ---------- Uncategorized transactions ---------- */
   .uncategorized-card .icon-bold { background: #fff3e8; }
   .uncategorized-card .icon-bold svg { stroke: #e07b1a; }
 
   /* ---------- Manage categories page ---------- */
-  .manage-link { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; font-size: 12px; color: #6c5ce7; font-weight: 700; background: none; border: none; cursor: pointer; padding: 4px; }
-  .manage-link .mini-icon { margin-right: 3px; }
   .manage-page { position: absolute; inset: 0; z-index: 40; background: #f7f8fc; display: flex; flex-direction: column; }
   .manage-page[hidden] { display: none; }
   .manage-header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 18px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -148,7 +180,7 @@
   .chat-fab .mini-icon { width: 16px; height: 16px; margin-right: 2px; }
 
   .navbar { flex-shrink: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; }
-  .nav-item { font-size: 11px; color: #999; text-align: center; }
+  .nav-item { font-size: 11px; color: #999; text-align: center; cursor: pointer; }
   .nav-item.active { color: #6c5ce7; font-weight: 700; }
   .nav-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
   .nav-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -167,6 +199,11 @@
         <div class="greeting">Good morning, Diogo 👋</div>
         <div class="balance">$2,340.18</div>
         <div class="sub">Available across 2 accounts</div>
+        <div class="month-switcher">
+          <button type="button" data-action="prev-month" id="prev-month-btn" aria-label="Previous month">‹</button>
+          <span class="month-label" id="month-label">June 2026</span>
+          <button type="button" data-action="next-month" id="next-month-btn" aria-label="Next month">›</button>
+        </div>
       </div>
 
       <div class="ai-bubble">
@@ -185,17 +222,18 @@
         </div></summary>
         <div class="safe-spend-breakdown">
           <div class="breakdown-row"><span>Current balance</span><span>$2,340.18</span></div>
-          <div class="breakdown-row minus"><span>AGL Electricity &middot; 3 Jul</span><span>-$142.10</span></div>
-          <div class="breakdown-row minus"><span>Telstra Mobile &middot; 8 Jul</span><span>-$65.00</span></div>
-          <div class="breakdown-row minus"><span>Aussie Broadband &middot; 3 Jul</span><span>-$79.00</span></div>
-          <div class="breakdown-row minus"><span>Netflix &middot; 24 Jun</span><span>-$24.99</span></div>
-          <div class="breakdown-row minus"><span>Spotify &middot; 15 Jul</span><span>-$12.99</span></div>
-          <div class="breakdown-row minus"><span>iCloud Storage &middot; 10 Jul</span><span>-$2.99</span></div>
-          <div class="breakdown-row minus"><span>Amazon Prime &middot; 2 Jul</span><span>-$9.00</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>AGL Electricity &middot; 3 Jul</span><span>-$142.10</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>Telstra Mobile &middot; 8 Jul</span><span>-$65.00</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>Aussie Broadband &middot; 3 Jul</span><span>-$79.00</span></div>
+          <div class="breakdown-row minus" data-month="Jun"><span>Netflix &middot; 24 Jun</span><span>-$24.99</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>Spotify &middot; 15 Jul</span><span>-$12.99</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>iCloud Storage &middot; 10 Jul</span><span>-$2.99</span></div>
+          <div class="breakdown-row minus" data-month="Jul"><span>Amazon Prime &middot; 2 Jul</span><span>-$9.00</span></div>
           <div class="breakdown-row total"><span>Safe to spend until next pay</span><span>$2,004.11</span></div>
         </div>
       </details>
 
+      <div id="month-data-sections">
       <div class="section">
         <h2>This month, by category</h2>
         <div class="pie-card">
@@ -217,10 +255,7 @@
       </div>
 
       <div class="section">
-        <div style="display:flex; align-items:center;">
-          <h2>Spending by category</h2>
-          <button type="button" class="manage-link" data-action="open-manage"><span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0A1.65 1.65 0 009.9 4.6V4.5a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Manage</button>
-        </div>
+        <h2>Spending by category</h2>
 
         <details class="category uncategorized-card" id="cat-uncategorized">
           <summary><div class="category-row">
@@ -359,6 +394,12 @@
         </details>
         </div>
       </div>
+      </div>
+
+      <div class="month-empty-state" id="month-empty-state" hidden>
+        <strong>No transaction history yet for this month.</strong><br>
+        This prototype only has full category data loaded for June 2026 — try switching back to see it in action.
+      </div>
 
       <div class="section">
         <h2>Goals</h2>
@@ -381,6 +422,7 @@
       <div class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
       <div class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span>Chat</div>
       <div class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
+      <div class="nav-item" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
     </div>
 
     <div class="manage-page" id="manage-page" hidden>
@@ -391,8 +433,20 @@
       <div class="manage-body" id="manage-body"></div>
     </div>
 
+    <div class="modal-overlay" id="categorize-modal" hidden>
+      <div class="modal-backdrop" data-action="close-modal"></div>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-merchant" id="modal-merchant"></div>
+        <div class="modal-meta" id="modal-meta"></div>
+        <div class="modal-section-label">Choose a category</div>
+        <div id="modal-cat-list"></div>
+        <button type="button" class="modal-close" data-action="close-modal">Done</button>
+      </div>
+    </div>
+
   </div>
-  <p class="hint">Click a pie slice or legend item to jump straight to that category, expanded. Click any bill's category chip to move it, or to create a brand-new category/subcategory right from that bill.</p>
+  <p class="hint">Click a pie slice or legend item to jump straight to that category, expanded. Click any transaction row to recategorize it, or to create a brand-new category/subcategory right from that transaction.</p>
 </div>
 
 <script>
@@ -419,55 +473,101 @@
     'cat-transport': ['Opal', 'Uber Trip', 'Transit', 'Taxi']
   };
 
-  function pickerListHTML(currentCatId) {
-    var html = '<div class="picker-section-label">Move to</div>';
-    CATEGORIES.forEach(function (c) {
-      html += '<button class="picker-chip" data-cat-id="' + c.id + '" data-cat-label="' + c.label + '">' + c.label + '</button>';
-    });
-    var catOptions = CATEGORIES.map(function (c) {
-      return '<option value="' + c.id + '"' + (c.id === currentCatId ? ' selected' : '') + '>' + c.label + '</option>';
-    }).join('');
-    html += '<div class="picker-divider"></div>' +
-      '<details class="picker-new-form"><summary>+ New category</summary>' +
-      '<div class="inline-form"><input type="text" placeholder="Name" class="new-cat-input">' +
-      '<button type="button" data-action="picker-new-category">Add</button></div></details>' +
-      '<details class="picker-new-form"><summary>+ New subcategory</summary>' +
-      '<div class="inline-form"><select class="new-sub-cat-select">' + catOptions + '</select>' +
-      '<input type="text" placeholder="Name" class="new-sub-input">' +
-      '<button type="button" data-action="picker-new-subcategory">Add</button></div></details>';
-    return html;
-  }
-
-  function pickerHTML(currentLabel, currentCatId) {
-    return '<details class="cat-picker"><summary class="cat-chip">' + currentLabel + ' ▾</summary>' +
-      '<div class="picker-list">' + pickerListHTML(currentCatId) + '</div></details>';
-  }
-
-  function refreshAllPickerLists() {
-    document.querySelectorAll('details.cat-picker').forEach(function (picker) {
-      var list = picker.querySelector('.picker-list');
-      var currentCatId = picker.closest('details.category') ? picker.closest('details.category').id : null;
-      if (list) list.innerHTML = pickerListHTML(currentCatId);
-    });
-  }
-
   function shortLabelFor(categoryEl) {
     if (!categoryEl || categoryEl.id === 'cat-uncategorized') return 'Uncategorized';
     var match = CATEGORIES.filter(function (c) { return c.id === categoryEl.id; })[0];
     return match ? match.label : categoryEl.querySelector('.cat-name').textContent;
   }
 
-  // every real transaction row gets a recategorize picker — "+N more transactions"
-  // placeholder rows are skipped since they don't represent a single bill to move
-  function attachPickers() {
+  // is this a real, movable transaction row, or just a "+N more transactions" placeholder?
+  function isRealBillRow(row) {
+    var merchantEl = row.querySelector('.bill-merchant');
+    return !!merchantEl && merchantEl.textContent.indexOf('more transactions') === -1;
+  }
+
+  // static, non-interactive category badge shown on every transaction row
+  function refreshRowBadge(row) {
+    if (!row) return;
+    var existing = row.querySelector('.cat-chip');
+    if (existing) existing.remove();
+    var parentCategory = row.closest('details.category');
+    var uncategorized = !parentCategory || parentCategory.id === 'cat-uncategorized';
+    row.insertAdjacentHTML('beforeend', '<span class="cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : '') + '">' + shortLabelFor(parentCategory) + '</span>');
+  }
+
+  function refreshAllRowBadges() {
     document.querySelectorAll('.bill-row').forEach(function (row) {
-      if (row.querySelector('.cat-picker')) return;
-      var merchantEl = row.querySelector('.bill-merchant');
-      if (!merchantEl || merchantEl.textContent.indexOf('more transactions') !== -1) return;
-      var parentCategory = row.closest('details.category');
-      var realCatId = (parentCategory && parentCategory.id !== 'cat-uncategorized') ? parentCategory.id : null;
-      row.insertAdjacentHTML('beforeend', pickerHTML(shortLabelFor(parentCategory), realCatId));
+      if (isRealBillRow(row)) {
+        refreshRowBadge(row);
+      } else {
+        row.style.cursor = 'default';
+      }
     });
+  }
+
+  // ---- tap-to-categorize modal ----
+  var activeRow = null;
+
+  function modalCategoryListHTML(currentCatId, currentSubName) {
+    var html = '<button type="button" class="modal-cat-btn' + (!currentCatId ? ' active' : '') + '" data-action="assign-category" data-cat-id="">Uncategorized</button>';
+    CATEGORIES.forEach(function (c) {
+      var subs = SUBCATEGORIES[c.id] || [];
+      var isCurrentCat = c.id === currentCatId;
+      html += '<details class="modal-cat"' + (isCurrentCat ? ' open' : '') + '>' +
+        '<summary class="modal-cat-summary"><span class="modal-cat-name' + (isCurrentCat && !currentSubName ? ' active' : '') + '" data-action="assign-category" data-cat-id="' + c.id + '">' + c.label + '</span><span class="chevron">▾</span></summary>' +
+        '<div class="modal-sub-list">';
+      subs.forEach(function (s) {
+        var subActive = isCurrentCat && currentSubName === s;
+        html += '<button type="button" class="modal-sub-btn' + (subActive ? ' active' : '') + '" data-action="assign-subcategory" data-cat-id="' + c.id + '" data-sub-name="' + s + '">' + s + '</button>';
+      });
+      html += '<details class="picker-new-form"><summary>+ New subcategory</summary>' +
+        '<div class="inline-form"><input type="text" placeholder="Name" class="modal-new-sub-input">' +
+        '<button type="button" data-action="modal-new-subcategory" data-cat-id="' + c.id + '">Add</button></div></details>';
+      html += '</div></details>';
+    });
+    html += '<details class="picker-new-form"><summary>+ New category</summary>' +
+      '<div class="inline-form"><input type="text" placeholder="Name" class="modal-new-cat-input">' +
+      '<button type="button" data-action="modal-new-category">Add</button></div></details>';
+    return html;
+  }
+
+  function openCategorizeModal(row) {
+    activeRow = row;
+    var merchantEl = row.querySelector('.bill-merchant');
+    var dateEl = row.querySelector('.bill-date');
+    var amountEl = row.querySelector('.bill-amount');
+    var merchantName = merchantEl.childNodes[0] ? merchantEl.childNodes[0].textContent.trim() : merchantEl.textContent.trim();
+    var parentCategory = row.closest('details.category');
+    var parentSub = row.closest('details.subcategory');
+    var currentCatId = (parentCategory && parentCategory.id !== 'cat-uncategorized') ? parentCategory.id : null;
+    var currentSubName = null;
+    if (parentSub) {
+      var subNameEl = parentSub.querySelector('.subcategory-row > span:first-child');
+      if (subNameEl) currentSubName = subNameEl.textContent.trim();
+    }
+    document.getElementById('modal-merchant').textContent = merchantName;
+    document.getElementById('modal-meta').textContent = (dateEl ? dateEl.textContent + ' · ' : '') + (amountEl ? amountEl.textContent : '');
+    document.getElementById('modal-cat-list').innerHTML = modalCategoryListHTML(currentCatId, currentSubName);
+    document.getElementById('categorize-modal').hidden = false;
+  }
+
+  function closeCategorizeModal() {
+    document.getElementById('categorize-modal').hidden = true;
+    activeRow = null;
+  }
+
+  // finds an existing subcategory by name inside a category, or creates it
+  function findOrCreateSubcategoryDetails(categoryEl, subName) {
+    var content = categoryEl.querySelector('.category-content');
+    var existing = Array.prototype.filter.call(content.querySelectorAll('details.subcategory'), function (d) {
+      var nameEl = d.querySelector('.subcategory-row > span:first-child');
+      return nameEl && nameEl.textContent.trim() === subName;
+    })[0];
+    if (existing) return existing;
+    var html = '<details class="subcategory"><summary><div class="subcategory-row"><span>' + subName +
+      '</span><span>$0.00<span class="chevron">▾</span></span></div></summary><div class="sub-content"></div></details>';
+    content.insertAdjacentHTML('beforeend', html);
+    return content.lastElementChild;
   }
 
   document.addEventListener('click', function (e) {
@@ -482,72 +582,82 @@
       return;
     }
 
-    var chip = e.target.closest('.picker-chip');
-    if (chip) {
-      var picker = chip.closest('details.cat-picker');
-      var row = picker.closest('.bill-row');
-      var targetCategory = document.getElementById(chip.dataset.catId);
-      if (targetCategory) targetCategory.querySelector('.category-content').appendChild(row);
-      picker.querySelector('summary.cat-chip').textContent = chip.dataset.catLabel + ' ▾';
-      picker.removeAttribute('open');
+    if (e.target.closest('[data-action="close-modal"]')) {
+      closeCategorizeModal();
       return;
     }
 
-    // "+ New category" raised directly from an uncategorized bill's picker —
-    // creates the category AND files this specific transaction into it in one step
-    var newCatBtn = e.target.closest('[data-action="picker-new-category"]');
-    if (newCatBtn) {
-      var ncForm = newCatBtn.closest('details.picker-new-form');
-      var ncNameInput = ncForm.querySelector('.new-cat-input');
-      var ncName = ncNameInput.value.trim();
-      if (!ncName) return;
-      var ncId = 'cat-' + ncName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      var ncHtml = '<details class="category" id="' + ncId + '"><summary><div class="category-row">' +
+    var assignCatBtn = e.target.closest('[data-action="assign-category"]');
+    if (assignCatBtn) {
+      var acTargetCat = assignCatBtn.dataset.catId ? document.getElementById(assignCatBtn.dataset.catId) : document.getElementById('cat-uncategorized');
+      if (acTargetCat && activeRow) acTargetCat.querySelector('.category-content').appendChild(activeRow);
+      refreshRowBadge(activeRow);
+      closeCategorizeModal();
+      return;
+    }
+
+    var assignSubBtn = e.target.closest('[data-action="assign-subcategory"]');
+    if (assignSubBtn) {
+      var asTargetCat = document.getElementById(assignSubBtn.dataset.catId);
+      if (asTargetCat && activeRow) {
+        var asSubDetails = findOrCreateSubcategoryDetails(asTargetCat, assignSubBtn.dataset.subName);
+        asSubDetails.querySelector('.sub-content').appendChild(activeRow);
+      }
+      refreshRowBadge(activeRow);
+      closeCategorizeModal();
+      return;
+    }
+
+    // "+ New category" raised from the categorize modal — creates the category
+    // AND files this specific transaction into it in one step
+    var modalNewCatBtn = e.target.closest('[data-action="modal-new-category"]');
+    if (modalNewCatBtn) {
+      var mncForm = modalNewCatBtn.closest('details.picker-new-form');
+      var mncNameInput = mncForm.querySelector('.modal-new-cat-input');
+      var mncName = mncNameInput.value.trim();
+      if (!mncName) return;
+      var mncId = 'cat-' + mncName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      var mncHtml = '<details class="category" id="' + mncId + '"><summary><div class="category-row">' +
         genericCategoryIcon() +
-        '<div class="cat-info"><div class="cat-name">' + ncName + '</div><div class="cat-meta">0 subcategories</div></div>' +
+        '<div class="cat-info"><div class="cat-name">' + mncName + '</div><div class="cat-meta">0 subcategories</div></div>' +
         '<div class="cat-amount">$0.00</div><div class="chevron">▾</div></div></summary>' +
         '<div class="category-content"></div></details>';
-      document.getElementById('category-list').insertAdjacentHTML('beforeend', ncHtml);
-      CATEGORIES.push({ id: ncId, label: ncName });
-      SUBCATEGORIES[ncId] = [];
-      KEYWORDS[ncId] = [];
+      document.getElementById('category-list').insertAdjacentHTML('beforeend', mncHtml);
+      CATEGORIES.push({ id: mncId, label: mncName });
+      SUBCATEGORIES[mncId] = [];
+      KEYWORDS[mncId] = [];
 
-      var ncRow = newCatBtn.closest('.bill-row');
-      document.getElementById(ncId).querySelector('.category-content').appendChild(ncRow);
-
-      var ncPicker = newCatBtn.closest('details.cat-picker');
-      ncPicker.querySelector('summary.cat-chip').textContent = ncName + ' ▾';
-      ncPicker.removeAttribute('open');
-      refreshAllPickerLists();
+      if (activeRow) document.getElementById(mncId).querySelector('.category-content').appendChild(activeRow);
+      refreshRowBadge(activeRow);
+      closeCategorizeModal();
       return;
     }
 
-    // "+ New subcategory" raised from a bill's recategorize picker — files the
+    // "+ New subcategory" raised from the categorize modal — files the
     // transaction under a brand-new subcategory inside the chosen parent category
-    var newSubBtn = e.target.closest('[data-action="picker-new-subcategory"]');
-    if (newSubBtn) {
-      var nsForm = newSubBtn.closest('details.picker-new-form');
-      var nsInput = nsForm.querySelector('.new-sub-input');
-      var nsSelect = nsForm.querySelector('.new-sub-cat-select');
-      var nsName = nsInput.value.trim();
-      if (!nsName) return;
-      var nsTargetCategory = document.getElementById(nsSelect.value);
-      if (!nsTargetCategory) return;
-      if (!SUBCATEGORIES[nsSelect.value]) SUBCATEGORIES[nsSelect.value] = [];
-      SUBCATEGORIES[nsSelect.value].push(nsName);
+    var modalNewSubBtn = e.target.closest('[data-action="modal-new-subcategory"]');
+    if (modalNewSubBtn) {
+      var mnsForm = modalNewSubBtn.closest('details.picker-new-form');
+      var mnsInput = mnsForm.querySelector('.modal-new-sub-input');
+      var mnsName = mnsInput.value.trim();
+      if (!mnsName) return;
+      var mnsCatId = modalNewSubBtn.dataset.catId;
+      var mnsTargetCategory = document.getElementById(mnsCatId);
+      if (!mnsTargetCategory) return;
+      if (!SUBCATEGORIES[mnsCatId]) SUBCATEGORIES[mnsCatId] = [];
+      SUBCATEGORIES[mnsCatId].push(mnsName);
 
-      var nsRow = newSubBtn.closest('.bill-row');
-      var nsContent = nsTargetCategory.querySelector('.category-content');
-      var nsHtml = '<details class="subcategory" open><summary><div class="subcategory-row"><span>' + nsName +
-        '</span><span>$0.00<span class="chevron">▾</span></span></div></summary>' +
-        '<div class="sub-content"></div></details>';
-      nsContent.insertAdjacentHTML('beforeend', nsHtml);
-      nsContent.lastElementChild.querySelector('.sub-content').appendChild(nsRow);
+      var mnsSubDetails = findOrCreateSubcategoryDetails(mnsTargetCategory, mnsName);
+      if (activeRow) mnsSubDetails.querySelector('.sub-content').appendChild(activeRow);
+      refreshRowBadge(activeRow);
+      closeCategorizeModal();
+      return;
+    }
 
-      var nsPicker = newSubBtn.closest('details.cat-picker');
-      nsPicker.querySelector('summary.cat-chip').textContent = shortLabelFor(nsTargetCategory) + ' · ' + nsName + ' ▾';
-      nsPicker.removeAttribute('open');
-      refreshAllPickerLists();
+    // tapping anywhere on a real transaction row opens the categorize modal
+    var clickedRow = e.target.closest('.bill-row');
+    if (clickedRow && isRealBillRow(clickedRow)) {
+      openCategorizeModal(clickedRow);
       return;
     }
 
@@ -607,8 +717,16 @@
         '<div class="cat-amount">$0.00</div><div class="chevron">▾</div></div></summary>' +
         '<div class="category-content"></div></details>';
       document.getElementById('category-list').insertAdjacentHTML('beforeend', macHtml);
-      refreshAllPickerLists();
       renderManagePage();
+      return;
+    }
+
+    if (e.target.closest('[data-action="prev-month"]')) {
+      if (monthIndex > 0) { monthIndex--; renderMonth(); }
+      return;
+    }
+    if (e.target.closest('[data-action="next-month"]')) {
+      if (monthIndex < MONTHS.length - 1) { monthIndex++; renderMonth(); }
       return;
     }
   });
@@ -625,7 +743,7 @@
         var nameEl = dashCat.querySelector('.cat-name');
         if (nameEl) nameEl.textContent = newLabel;
       }
-      refreshAllPickerLists();
+      refreshAllRowBadges();
       return;
     }
     var subInput = e.target.closest('.manage-sub-input');
@@ -667,7 +785,43 @@
     document.getElementById('manage-body').innerHTML = html;
   }
 
-  attachPickers();
+  // ---- month switcher ----
+  // this prototype only has full transaction history loaded for June 2026;
+  // other months still show the upcoming-bills list, scoped to that month
+  var MONTHS = ['May 2026', 'June 2026', 'July 2026'];
+  var MONTH_TAGS = ['May', 'Jun', 'Jul'];
+  var CURRENT_DATA_MONTH_INDEX = 1;
+  var monthIndex = 1;
+
+  function formatMoney(n) {
+    return '$' + n.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  }
+
+  function renderMonth() {
+    document.getElementById('month-label').textContent = MONTHS[monthIndex];
+    document.getElementById('prev-month-btn').disabled = monthIndex === 0;
+    document.getElementById('next-month-btn').disabled = monthIndex === MONTHS.length - 1;
+
+    var tag = MONTH_TAGS[monthIndex];
+    var balance = 2340.18;
+    var upcomingTotal = 0;
+    document.querySelectorAll('.breakdown-row.minus').forEach(function (row) {
+      var match = row.dataset.month === tag;
+      row.hidden = !match;
+      if (match) upcomingTotal += Math.abs(parseFloat(row.querySelector('span:last-child').textContent.replace(/[^0-9.-]/g, '')));
+    });
+    var safeAmount = balance - upcomingTotal;
+    document.querySelector('.safe-spend-amount').textContent = formatMoney(safeAmount);
+    document.querySelector('.safe-spend-sub').textContent = 'After ' + formatMoney(upcomingTotal) + ' in upcoming recurring bills';
+    document.querySelector('.breakdown-row.total span:last-child').textContent = formatMoney(safeAmount);
+
+    var isCurrent = monthIndex === CURRENT_DATA_MONTH_INDEX;
+    document.getElementById('month-data-sections').hidden = !isCurrent;
+    document.getElementById('month-empty-state').hidden = isCurrent;
+  }
+
+  refreshAllRowBadges();
+  renderMonth();
 </script>
 </body>
 </html>
