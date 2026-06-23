@@ -275,6 +275,35 @@
   .cat-budget-line { font-size: 11px; margin-top: 2px; font-weight: 600; }
   .cat-budget-line.over { color: #e74c3c; }
   .cat-budget-line.under { color: #2ecc71; }
+
+  /* ---------- Import page ---------- */
+  .import-drop-zone { border: 2px dashed #d9d3ff; border-radius: 18px; padding: 32px 20px; text-align: center; margin-bottom: 16px; cursor: pointer; transition: background .15s; }
+  .import-drop-zone.drag-over { background: #f3f1ff; border-color: #6c5ce7; }
+  .import-drop-zone .drop-icon { font-size: 36px; margin-bottom: 8px; }
+  .import-drop-zone .drop-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .import-drop-zone .drop-sub { font-size: 12px; color: #999; }
+  .import-file-btn { display: inline-block; margin-top: 12px; background: #6c5ce7; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .import-bank-badge { display: inline-flex; align-items: center; gap: 6px; background: #e8f8ee; color: #229954; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 5px 10px; margin-bottom: 14px; }
+  .import-bank-badge.unknown { background: #fff3e8; color: #e07b1a; }
+  .import-map-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .import-map-card h4 { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; margin-bottom: 10px; }
+  .import-map-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12.5px; }
+  .import-map-row label { width: 72px; color: #555; font-weight: 600; flex-shrink: 0; }
+  .import-map-row select { flex: 1; border: 1px solid #e3e3e6; border-radius: 8px; padding: 6px 8px; font-size: 12px; background: #fff; }
+  .import-preview-table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 4px; }
+  .import-preview-table th { text-align: left; color: #999; font-weight: 700; padding: 5px 6px; border-bottom: 1px solid #eee; }
+  .import-preview-table td { padding: 5px 6px; color: #333; border-bottom: 1px solid #f5f5f7; }
+  .import-preview-table tr:last-child td { border-bottom: none; }
+  .import-stats { display: flex; gap: 10px; margin-bottom: 14px; }
+  .import-stat { flex: 1; background: #fff; border-radius: 12px; padding: 10px 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .import-stat .stat-num { font-size: 20px; font-weight: 800; color: #6c5ce7; }
+  .import-stat .stat-lbl { font-size: 10.5px; color: #999; margin-top: 2px; }
+  .import-confirm-btn { width: 100%; border: none; background: #6c5ce7; color: #fff; border-radius: 14px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; }
+  .import-confirm-btn:disabled { opacity: .4; cursor: default; }
+  .import-success { text-align: center; padding: 40px 20px; }
+  .import-success .success-icon { font-size: 48px; margin-bottom: 12px; }
+  .import-success h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .import-success p { font-size: 13px; color: #999; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -508,7 +537,7 @@
     <div class="navbar">
       <div class="nav-item active" data-nav="home" data-action="show-home"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Home</div>
       <div class="nav-item" data-nav="insights" data-action="open-insights"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
-      <div class="nav-item" data-nav="chat" data-action="open-chat"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span>Chat</div>
+      <div class="nav-item" data-nav="import" data-action="open-import"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>Import</div>
       <div class="nav-item" data-nav="goals" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
       <div class="nav-item" data-nav="budget" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
       <div class="nav-item" data-nav="categories" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
@@ -560,6 +589,24 @@
         <h2>Budget</h2>
       </div>
       <div class="subpage-body" id="budget-body"></div>
+    </div>
+
+    <div class="subpage" id="import-page" hidden>
+      <div class="subpage-header">
+        <button type="button" class="back-btn" data-action="close-import">←</button>
+        <h2>Import transactions</h2>
+      </div>
+      <div class="subpage-body" id="import-body">
+        <div class="import-drop-zone" id="import-drop-zone">
+          <div class="drop-icon">📂</div>
+          <div class="drop-title">Drop your bank CSV here</div>
+          <div class="drop-sub">or tap the button below to choose a file</div>
+          <label class="import-file-btn">Choose CSV file
+            <input type="file" accept=".csv,.CSV" id="import-file-input" style="display:none;">
+          </label>
+        </div>
+        <div id="import-result" hidden></div>
+      </div>
     </div>
 
     <div class="modal-overlay" id="categorize-modal" hidden>
@@ -672,7 +719,7 @@
   var compareChartType = 'line';
 
   // ---- static navbar / overlay-page plumbing ----
-  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page'];
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page'];
 
   function hideAllOverlays() {
     OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
@@ -1020,6 +1067,25 @@
       return;
     }
 
+    if (e.target.closest('[data-action="open-import"]')) {
+      resetImportPage();
+      showOverlay('import-page', 'import');
+      return;
+    }
+    if (e.target.closest('[data-action="close-import"]')) {
+      hideAllOverlays();
+      setActiveNav('home');
+      return;
+    }
+    if (e.target.closest('[data-action="confirm-import"]')) {
+      commitImport();
+      return;
+    }
+    if (e.target.closest('[data-action="import-again"]')) {
+      resetImportPage();
+      return;
+    }
+
     var addSubBtn = e.target.closest('[data-action="manage-add-sub"]');
     if (addSubBtn) {
       var asCatId = addSubBtn.dataset.catId;
@@ -1132,6 +1198,326 @@
       sendChatMessage();
     }
   });
+
+  // ---- CSV import engine ----
+
+  // Robustly parses a CSV string into an array of row arrays, handling
+  // quoted fields that may contain commas or newlines.
+  function parseCSV(text) {
+    var rows = [];
+    var row = [];
+    var field = '';
+    var inQuotes = false;
+    // normalise line endings
+    text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; } // escaped quote
+          else inQuotes = false;
+        } else {
+          field += ch;
+        }
+      } else {
+        if (ch === '"') { inQuotes = true; }
+        else if (ch === ',') { row.push(field.trim()); field = ''; }
+        else if (ch === '\n') {
+          row.push(field.trim()); field = '';
+          if (row.some(function (c) { return c !== ''; })) rows.push(row);
+          row = [];
+        } else { field += ch; }
+      }
+    }
+    row.push(field.trim());
+    if (row.some(function (c) { return c !== ''; })) rows.push(row);
+    return rows;
+  }
+
+  // Known AU bank CSV formats — scored against the header row.
+  // Each entry provides the detected column indices for: date, description,
+  // amount (signed), and optional separate debit/credit columns.
+  var BANK_FORMATS = [
+    {
+      name: 'Commonwealth Bank (CBA)',
+      score: function (h) { return (has(h,'Date') + has(h,'Amount') + has(h,'Description') + has(h,'Balance')); },
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
+    },
+    {
+      name: 'ANZ',
+      score: function (h) { return (has(h,'Transaction Date') + has(h,'Amount') * 2 + has(h,'Description')); },
+      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
+    },
+    {
+      name: 'Westpac',
+      score: function (h) { return (has(h,'Transaction Date') + has(h,'Debit Amount') + has(h,'Credit Amount') + has(h,'Transaction Details')); },
+      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Transaction Details'), amount: -1, debit: idx(h,'Debit Amount'), credit: idx(h,'Credit Amount') }; }
+    },
+    {
+      name: 'NAB',
+      score: function (h) { return (has(h,'Date') + has(h,'Narrative') + has(h,'Debit') + has(h,'Credit')); },
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Narrative'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit') }; }
+    },
+    {
+      name: 'ING',
+      score: function (h) { return (has(h,'Date') + has(h,'Description') + has(h,'Credit') + has(h,'Debit')); },
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit') }; }
+    }
+  ];
+
+  function has(headers, name) {
+    return headers.some(function (h) { return h.toLowerCase() === name.toLowerCase(); }) ? 1 : 0;
+  }
+  function idx(headers, name) {
+    for (var i = 0; i < headers.length; i++) {
+      if (headers[i].toLowerCase() === name.toLowerCase()) return i;
+    }
+    return -1;
+  }
+
+  function detectFormat(headers) {
+    var best = null, bestScore = 0;
+    BANK_FORMATS.forEach(function (fmt) {
+      var s = fmt.score(headers);
+      if (s > bestScore) { bestScore = s; best = fmt; }
+    });
+    return bestScore >= 2 ? best : null;
+  }
+
+  // Converts a parsed row + column mapping into a normalised transaction object.
+  function rowToTransaction(row, colMap) {
+    var dateStr = colMap.date >= 0 ? (row[colMap.date] || '') : '';
+    var desc = colMap.desc >= 0 ? (row[colMap.desc] || '') : '';
+    var amount = 0;
+    if (colMap.amount >= 0) {
+      amount = parseFloat((row[colMap.amount] || '0').replace(/[^0-9.-]/g, '')) || 0;
+    } else {
+      var debit = parseFloat((row[colMap.debit] || '0').replace(/[^0-9.-]/g, '')) || 0;
+      var credit = parseFloat((row[colMap.credit] || '0').replace(/[^0-9.-]/g, '')) || 0;
+      // debits are outflows (positive spend), credits are inflows
+      amount = credit > 0 ? credit : -debit;
+    }
+    return { date: dateStr, desc: desc.trim(), amount: amount };
+  }
+
+  // Tries to auto-categorise a transaction description using KEYWORDS (per-subcategory).
+  function autoCategory(desc) {
+    var lower = desc.toLowerCase();
+    for (var ci = 0; ci < CATEGORIES.length; ci++) {
+      var cat = CATEGORIES[ci];
+      var kwLists = KEYWORDS[cat.id] || [];
+      for (var si = 0; si < kwLists.length; si++) {
+        var kws = kwLists[si] || [];
+        for (var ki = 0; ki < kws.length; ki++) {
+          if (lower.indexOf(kws[ki].toLowerCase()) !== -1) {
+            return { catId: cat.id, subName: (SUBCATEGORIES[cat.id] || [])[si] || null };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // State for the current import session
+  var importParsed = [];   // normalised transactions after parsing
+  var importColMap = null; // active column mapping
+  var importHeaders = [];  // raw header row from CSV
+  var importRows = [];     // raw data rows from CSV
+
+  function resetImportPage() {
+    importParsed = []; importColMap = null; importHeaders = []; importRows = [];
+    var body = document.getElementById('import-body');
+    body.innerHTML =
+      '<div class="import-drop-zone" id="import-drop-zone">' +
+        '<div class="drop-icon">📂</div>' +
+        '<div class="drop-title">Drop your bank CSV here</div>' +
+        '<div class="drop-sub">or tap the button below to choose a file</div>' +
+        '<label class="import-file-btn">Choose CSV file' +
+          '<input type="file" accept=".csv,.CSV" id="import-file-input" style="display:none;">' +
+        '</label>' +
+      '</div>' +
+      '<div id="import-result" hidden></div>';
+    wireImportFileInput();
+    wireImportDropZone();
+  }
+
+  function wireImportFileInput() {
+    var input = document.getElementById('import-file-input');
+    if (!input) return;
+    input.addEventListener('change', function () {
+      if (input.files && input.files[0]) readImportFile(input.files[0]);
+    });
+  }
+
+  function wireImportDropZone() {
+    var zone = document.getElementById('import-drop-zone');
+    if (!zone) return;
+    zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function () { zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function (e) {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) readImportFile(file);
+    });
+  }
+
+  function readImportFile(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) { processCSVText(e.target.result, file.name); };
+    reader.readAsText(file);
+  }
+
+  function processCSVText(text, filename) {
+    var rows = parseCSV(text);
+    if (rows.length < 2) { showImportError('This file appears to be empty or not a valid CSV.'); return; }
+
+    importHeaders = rows[0];
+    importRows = rows.slice(1);
+
+    var detected = detectFormat(importHeaders);
+    if (detected) {
+      importColMap = detected.map(importHeaders);
+      renderImportPreview(detected.name, true);
+    } else {
+      // Unknown format — let user map columns manually
+      importColMap = { date: 0, desc: 1, amount: 2, debit: -1, credit: -1 };
+      renderImportManualMap();
+    }
+  }
+
+  function renderImportPreview(bankName, autoDetected) {
+    importParsed = importRows.map(function (r) { return rowToTransaction(r, importColMap); })
+      .filter(function (t) { return t.desc && t.amount !== 0; });
+
+    var autoCount = 0;
+    importParsed.forEach(function (t) { if (autoCategory(t.desc)) autoCount++; });
+
+    var html = '';
+    if (autoDetected) {
+      html += '<div class="import-bank-badge">✓ Detected: ' + escapeHtml(bankName) + '</div>';
+    } else {
+      html += '<div class="import-bank-badge unknown">⚠ Unknown format — using your column mapping</div>';
+    }
+
+    html += '<div class="import-stats">' +
+      '<div class="import-stat"><div class="stat-num">' + importParsed.length + '</div><div class="stat-lbl">Transactions</div></div>' +
+      '<div class="import-stat"><div class="stat-num">' + autoCount + '</div><div class="stat-lbl">Auto-categorised</div></div>' +
+      '</div>';
+
+    var preview = importParsed.slice(0, 5);
+    html += '<div class="import-map-card"><h4>Preview (first ' + preview.length + ' rows)</h4>' +
+      '<table class="import-preview-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Category</th></tr></thead><tbody>';
+    preview.forEach(function (t) {
+      var cat = autoCategory(t.desc);
+      var catLabel = cat ? (CATEGORIES.filter(function (c) { return c.id === cat.catId; })[0] || {}).label || '—' : '—';
+      var subLabel = cat && cat.subName ? ' › ' + cat.subName : '';
+      html += '<tr><td>' + escapeHtml(t.date) + '</td><td>' + escapeHtml(t.desc.substring(0, 28)) + '</td>' +
+        '<td style="text-align:right;font-weight:600;color:' + (t.amount < 0 ? '#e74c3c' : '#229954') + ';">' +
+        (t.amount < 0 ? '-' : '+') + formatMoney(Math.abs(t.amount)) + '</td>' +
+        '<td style="color:#6c5ce7;font-size:11px;">' + escapeHtml(catLabel + subLabel) + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    html += '<button type="button" class="import-confirm-btn" data-action="confirm-import"' +
+      (importParsed.length === 0 ? ' disabled' : '') + '>Import ' + importParsed.length + ' transactions</button>';
+    html += '<button type="button" class="subpage-add-btn" style="margin-top:10px;" data-action="import-again">Choose a different file</button>';
+
+    var result = document.getElementById('import-result');
+    result.innerHTML = html;
+    result.hidden = false;
+    document.getElementById('import-drop-zone').hidden = true;
+  }
+
+  function renderImportManualMap() {
+    var options = importHeaders.map(function (h, i) {
+      return '<option value="' + i + '">' + escapeHtml(h) + '</option>';
+    }).join('');
+    var noneOpt = '<option value="-1">— none —</option>';
+
+    var html = '<div class="import-bank-badge unknown">⚠ Format not recognised — map columns manually</div>' +
+      '<div class="import-map-card"><h4>Column mapping</h4>' +
+      '<div class="import-map-row"><label>Date</label><select id="map-date">' + options + '</select></div>' +
+      '<div class="import-map-row"><label>Description</label><select id="map-desc">' + options + '</select></div>' +
+      '<div class="import-map-row"><label>Amount</label><select id="map-amount">' + noneOpt + options + '</select></div>' +
+      '<div class="import-map-row"><label>Debit</label><select id="map-debit">' + noneOpt + options + '</select></div>' +
+      '<div class="import-map-row"><label>Credit</label><select id="map-credit">' + noneOpt + options + '</select></div>' +
+      '</div>' +
+      '<button type="button" class="import-confirm-btn" data-action="apply-col-map">Preview with this mapping</button>' +
+      '<button type="button" class="subpage-add-btn" style="margin-top:10px;" data-action="import-again">Choose a different file</button>';
+
+    var result = document.getElementById('import-result');
+    result.innerHTML = html;
+    result.hidden = false;
+    document.getElementById('import-drop-zone').hidden = true;
+
+    // wire the apply button
+    result.querySelector('[data-action="apply-col-map"]').addEventListener('click', function () {
+      importColMap = {
+        date: parseInt(document.getElementById('map-date').value, 10),
+        desc: parseInt(document.getElementById('map-desc').value, 10),
+        amount: parseInt(document.getElementById('map-amount').value, 10),
+        debit: parseInt(document.getElementById('map-debit').value, 10),
+        credit: parseInt(document.getElementById('map-credit').value, 10)
+      };
+      renderImportPreview('Custom mapping', false);
+    });
+  }
+
+  function showImportError(msg) {
+    var result = document.getElementById('import-result');
+    result.innerHTML = '<div class="import-bank-badge unknown">' + escapeHtml(msg) + '</div>' +
+      '<button type="button" class="subpage-add-btn" data-action="import-again">Try again</button>';
+    result.hidden = false;
+  }
+
+  // Commits parsed transactions into the home category list as bill-rows,
+  // using auto-categorisation where a keyword match is found.
+  function commitImport() {
+    var uncatContent = document.querySelector('#cat-uncategorized .category-content');
+    var addedCount = 0;
+
+    importParsed.forEach(function (t) {
+      var row = document.createElement('div');
+      row.className = 'bill-row';
+
+      var dateEl = document.createElement('div'); dateEl.className = 'bill-date'; dateEl.textContent = t.date;
+      var descEl = document.createElement('div'); descEl.className = 'bill-merchant'; descEl.textContent = t.desc;
+      var amtEl = document.createElement('div'); amtEl.className = 'bill-amount';
+      amtEl.textContent = (t.amount < 0 ? '-' : '') + formatMoney(Math.abs(t.amount));
+
+      row.appendChild(dateEl); row.appendChild(descEl); row.appendChild(amtEl);
+
+      var cat = autoCategory(t.desc);
+      if (cat) {
+        var catEl = document.getElementById(cat.catId);
+        if (catEl) {
+          if (cat.subName) {
+            findOrCreateSubcategoryDetails(catEl, cat.subName).querySelector('.sub-content').appendChild(row);
+          } else {
+            catEl.querySelector('.category-content').appendChild(row);
+          }
+          refreshRowBadge(row);
+          addedCount++;
+          return;
+        }
+      }
+      // falls through to uncategorized
+      uncatContent.appendChild(row);
+      refreshRowBadge(row);
+      addedCount++;
+    });
+
+    // show success screen
+    var result = document.getElementById('import-result');
+    result.innerHTML = '<div class="import-success">' +
+      '<div class="success-icon">✅</div>' +
+      '<h3>' + addedCount + ' transactions imported</h3>' +
+      '<p>Auto-categorised where keywords matched. Tap any transaction on the Home screen to recategorise it.</p>' +
+      '</div>' +
+      '<button type="button" class="import-confirm-btn" style="margin-top:16px;" data-action="show-home">Go to Home</button>' +
+      '<button type="button" class="subpage-add-btn" style="margin-top:10px;" data-action="import-again">Import another file</button>';
+    document.getElementById('import-drop-zone').hidden = true;
+    importParsed = [];
+  }
 
   // generic bold-outline folder icon used for newly created categories
   function genericCategoryIcon() {
@@ -1479,6 +1865,8 @@
   renderMonth();
   renderCategoryBudgetLines();
   refreshTransferRowBadge('transfer-1');
+  wireImportFileInput();
+  wireImportDropZone();
 </script>
 </body>
 </html>
