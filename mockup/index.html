@@ -102,6 +102,9 @@
   .bill-merchant { flex: 1; color: #333; min-width: 90px; }
   .bill-amount { font-weight: 600; color: #1a1a1a; }
   .bill-recurring { font-size: 9.5px; background: #eef0ff; color: #6c5ce7; border-radius: 6px; padding: 1px 5px; margin-left: 5px; font-weight: 600; }
+  .split-goal-btn { border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .split-summary { font-size: 11px; color: #6c5ce7; font-weight: 600; width: 100%; }
+  .split-summary:empty { display: none; }
 
   /* static category badge shown on every transaction row (click the row to recategorize) */
   .cat-chip { font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; margin-left: auto; }
@@ -145,7 +148,7 @@
   .uncategorized-card .icon-bold svg { stroke: #e07b1a; }
 
   /* ---------- Manage categories page ---------- */
-  .manage-page { position: absolute; inset: 0; z-index: 40; background: #f7f8fc; display: flex; flex-direction: column; }
+  .manage-page { position: absolute; top: 0; left: 0; right: 0; bottom: 58px; z-index: 40; background: #f7f8fc; display: flex; flex-direction: column; }
   .manage-page[hidden] { display: none; }
   .manage-header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 18px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .manage-header .back-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 30px; height: 30px; border-radius: 9px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -159,6 +162,7 @@
   .manage-sub-remove { border: none; background: none; color: #ccc; font-size: 16px; cursor: pointer; width: 22px; flex-shrink: 0; }
   .manage-sub-remove:hover { color: #e74c3c; }
   .manage-add-sub { border: none; background: none; color: #6c5ce7; font-size: 12px; font-weight: 700; padding: 6px 0; cursor: pointer; }
+  .manage-sub-block { border: 1px solid #f0f0f0; border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; }
   .manage-keywords-label { font-size: 10.5px; color: #999; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; margin: 10px 0 6px; }
   .keyword-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
   .keyword-tag { background: #f1efff; color: #6c5ce7; font-size: 11.5px; font-weight: 600; padding: 4px 6px 4px 9px; border-radius: 7px; display: flex; align-items: center; gap: 5px; }
@@ -176,10 +180,18 @@
   .bar-track { background: #eee; height: 8px; border-radius: 6px; overflow: hidden; }
   .bar-fill { background: linear-gradient(90deg,#6c5ce7,#a29bfe); height: 100%; border-radius: 6px; }
 
+  /* ---------- Transfer -> goal allocation modal ---------- */
+  .allocate-goal-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; font-size: 13px; border-top: 1px solid #f5f5f7; }
+  .allocate-goal-row:first-child { border-top: none; }
+  .allocate-goal-row .name { flex: 1; font-weight: 600; color: #1a1a1a; }
+  .allocate-goal-row input { width: 90px; border: 1px solid #e3e3e6; border-radius: 8px; padding: 6px 8px; font-size: 13px; text-align: right; }
+  .allocate-remaining { font-size: 12px; color: #999; font-weight: 600; margin: 10px 0 4px; }
+  .allocate-remaining.over { color: #e74c3c; }
+
   .chat-fab { margin: 10px 16px 0; background: #1a1a1a; color: #fff; border-radius: 14px; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
   .chat-fab .mini-icon { width: 16px; height: 16px; margin-right: 2px; }
 
-  .navbar { flex-shrink: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; }
+  .navbar { flex-shrink: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; position: relative; z-index: 45; }
   .nav-item { font-size: 10.5px; color: #999; text-align: center; cursor: pointer; }
   .nav-item.active { color: #6c5ce7; font-weight: 700; }
   .nav-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
@@ -188,7 +200,7 @@
   .hint { text-align: center; color: #999; font-size: 12px; max-width: 380px; }
 
   /* ---------- shared full-screen subpage chrome (Insights / Chat / Goals / Budget) ---------- */
-  .subpage { position: absolute; inset: 0; z-index: 40; background: #f7f8fc; display: flex; flex-direction: column; }
+  .subpage { position: absolute; top: 0; left: 0; right: 0; bottom: 58px; z-index: 40; background: #f7f8fc; display: flex; flex-direction: column; }
   .subpage[hidden] { display: none; }
   .subpage-header { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color: #fff; padding: 18px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .subpage-header .back-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 30px; height: 30px; border-radius: 9px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -213,6 +225,18 @@
   .insight-merchant-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 13px; color: #333; border-top: 1px solid #f5f5f7; }
   .insight-merchant-row:first-child { border-top: none; }
   .insight-merchant-row .rank { color: #999; font-weight: 700; margin-right: 8px; }
+
+  /* ---------- Insights: interactive category-compare chart ---------- */
+  .compare-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .compare-chip { font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 20px; border: 1.5px solid #e3e3e6; background: #fff; color: #888; cursor: pointer; }
+  .compare-chip.active { color: #fff; }
+  .compare-type-toggle { display: flex; gap: 6px; margin-bottom: 10px; }
+  .compare-type-btn { flex: 1; border: none; background: #f5f5f8; color: #888; font-size: 12px; font-weight: 700; padding: 7px; border-radius: 8px; cursor: pointer; }
+  .compare-type-btn.active { background: #6c5ce7; color: #fff; }
+  .compare-chart-wrap svg { width: 100%; height: 150px; display: block; }
+  .compare-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .compare-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #555; }
+  .compare-legend-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   /* ---------- Chat page ---------- */
   .chat-thread { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
@@ -457,6 +481,17 @@
             </details>
           </div>
         </details>
+
+        <details class="category" id="cat-transfer">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Transfers</div><div class="cat-meta">1 transaction</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$1,000.00</div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content">
+            <div class="bill-row" data-row-id="transfer-1"><div class="bill-date">22 Jun</div><div class="bill-merchant">Internal Transfer - Savings</div><div class="bill-amount">$1,000.00</div><button type="button" class="split-goal-btn" data-action="split-to-goals" data-row-id="transfer-1">Split to goals</button><div class="split-summary" data-row-id="transfer-1"></div></div>
+          </div>
+        </details>
         </div>
       </div>
       </div>
@@ -471,12 +506,12 @@
     <div class="chat-fab" data-action="open-chat"><span class="mini-icon" style="width:16px;height:16px;"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span> Ask about your money — "How much did I spend on coffee?"</div>
 
     <div class="navbar">
-      <div class="nav-item active"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Home</div>
-      <div class="nav-item" data-action="open-insights"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
-      <div class="nav-item" data-action="open-chat"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span>Chat</div>
-      <div class="nav-item" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
-      <div class="nav-item" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
-      <div class="nav-item" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
+      <div class="nav-item active" data-nav="home" data-action="show-home"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Home</div>
+      <div class="nav-item" data-nav="insights" data-action="open-insights"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
+      <div class="nav-item" data-nav="chat" data-action="open-chat"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span>Chat</div>
+      <div class="nav-item" data-nav="goals" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
+      <div class="nav-item" data-nav="budget" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
+      <div class="nav-item" data-nav="categories" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
     </div>
 
     <div class="manage-page" id="manage-page" hidden>
@@ -516,17 +551,7 @@
         <button type="button" class="back-btn" data-action="close-goals">←</button>
         <h2>Goals</h2>
       </div>
-      <div class="subpage-body" id="goals-body">
-        <div class="goal-card">
-          <div class="goal-top"><div class="label"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M9 7V5a3 3 0 013-3 3 3 0 013 3v2"/><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M12 7v13"/></svg></span>Bali trip</div><div class="value">$1,240 / $2,000</div></div>
-          <div class="bar-track"><div class="bar-fill" style="width:62%;"></div></div>
-        </div>
-        <div class="goal-card">
-          <div class="goal-top"><div class="label"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg></span>Emergency fund</div><div class="value">$3,800 / $5,000</div></div>
-          <div class="bar-track"><div class="bar-fill" style="width:76%;"></div></div>
-        </div>
-        <button type="button" class="subpage-add-btn" data-action="add-goal">+ New goal</button>
-      </div>
+      <div class="subpage-body" id="goals-body"></div>
     </div>
 
     <div class="subpage" id="budget-page" hidden>
@@ -549,6 +574,19 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="allocate-modal" hidden>
+      <div class="modal-backdrop" data-action="close-allocate-modal"></div>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-merchant" id="allocate-merchant"></div>
+        <div class="modal-meta" id="allocate-meta"></div>
+        <div class="modal-section-label">Split across goals</div>
+        <div id="allocate-goal-list"></div>
+        <div class="allocate-remaining" id="allocate-remaining"></div>
+        <button type="button" class="modal-close" data-action="save-allocation">Save split</button>
+      </div>
+    </div>
+
   </div>
   <p class="hint">Click a pie slice or legend item to jump straight to that category, expanded. Click any transaction row to recategorize it, or to create a brand-new category/subcategory right from that transaction.</p>
 </div>
@@ -559,8 +597,19 @@
     { id: 'cat-bills', label: 'Bills' },
     { id: 'cat-subs', label: 'Subscriptions' },
     { id: 'cat-dine', label: 'Dining' },
-    { id: 'cat-transport', label: 'Transport' }
+    { id: 'cat-transport', label: 'Transport' },
+    { id: 'cat-transfer', label: 'Transfers' }
   ];
+
+  // Transfers is a movement of money, not spending — excluded from budgets,
+  // the Budget page and the Insights "vs last month" / compare-chart totals
+  var EXCLUDE_FROM_SPENDING = ['cat-transfer'];
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
 
   // subcategory names per category, and the keyword "database" used to
   // simulate future auto-categorization of merchant transactions
@@ -570,11 +619,14 @@
     'cat-dine': ['Takeout Delivery', 'Coffee', 'Restaurants'],
     'cat-transport': ['Public Transit', 'Rideshare']
   };
+  // keywords are scoped per-subcategory, array-of-arrays index-aligned to
+  // each category's SUBCATEGORIES list (KEYWORDS['cat-bills'][0] matches
+  // SUBCATEGORIES['cat-bills'][0], i.e. "Electricity")
   var KEYWORDS = {
-    'cat-bills': ['AGL', 'Sydney Water', 'Telstra', 'Broadband', 'Energy', 'Electricity'],
-    'cat-subs': ['Netflix', 'Spotify', 'iCloud', 'Amazon Prime', 'Subscription'],
-    'cat-dine': ['UberEats', 'Menulog', 'Espresso', 'Cafe', 'Restaurant'],
-    'cat-transport': ['Opal', 'Uber Trip', 'Transit', 'Taxi']
+    'cat-bills': [['AGL', 'Energy', 'Electricity'], ['Sydney Water', 'Water'], ['Broadband', 'Internet'], ['Telstra', 'Mobile']],
+    'cat-subs': [['Netflix', 'Streaming'], ['Spotify', 'Music'], ['iCloud', 'Amazon Prime', 'Subscription']],
+    'cat-dine': [['UberEats', 'Menulog'], ['Espresso', 'Cafe'], ['Restaurant']],
+    'cat-transport': [['Opal', 'Transit'], ['Uber Trip', 'Taxi']]
   };
 
   // monthly budget per category, editable from the Budget page
@@ -594,6 +646,49 @@
     'cat-dine': [ { m: 'Jan', spent: 198.40 }, { m: 'Feb', spent: 241.10 }, { m: 'Mar', spent: 265.30 }, { m: 'Apr', spent: 223.90 }, { m: 'May', spent: 301.20 }, { m: 'Jun', spent: 287.75 } ],
     'cat-transport': [ { m: 'Jan', spent: 88.00 }, { m: 'Feb', spent: 92.50 }, { m: 'Mar', spent: 79.30 }, { m: 'Apr', spent: 101.40 }, { m: 'May', spent: 94.60 }, { m: 'Jun', spent: 96.20 } ]
   };
+
+  // ---- goals + transfer-to-goal allocation ----
+  var GOALS = [
+    { id: 'goal-bali', label: 'Bali trip', icon: '<path d="M9 7V5a3 3 0 013-3 3 3 0 013 3v2"/><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M12 7v13"/>', saved: 1240, target: 2000 },
+    { id: 'goal-emergency', label: 'Emergency fund', icon: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>', saved: 3800, target: 5000 }
+  ];
+
+  // transfer bill-row id -> { goalId: allocatedAmount } — lets a single
+  // "Transfer" transaction be split across several goals at once
+  var TRANSFER_ALLOCATIONS = {
+    'transfer-1': { 'goal-bali': 500, 'goal-emergency': 500 }
+  };
+  var activeTransferRowId = null;
+
+  // ---- insights "compare categories" chart state ----
+  var CATEGORY_COLORS = {
+    'cat-bills': '#ff8a3d',
+    'cat-subs': '#5b8def',
+    'cat-dine': '#ff6b6b',
+    'cat-transport': '#2ecc71'
+  };
+  function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#9b59b6'; }
+  var compareSelectedCats = ['cat-bills', 'cat-dine'];
+  var compareChartType = 'line';
+
+  // ---- static navbar / overlay-page plumbing ----
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page'];
+
+  function hideAllOverlays() {
+    OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
+  }
+
+  function setActiveNav(name) {
+    document.querySelectorAll('.nav-item').forEach(function (item) {
+      item.classList.toggle('active', item.dataset.nav === name);
+    });
+  }
+
+  function showOverlay(pageId, navName) {
+    hideAllOverlays();
+    document.getElementById(pageId).hidden = false;
+    setActiveNav(navName);
+  }
 
   function shortLabelFor(categoryEl) {
     if (!categoryEl || categoryEl.id === 'cat-uncategorized') return 'Uncategorized';
@@ -788,11 +883,44 @@
       if (!mnsTargetCategory) return;
       if (!SUBCATEGORIES[mnsCatId]) SUBCATEGORIES[mnsCatId] = [];
       SUBCATEGORIES[mnsCatId].push(mnsName);
+      if (!KEYWORDS[mnsCatId]) KEYWORDS[mnsCatId] = [];
+      KEYWORDS[mnsCatId].push([]);
 
       var mnsSubDetails = findOrCreateSubcategoryDetails(mnsTargetCategory, mnsName);
       if (activeRow) mnsSubDetails.querySelector('.sub-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
       closeCategorizeModal();
+      return;
+    }
+
+    var splitBtn = e.target.closest('[data-action="split-to-goals"]');
+    if (splitBtn) {
+      openAllocateModal(splitBtn.dataset.rowId);
+      return;
+    }
+    if (e.target.closest('[data-action="close-allocate-modal"]')) {
+      closeAllocateModal();
+      return;
+    }
+    var saveAllocBtn = e.target.closest('[data-action="save-allocation"]');
+    if (saveAllocBtn) {
+      if (!activeTransferRowId) return;
+      var prevAlloc = TRANSFER_ALLOCATIONS[activeTransferRowId] || {};
+      var newAlloc = {};
+      document.querySelectorAll('.allocate-input').forEach(function (inp) {
+        var gid = inp.dataset.goalId;
+        var val = parseFloat(inp.value) || 0;
+        if (val > 0) newAlloc[gid] = val;
+        var delta = val - (prevAlloc[gid] || 0);
+        if (delta !== 0) {
+          var g = GOALS.filter(function (x) { return x.id === gid; })[0];
+          if (g) g.saved += delta;
+        }
+      });
+      TRANSFER_ALLOCATIONS[activeTransferRowId] = newAlloc;
+      refreshTransferRowBadge(activeTransferRowId);
+      renderGoalsPage();
+      closeAllocateModal();
       return;
     }
 
@@ -803,32 +931,56 @@
       return;
     }
 
+    if (e.target.closest('[data-action="show-home"]')) {
+      hideAllOverlays();
+      setActiveNav('home');
+      return;
+    }
+
     if (e.target.closest('[data-action="open-manage"]')) {
       renderManagePage();
-      document.getElementById('manage-page').hidden = false;
+      showOverlay('manage-page', 'categories');
       return;
     }
     if (e.target.closest('[data-action="close-manage"]')) {
-      document.getElementById('manage-page').hidden = true;
+      hideAllOverlays();
+      setActiveNav('home');
       return;
     }
 
     if (e.target.closest('[data-action="open-insights"]')) {
       renderInsightsPage();
-      document.getElementById('insights-page').hidden = false;
+      showOverlay('insights-page', 'insights');
       return;
     }
     if (e.target.closest('[data-action="close-insights"]')) {
-      document.getElementById('insights-page').hidden = true;
+      hideAllOverlays();
+      setActiveNav('home');
+      return;
+    }
+
+    var toggleCompareBtn = e.target.closest('[data-action="toggle-compare-cat"]');
+    if (toggleCompareBtn) {
+      var tcCatId = toggleCompareBtn.dataset.catId;
+      var tcIdx = compareSelectedCats.indexOf(tcCatId);
+      if (tcIdx === -1) compareSelectedCats.push(tcCatId); else compareSelectedCats.splice(tcIdx, 1);
+      renderInsightsPage();
+      return;
+    }
+    var setTypeBtn = e.target.closest('[data-action="set-compare-type"]');
+    if (setTypeBtn) {
+      compareChartType = setTypeBtn.dataset.type;
+      renderInsightsPage();
       return;
     }
 
     if (e.target.closest('[data-action="open-chat"]')) {
-      document.getElementById('chat-page').hidden = false;
+      showOverlay('chat-page', 'chat');
       return;
     }
     if (e.target.closest('[data-action="close-chat"]')) {
-      document.getElementById('chat-page').hidden = true;
+      hideAllOverlays();
+      setActiveNav('home');
       return;
     }
     if (e.target.closest('[data-action="chat-send"]')) {
@@ -837,11 +989,13 @@
     }
 
     if (e.target.closest('[data-action="open-goals"]')) {
-      document.getElementById('goals-page').hidden = false;
+      renderGoalsPage();
+      showOverlay('goals-page', 'goals');
       return;
     }
     if (e.target.closest('[data-action="close-goals"]')) {
-      document.getElementById('goals-page').hidden = true;
+      hideAllOverlays();
+      setActiveNav('home');
       return;
     }
     var addGoalBtn = e.target.closest('[data-action="add-goal"]');
@@ -850,27 +1004,19 @@
       if (!goalName) return;
       var goalTarget = parseFloat(prompt('Target amount? (e.g. 1000)')) || 0;
       if (goalTarget <= 0) return;
-      var card = document.createElement('div');
-      card.className = 'goal-card';
-      var top = document.createElement('div'); top.className = 'goal-top';
-      var label = document.createElement('div'); label.className = 'label'; label.textContent = goalName;
-      var value = document.createElement('div'); value.className = 'value'; value.textContent = formatMoney(0) + ' / ' + formatMoney(goalTarget);
-      top.appendChild(label); top.appendChild(value);
-      var track = document.createElement('div'); track.className = 'bar-track';
-      var fill = document.createElement('div'); fill.className = 'bar-fill'; fill.style.width = '0%';
-      track.appendChild(fill);
-      card.appendChild(top); card.appendChild(track);
-      addGoalBtn.parentElement.insertBefore(card, addGoalBtn);
+      GOALS.push({ id: 'goal-' + Date.now(), label: goalName, icon: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>', saved: 0, target: goalTarget });
+      renderGoalsPage();
       return;
     }
 
     if (e.target.closest('[data-action="open-budget"]')) {
       renderBudgetPage();
-      document.getElementById('budget-page').hidden = false;
+      showOverlay('budget-page', 'budget');
       return;
     }
     if (e.target.closest('[data-action="close-budget"]')) {
-      document.getElementById('budget-page').hidden = true;
+      hideAllOverlays();
+      setActiveNav('home');
       return;
     }
 
@@ -878,14 +1024,19 @@
     if (addSubBtn) {
       var asCatId = addSubBtn.dataset.catId;
       if (!SUBCATEGORIES[asCatId]) SUBCATEGORIES[asCatId] = [];
+      if (!KEYWORDS[asCatId]) KEYWORDS[asCatId] = [];
       SUBCATEGORIES[asCatId].push('New subcategory');
+      KEYWORDS[asCatId].push([]);
       renderManagePage();
       return;
     }
 
     var removeSubBtn = e.target.closest('[data-action="manage-remove-sub"]');
     if (removeSubBtn) {
-      SUBCATEGORIES[removeSubBtn.dataset.catId].splice(parseInt(removeSubBtn.dataset.subIndex, 10), 1);
+      var rsCatId = removeSubBtn.dataset.catId;
+      var rsIdx = parseInt(removeSubBtn.dataset.subIndex, 10);
+      SUBCATEGORIES[rsCatId].splice(rsIdx, 1);
+      if (KEYWORDS[rsCatId]) KEYWORDS[rsCatId].splice(rsIdx, 1);
       renderManagePage();
       return;
     }
@@ -896,15 +1047,19 @@
       var kwVal = kwInput.value.trim();
       if (!kwVal) return;
       var kwCatId = addKwBtn.dataset.catId;
+      var kwSubIdx = parseInt(addKwBtn.dataset.subIndex, 10);
       if (!KEYWORDS[kwCatId]) KEYWORDS[kwCatId] = [];
-      KEYWORDS[kwCatId].push(kwVal);
+      if (!KEYWORDS[kwCatId][kwSubIdx]) KEYWORDS[kwCatId][kwSubIdx] = [];
+      KEYWORDS[kwCatId][kwSubIdx].push(kwVal);
       renderManagePage();
       return;
     }
 
     var removeKwBtn = e.target.closest('[data-action="remove-keyword"]');
     if (removeKwBtn) {
-      KEYWORDS[removeKwBtn.dataset.catId].splice(parseInt(removeKwBtn.dataset.kwIndex, 10), 1);
+      var rkCatId = removeKwBtn.dataset.catId;
+      var rkSubIdx = parseInt(removeKwBtn.dataset.subIndex, 10);
+      KEYWORDS[rkCatId][rkSubIdx].splice(parseInt(removeKwBtn.dataset.kwIndex, 10), 1);
       renderManagePage();
       return;
     }
@@ -963,6 +1118,12 @@
       BUDGETS[bCatId] = parseFloat(budgetInput.value) || 0;
       updateBudgetCardUI(bCatId);
       renderCategoryBudgetLines();
+      return;
+    }
+
+    if (e.target.closest('.allocate-input')) {
+      updateAllocateRemaining();
+      return;
     }
   });
 
@@ -981,23 +1142,25 @@
     var html = '';
     CATEGORIES.forEach(function (c) {
       var subs = SUBCATEGORIES[c.id] || [];
-      var keywords = KEYWORDS[c.id] || [];
+      var kwLists = KEYWORDS[c.id] || [];
       html += '<div class="manage-card">' +
         '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">';
       subs.forEach(function (s, i) {
-        html += '<div class="manage-sub-row">' +
+        var keywords = kwLists[i] || [];
+        html += '<div class="manage-sub-block"><div class="manage-sub-row">' +
           '<input type="text" class="manage-sub-input" data-cat-id="' + c.id + '" data-sub-index="' + i + '" value="' + s + '">' +
-          '<button type="button" class="manage-sub-remove" data-action="manage-remove-sub" data-cat-id="' + c.id + '" data-sub-index="' + i + '">&times;</button></div>';
+          '<button type="button" class="manage-sub-remove" data-action="manage-remove-sub" data-cat-id="' + c.id + '" data-sub-index="' + i + '">&times;</button></div>' +
+          '<div class="manage-keywords-label">Matching keywords (for auto-categorization)</div><div class="keyword-tags">';
+        keywords.forEach(function (k, ki) {
+          html += '<span class="keyword-tag">' + k + '<button type="button" data-action="remove-keyword" data-cat-id="' + c.id + '" data-sub-index="' + i + '" data-kw-index="' + ki + '">&times;</button></span>';
+        });
+        html += '</div><div class="keyword-add-row">' +
+          '<input type="text" placeholder="e.g. Woolworths" class="keyword-input">' +
+          '<button type="button" data-action="add-keyword" data-cat-id="' + c.id + '" data-sub-index="' + i + '">Add</button></div>' +
+          '</div>';
       });
       html += '<button type="button" class="manage-add-sub" data-action="manage-add-sub" data-cat-id="' + c.id + '">+ Add subcategory</button>';
-      html += '<div class="manage-keywords-label">Matching keywords (for auto-categorization)</div><div class="keyword-tags">';
-      keywords.forEach(function (k, i) {
-        html += '<span class="keyword-tag">' + k + '<button type="button" data-action="remove-keyword" data-cat-id="' + c.id + '" data-kw-index="' + i + '">&times;</button></span>';
-      });
-      html += '</div><div class="keyword-add-row">' +
-        '<input type="text" placeholder="e.g. Woolworths" class="keyword-input">' +
-        '<button type="button" data-action="add-keyword" data-cat-id="' + c.id + '">Add</button></div>' +
-        '</div>';
+      html += '</div>';
     });
     html += '<button type="button" class="manage-add-category" data-action="manage-add-category">+ New category</button>';
     document.getElementById('manage-body').innerHTML = html;
@@ -1024,10 +1187,77 @@
     }, 500);
   }
 
+  // ---- goals page ----
+  function renderGoalsPage() {
+    var html = '';
+    GOALS.forEach(function (g) {
+      var pct = g.target > 0 ? Math.min(100, (g.saved / g.target) * 100) : 0;
+      html += '<div class="goal-card" data-goal-id="' + g.id + '">' +
+        '<div class="goal-top"><div class="label"><span class="mini-icon"><svg viewBox="0 0 24 24">' + g.icon + '</svg></span>' + escapeHtml(g.label) + '</div>' +
+        '<div class="value">' + formatMoney(g.saved) + ' / ' + formatMoney(g.target) + '</div></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>' +
+        '</div>';
+    });
+    html += '<button type="button" class="subpage-add-btn" data-action="add-goal">+ New goal</button>';
+    document.getElementById('goals-body').innerHTML = html;
+  }
+
+  // ---- transfer -> goal allocation modal ----
+  function openAllocateModal(rowId) {
+    activeTransferRowId = rowId;
+    var row = document.querySelector('.bill-row[data-row-id="' + rowId + '"]');
+    if (!row) return;
+    var merchantEl = row.querySelector('.bill-merchant');
+    var amountEl = row.querySelector('.bill-amount');
+    document.getElementById('allocate-merchant').textContent = merchantEl.textContent.trim();
+    document.getElementById('allocate-meta').textContent = amountEl.textContent.trim();
+    var alloc = TRANSFER_ALLOCATIONS[rowId] || {};
+    var html = '';
+    GOALS.forEach(function (g) {
+      var amt = alloc[g.id] || 0;
+      html += '<div class="allocate-goal-row"><span class="name">' + escapeHtml(g.label) + '</span>' +
+        '<input type="number" min="0" step="1" class="allocate-input" data-goal-id="' + g.id + '" value="' + amt + '"></div>';
+    });
+    document.getElementById('allocate-goal-list').innerHTML = html;
+    document.getElementById('allocate-modal').hidden = false;
+    updateAllocateRemaining();
+  }
+
+  function closeAllocateModal() {
+    document.getElementById('allocate-modal').hidden = true;
+    activeTransferRowId = null;
+  }
+
+  function updateAllocateRemaining() {
+    if (!activeTransferRowId) return;
+    var row = document.querySelector('.bill-row[data-row-id="' + activeTransferRowId + '"]');
+    if (!row) return;
+    var total = parseFloat(row.querySelector('.bill-amount').textContent.replace(/[^0-9.-]/g, '')) || 0;
+    var allocated = 0;
+    document.querySelectorAll('.allocate-input').forEach(function (inp) { allocated += parseFloat(inp.value) || 0; });
+    var remaining = total - allocated;
+    var el = document.getElementById('allocate-remaining');
+    el.textContent = remaining < 0 ? (formatMoney(Math.abs(remaining)) + ' over-allocated') : (formatMoney(remaining) + ' left to allocate');
+    el.className = 'allocate-remaining' + (remaining < 0 ? ' over' : '');
+  }
+
+  // shows a small "$500 -> Bali trip, $500 -> Emergency fund" summary under a split transfer row
+  function refreshTransferRowBadge(rowId) {
+    var summaryEl = document.querySelector('.split-summary[data-row-id="' + rowId + '"]');
+    if (!summaryEl) return;
+    var alloc = TRANSFER_ALLOCATIONS[rowId] || {};
+    var parts = Object.keys(alloc).filter(function (gid) { return alloc[gid] > 0; }).map(function (gid) {
+      var g = GOALS.filter(function (x) { return x.id === gid; })[0];
+      return g ? (formatMoney(alloc[gid]) + ' → ' + g.label) : null;
+    }).filter(function (p) { return p; });
+    summaryEl.textContent = parts.join(', ');
+  }
+
   // ---- insights page ----
   function renderInsightsPage() {
     var lastMonthTotal = 735.40;
-    var currentTotal = CATEGORIES.reduce(function (sum, c) { return sum + getCategorySpent(c.id); }, 0);
+    var currentTotal = CATEGORIES.filter(function (c) { return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1; })
+      .reduce(function (sum, c) { return sum + getCategorySpent(c.id); }, 0);
     var delta = currentTotal - lastMonthTotal;
     var deltaPct = (delta / lastMonthTotal) * 100;
     var deltaUp = delta >= 0;
@@ -1059,6 +1289,7 @@
     var merchantTotals = {};
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function (row) {
       if (!isRealBillRow(row)) return;
+      if (row.closest('#cat-transfer')) return;
       var merchantEl = row.querySelector('.bill-merchant');
       var amountEl = row.querySelector('.bill-amount');
       if (!merchantEl || !amountEl) return;
@@ -1078,18 +1309,92 @@
       html += '</div>';
     }
 
+    var compareCatOptions = CATEGORIES.filter(function (c) { return !!BUDGET_HISTORY[c.id]; });
+    var chipsHtml = compareCatOptions.map(function (c) {
+      var active = compareSelectedCats.indexOf(c.id) !== -1;
+      var color = colorForCategory(c.id);
+      var style = active ? ('background:' + color + ';border-color:' + color + ';') : '';
+      return '<button type="button" class="compare-chip' + (active ? ' active' : '') + '" style="' + style + '" data-action="toggle-compare-cat" data-cat-id="' + c.id + '">' + escapeHtml(c.label) + '</button>';
+    }).join('');
+    var typeToggleHtml = ['line', 'bar'].map(function (t) {
+      return '<button type="button" class="compare-type-btn' + (compareChartType === t ? ' active' : '') + '" data-action="set-compare-type" data-type="' + t + '">' + (t === 'line' ? 'Line' : 'Bar') + '</button>';
+    }).join('');
+    html += '<div class="insight-card"><h3>Compare categories</h3>' +
+      '<div class="compare-chips">' + chipsHtml + '</div>' +
+      '<div class="compare-type-toggle">' + typeToggleHtml + '</div>' +
+      '<div class="compare-chart-wrap" id="compare-chart-wrap"></div>' +
+      '<div class="compare-legend" id="compare-legend"></div>' +
+      '</div>';
+
     html += '<div class="insight-card"><h3>AI nudges</h3>' +
       '<div class="insight-compare-sub" style="margin-top:0;">Dining &amp; Takeout made up 37% of your spending this month — typically closer to 28% for similar budgets.</div></div>' +
       '<div class="insight-card"><h3>AI nudges</h3>' +
       '<div class="insight-compare-sub" style="margin-top:0;">Cancelling Netflix could save $24.99/mo if you haven\'t watched anything on it in the last 60 days.</div></div>';
 
     document.getElementById('insights-body').innerHTML = html;
+    renderCompareChart();
+  }
+
+  // draws the interactive line/bar chart comparing the user's selected
+  // categories over the last 6 illustrative months (BUDGET_HISTORY)
+  function renderCompareChart() {
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    var w = 300, h = 150, padL = 30, padR = 10, padT = 10, padB = 18;
+
+    var maxVal = 0;
+    compareSelectedCats.forEach(function (catId) {
+      (BUDGET_HISTORY[catId] || []).forEach(function (pt) { if (pt.spent > maxVal) maxVal = pt.spent; });
+    });
+    maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
+
+    function xFor(i) { return padL + (i / (months.length - 1)) * (w - padL - padR); }
+    function yFor(val) { return h - padB - (val / maxVal) * (h - padB - padT); }
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
+    for (var g = 0; g <= 2; g++) {
+      var gy = padT + (g / 2) * (h - padB - padT);
+      svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
+    }
+    months.forEach(function (m, i) {
+      svg += '<text x="' + xFor(i) + '" y="' + (h - 4) + '" font-size="8" fill="#aaa" text-anchor="middle">' + m + '</text>';
+    });
+
+    if (compareChartType === 'bar') {
+      var groupW = (w - padL - padR) / months.length;
+      var barW = Math.max(3, (groupW * 0.7) / Math.max(1, compareSelectedCats.length));
+      months.forEach(function (m, i) {
+        var groupStart = xFor(i) - (barW * compareSelectedCats.length) / 2;
+        compareSelectedCats.forEach(function (catId, ci) {
+          var pt = (BUDGET_HISTORY[catId] || [])[i];
+          if (!pt) return;
+          var bx = groupStart + ci * barW;
+          var by = yFor(pt.spent);
+          svg += '<rect x="' + bx + '" y="' + by + '" width="' + (barW - 1) + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(catId) + '" rx="1.5"/>';
+        });
+      });
+    } else {
+      compareSelectedCats.forEach(function (catId) {
+        var hist = BUDGET_HISTORY[catId] || [];
+        var points = hist.map(function (pt, i) { return xFor(i) + ',' + yFor(pt.spent); }).join(' ');
+        svg += '<polyline points="' + points + '" fill="none" stroke="' + colorForCategory(catId) + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+        hist.forEach(function (pt, i) {
+          svg += '<circle cx="' + xFor(i) + '" cy="' + yFor(pt.spent) + '" r="3" fill="' + colorForCategory(catId) + '"/>';
+        });
+      });
+    }
+    svg += '</svg>';
+    document.getElementById('compare-chart-wrap').innerHTML = svg;
+
+    document.getElementById('compare-legend').innerHTML = compareSelectedCats.map(function (catId) {
+      var cat = CATEGORIES.filter(function (c) { return c.id === catId; })[0];
+      return '<div class="compare-legend-item"><span class="dot" style="background:' + colorForCategory(catId) + ';"></span>' + escapeHtml(cat ? cat.label : catId) + '</div>';
+    }).join('');
   }
 
   // ---- budget page ----
   function renderBudgetPage() {
     var html = '';
-    CATEGORIES.forEach(function (c) {
+    CATEGORIES.filter(function (c) { return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1; }).forEach(function (c) {
       var budget = BUDGETS[c.id] || 0;
       var spent = getCategorySpent(c.id);
       var pct = budget > 0 ? Math.min(100, (spent / budget) * 100) : 0;
@@ -1173,6 +1478,7 @@
   refreshAllRowBadges();
   renderMonth();
   renderCategoryBudgetLines();
+  refreshTransferRowBadge('transfer-1');
 </script>
 </body>
 </html>
