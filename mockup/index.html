@@ -96,19 +96,22 @@
   details.subcategory[open] > summary .chevron { transform: rotate(180deg); }
   .sub-content { padding-bottom: 4px; }
 
-  .bill-row { display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; padding: 10px 16px; font-size: 12.5px; border-top: 1px solid #f7f7f9; cursor: pointer; }
+  .bill-row { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; padding: 10px 16px; font-size: 12.5px; border-top: 1px solid #f7f7f9; cursor: pointer; }
   .bill-row:first-child { border-top: none; }
-  .bill-date { grid-column: 1; grid-row: 1 / 3; align-self: center; color: #999; font-size: 11px; white-space: nowrap; }
-  .bill-merchant { grid-column: 2; grid-row: 1 / 3; align-self: center; color: #333; font-size: 12.5px; line-height: 1.35; }
-  .bill-amount { grid-column: 3; grid-row: 1; font-weight: 700; font-size: 13px; color: #1a1a1a; text-align: right; white-space: nowrap; align-self: end; }
+  .date-group-header { font-size: 11px; font-weight: 700; color: #bbb; padding: 10px 16px 3px; letter-spacing: .04em; background: #f7f8fc; border-top: 1px solid #f0f0f0; }
+  .date-group-header:first-child { border-top: none; }
+  .date-group-header + .bill-row { border-top: none; }
+  .bill-date { display: none; }
+  .bill-merchant { grid-column: 1; grid-row: 1 / 3; align-self: center; color: #333; font-size: 12.5px; line-height: 1.35; }
+  .bill-amount { grid-column: 2; grid-row: 1; font-weight: 700; font-size: 13px; color: #1a1a1a; text-align: right; white-space: nowrap; align-self: end; }
   .bill-amount.negative { color: #e74c3c; }
   .bill-recurring { font-size: 9.5px; background: #eef0ff; color: #6c5ce7; border-radius: 6px; padding: 1px 5px; margin-left: 5px; font-weight: 600; }
-  .split-goal-btn { grid-column: 1 / 4; border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; justify-self: start; }
-  .split-summary { grid-column: 1 / 4; font-size: 11px; color: #6c5ce7; font-weight: 600; }
+  .split-goal-btn { grid-column: 1 / 3; border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; justify-self: start; }
+  .split-summary { grid-column: 1 / 3; font-size: 11px; color: #6c5ce7; font-weight: 600; }
   .split-summary:empty { display: none; }
 
   /* static category badge shown on every transaction row (click the row to recategorize) */
-  .cat-chip { grid-column: 3; grid-row: 2; justify-self: end; font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
+  .cat-chip { grid-column: 2; grid-row: 2; justify-self: end; font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
   .cat-chip-uncategorized { background: #fff3e8; color: #e07b1a; }
 
   details.picker-new-form summary { font-size: 11.5px; color: #6c5ce7; font-weight: 700; padding: 6px 8px; cursor: pointer; list-style: none; }
@@ -322,6 +325,167 @@
   .import-success .success-icon { font-size: 48px; margin-bottom: 12px; }
   .import-success h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
   .import-success p { font-size: 13px; color: #999; line-height: 1.5; }
+
+  /* ---------- Settings button (top-right of header) ---------- */
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .settings-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
+  .settings-btn svg { width: 17px; height: 17px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- Category icon picker (in Manage categories) ---------- */
+  .manage-icon-label { font-size: 10.5px; color: #999; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; margin: 8px 0 6px; }
+  .manage-icon-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-bottom: 10px; }
+  .manage-icon-btn { width: 100%; aspect-ratio: 1; border: 1.5px solid #eee; border-radius: 8px; background: #f7f8fc; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .manage-icon-btn svg { width: 15px; height: 15px; fill: none; stroke: #666; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .manage-icon-btn.active { border-color: #6c5ce7; background: #eef0ff; }
+  .manage-icon-btn.active svg { stroke: #6c5ce7; }
+
+  /* ---------- Settings page ---------- */
+  .settings-section-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; margin: 4px 0 12px; }
+  .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .theme-swatch { border: 2.5px solid transparent; border-radius: 16px; overflow: hidden; cursor: pointer; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .theme-swatch.active { border-color: #1a1a1a; }
+  .theme-swatch-preview { height: 60px; display: flex; align-items: flex-end; padding: 8px; }
+  .theme-swatch-label { background: rgba(0,0,0,0.3); color: #fff; font-size: 10.5px; font-weight: 700; border-radius: 6px; padding: 2px 6px; }
+  .theme-swatch-name { font-size: 13px; font-weight: 700; color: #1a1a1a; padding: 8px 10px 10px; }
+
+  /* ---------- Theme: Ocean (teal) ---------- */
+  .phone.theme-ocean .header, .phone.theme-ocean .manage-header, .phone.theme-ocean .subpage-header { background: linear-gradient(135deg,#00b894,#00cec9); }
+  .phone.theme-ocean .nav-item.active { color: #00b894; }
+  .phone.theme-ocean .bar-fill, .phone.theme-ocean .budget-bar-fill.under { background: linear-gradient(90deg,#00b894,#00cec9); }
+  .phone.theme-ocean .modal-primary-btn, .phone.theme-ocean .import-confirm-btn, .phone.theme-ocean .keyword-add-row button, .phone.theme-ocean .compare-type-btn.active, .phone.theme-ocean .chat-input-row button { background: #00b894; color: #fff; }
+  .phone.theme-ocean .modal-cat-btn.active { background: #e0fff9; color: #00b894; }
+  .phone.theme-ocean .modal-sub-btn.active { background: #e0fff9; color: #00b894; font-weight: 700; }
+  .phone.theme-ocean .modal-cat-name.active { color: #00b894; }
+  .phone.theme-ocean .bill-recurring { background: #e0fff9; color: #00b894; }
+  .phone.theme-ocean .cat-chip { background: #e0fff9; color: #007b65; }
+  .phone.theme-ocean .ai-bubble .tag { color: #00b894; }
+  .phone.theme-ocean .chat-fab { background: #00b894; }
+  .phone.theme-ocean .modal-kw-input:focus { border-color: #00b894; }
+  .phone.theme-ocean .manage-icon-btn.active { border-color: #00b894; background: #e0fff9; }
+  .phone.theme-ocean .manage-icon-btn.active svg { stroke: #00b894; }
+  .phone.theme-ocean .manage-add-sub, .phone.theme-ocean .manage-add-category { color: #00b894; }
+  .phone.theme-ocean .manage-add-category { border-color: #b3f0e6; }
+
+  /* ---------- Theme: Sunset (warm orange) ---------- */
+  .phone.theme-sunset .header, .phone.theme-sunset .manage-header, .phone.theme-sunset .subpage-header { background: linear-gradient(135deg,#e17055,#fdcb6e); }
+  .phone.theme-sunset .nav-item.active { color: #e17055; }
+  .phone.theme-sunset .bar-fill, .phone.theme-sunset .budget-bar-fill.under { background: linear-gradient(90deg,#e17055,#fdcb6e); }
+  .phone.theme-sunset .modal-primary-btn, .phone.theme-sunset .import-confirm-btn, .phone.theme-sunset .keyword-add-row button, .phone.theme-sunset .compare-type-btn.active, .phone.theme-sunset .chat-input-row button { background: #e17055; color: #fff; }
+  .phone.theme-sunset .modal-cat-btn.active { background: #fff0ea; color: #e17055; }
+  .phone.theme-sunset .modal-sub-btn.active { background: #fff0ea; color: #e17055; font-weight: 700; }
+  .phone.theme-sunset .modal-cat-name.active { color: #e17055; }
+  .phone.theme-sunset .bill-recurring { background: #fff0ea; color: #e17055; }
+  .phone.theme-sunset .cat-chip { background: #fff0ea; color: #c0572b; }
+  .phone.theme-sunset .ai-bubble .tag { color: #e17055; }
+  .phone.theme-sunset .chat-fab { background: #e17055; }
+  .phone.theme-sunset .modal-kw-input:focus { border-color: #e17055; }
+  .phone.theme-sunset .manage-icon-btn.active { border-color: #e17055; background: #fff0ea; }
+  .phone.theme-sunset .manage-icon-btn.active svg { stroke: #e17055; }
+  .phone.theme-sunset .manage-add-sub, .phone.theme-sunset .manage-add-category { color: #e17055; }
+  .phone.theme-sunset .manage-add-category { border-color: #fbd2c4; }
+
+  /* ---------- Theme: Dark ---------- */
+  .phone.theme-dark { background: #12121e; }
+  .phone.theme-dark .screen { background: #12121e; }
+  .phone.theme-dark .header { background: linear-gradient(135deg,#1f1d3a,#2d2b55); }
+  .phone.theme-dark .ai-bubble { background: #1e1d30; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+  .phone.theme-dark .ai-bubble .tag { color: #a29bfe; }
+  .phone.theme-dark .ai-bubble .msg { color: #c8c5f0; }
+  .phone.theme-dark details.safe-spend-card { background: #1e1d30; }
+  .phone.theme-dark .safe-spend-label, .phone.theme-dark .safe-spend-amount { color: #e8e6ff; }
+  .phone.theme-dark .safe-spend-sub, .phone.theme-dark .breakdown-row { color: #777; }
+  .phone.theme-dark .breakdown-row.total { color: #e8e6ff; border-top-color: #2a2838; }
+  .phone.theme-dark .section h2 { color: #e8e6ff; }
+  .phone.theme-dark .pie-center-amount { fill: #e8e6ff; }
+  .phone.theme-dark details.category { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .phone.theme-dark .cat-name { color: #e8e6ff; }
+  .phone.theme-dark .cat-meta { color: #666; }
+  .phone.theme-dark .cat-amount { color: #e8e6ff; }
+  .phone.theme-dark .chevron { color: #555; }
+  .phone.theme-dark details.category[open] > summary .category-row { background: #25234a; }
+  .phone.theme-dark .category-content, .phone.theme-dark .sub-content { background: #1e1d30; }
+  .phone.theme-dark .bill-row { border-top-color: #252340; }
+  .phone.theme-dark .bill-merchant { color: #c8c5f0; }
+  .phone.theme-dark .bill-amount { color: #e8e6ff; }
+  .phone.theme-dark .date-group-header { background: #12121e; color: #555; border-top-color: #1e1d30; }
+  .phone.theme-dark .cat-chip { background: #25234a; color: #a29bfe; }
+  .phone.theme-dark .cat-chip-uncategorized { background: #2a1e10; color: #d4884a; }
+  .phone.theme-dark .subcategory-row { color: #999; }
+  .phone.theme-dark details.subcategory { border-top-color: #25234a; }
+  .phone.theme-dark .navbar { background: #1e1d30; border-top-color: #25234a; }
+  .phone.theme-dark .nav-item { color: #555; }
+  .phone.theme-dark .nav-item.active { color: #a29bfe; }
+  .phone.theme-dark .modal-sheet { background: #1e1d30; }
+  .phone.theme-dark .modal-merchant { color: #e8e6ff; }
+  .phone.theme-dark .modal-meta { color: #777; }
+  .phone.theme-dark .modal-section-label { color: #555; }
+  .phone.theme-dark .modal-cat-btn { background: #25234a; color: #c8c5f0; }
+  .phone.theme-dark .modal-cat-btn.active { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .modal-cat-name { color: #c8c5f0; }
+  .phone.theme-dark .modal-cat-name.active { color: #a29bfe; }
+  .phone.theme-dark .modal-sub-btn { color: #999; }
+  .phone.theme-dark .modal-sub-btn:hover { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .modal-sub-btn.active { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .modal-close { background: #e8e6ff; color: #1a1a2e; }
+  .phone.theme-dark .modal-backdrop { background: rgba(0,0,0,0.7); }
+  .phone.theme-dark .chat-fab { background: #25234a; }
+  .phone.theme-dark .manage-page, .phone.theme-dark .subpage { background: #12121e; }
+  .phone.theme-dark .manage-header, .phone.theme-dark .subpage-header { background: linear-gradient(135deg,#1f1d3a,#2d2b55); }
+  .phone.theme-dark .manage-body, .phone.theme-dark .subpage-body { background: #12121e; }
+  .phone.theme-dark .manage-card { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .phone.theme-dark .manage-cat-name { color: #e8e6ff; border-bottom-color: #2a2838; }
+  .phone.theme-dark .manage-sub-block { border-color: #252340; }
+  .phone.theme-dark .manage-sub-row input, .phone.theme-dark .keyword-add-row input { border-color: #2a2838; background: #25234a; color: #c8c5f0; }
+  .phone.theme-dark .manage-keywords-label { color: #555; }
+  .phone.theme-dark .keyword-tag { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .manage-icon-btn { border-color: #2a2838; background: #25234a; }
+  .phone.theme-dark .manage-icon-btn svg { stroke: #888; }
+  .phone.theme-dark .manage-icon-btn.active { border-color: #a29bfe; background: #2d2b55; }
+  .phone.theme-dark .manage-icon-btn.active svg { stroke: #a29bfe; }
+  .phone.theme-dark .subpage-add-btn, .phone.theme-dark .manage-add-category { border-color: #2a2838; color: #a29bfe; }
+  .phone.theme-dark .goal-card, .phone.theme-dark .budget-card, .phone.theme-dark .insight-card { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .phone.theme-dark .goal-top .label, .phone.theme-dark .insight-card h3 { color: #e8e6ff; }
+  .phone.theme-dark .goal-top .value { color: #a29bfe; }
+  .phone.theme-dark .bar-track, .phone.theme-dark .budget-bar-track { background: #25234a; }
+  .phone.theme-dark .import-drop-zone { border-color: #2a2838; }
+  .phone.theme-dark .import-drop-zone .drop-title { color: #e8e6ff; }
+  .phone.theme-dark .import-drop-zone .drop-sub { color: #666; }
+  .phone.theme-dark .import-map-card { background: #1e1d30; }
+  .phone.theme-dark .import-map-card h4 { color: #666; }
+  .phone.theme-dark .import-preview-table th { color: #666; }
+  .phone.theme-dark .import-preview-table td { color: #c8c5f0; border-bottom-color: #25234a; }
+  .phone.theme-dark .import-map-row label { color: #999; }
+  .phone.theme-dark .import-map-row select { background: #25234a; border-color: #2a2838; color: #c8c5f0; }
+  .phone.theme-dark .chat-thread { background: #12121e; }
+  .phone.theme-dark .chat-msg.from-ai { background: #1e1d30; color: #c8c5f0; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .phone.theme-dark .chat-input-row { background: #1e1d30; border-top-color: #25234a; }
+  .phone.theme-dark .chat-input-row input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
+  .phone.theme-dark .insight-compare .amt, .phone.theme-dark .insight-compare-sub { color: #c8c5f0; }
+  .phone.theme-dark .insight-trend-row, .phone.theme-dark .insight-merchant-row { border-top-color: #25234a; color: #c8c5f0; }
+  .phone.theme-dark .compare-chip { background: #25234a; border-color: #2a2838; color: #888; }
+  .phone.theme-dark .compare-type-btn { background: #25234a; color: #777; }
+  .phone.theme-dark .budget-input-row label { color: #666; }
+  .phone.theme-dark .budget-input-row input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
+  .phone.theme-dark .budget-progress-label { color: #999; }
+  .phone.theme-dark .budget-history summary { color: #a29bfe; }
+  .phone.theme-dark .budget-history-row { color: #999; border-top-color: #25234a; }
+  .phone.theme-dark .safe-spend-breakdown { border-top-color: #2a2838; }
+  .phone.theme-dark .breakdown-row.minus span:last-child { color: #ff6b6b; }
+  .phone.theme-dark .settings-section-label { color: #555; }
+  .phone.theme-dark .theme-swatch { box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+  .phone.theme-dark .theme-swatch.active { border-color: #a29bfe; }
+  .phone.theme-dark .theme-swatch-name { background: #1e1d30; color: #e8e6ff; }
+  .phone.theme-dark .modal-learn-step h4 { color: #e8e6ff; }
+  .phone.theme-dark .modal-learn-step p, .phone.theme-dark .modal-match-desc { color: #999; }
+  .phone.theme-dark .modal-kw-input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
+  .phone.theme-dark .modal-secondary-btn { background: #25234a; color: #999; }
+  .phone.theme-dark .modal-review-desc { color: #e8e6ff; }
+  .phone.theme-dark .modal-review-meta { color: #777; }
+  .phone.theme-dark .modal-review-target { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .cat-budget-line.under { color: #55efc4; }
+  .phone.theme-dark .allocate-goal-row .name { color: #e8e6ff; }
+  .phone.theme-dark .allocate-goal-row input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
+  .phone.theme-dark .allocate-remaining { color: #999; }
 </style>
 </head>
 <body>
@@ -332,9 +496,16 @@
     <div class="screen">
 
       <div class="header">
-        <div class="greeting">Good morning, Diogo 👋</div>
-        <div class="balance">$2,340.18</div>
-        <div class="sub">Available across 2 accounts</div>
+        <div class="header-top">
+          <div>
+            <div class="greeting">Good morning, Diogo 👋</div>
+            <div class="balance">$2,340.18</div>
+            <div class="sub">Available across 2 accounts</div>
+          </div>
+          <button type="button" class="settings-btn" data-action="open-settings" aria-label="Settings">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </button>
+        </div>
         <div class="month-switcher">
           <button type="button" data-action="prev-month" id="prev-month-btn" aria-label="Previous month">‹</button>
           <span class="month-label" id="month-label">June 2026</span>
@@ -627,6 +798,14 @@
       </div>
     </div>
 
+    <div class="subpage" id="settings-page" hidden>
+      <div class="subpage-header">
+        <button type="button" class="back-btn" data-action="close-settings">←</button>
+        <h2>Settings</h2>
+      </div>
+      <div class="subpage-body" id="settings-body"></div>
+    </div>
+
     <div class="modal-overlay" id="categorize-modal" hidden>
       <div class="modal-backdrop" data-action="close-modal"></div>
       <div class="modal-sheet">
@@ -661,11 +840,31 @@
 <script>
   // ---- category registry, kept in sync as new categories are created ----
   var CATEGORIES = [
-    { id: 'cat-bills', label: 'Bills' },
-    { id: 'cat-subs', label: 'Subscriptions' },
-    { id: 'cat-dine', label: 'Dining' },
-    { id: 'cat-transport', label: 'Transport' },
-    { id: 'cat-transfer', label: 'Transfers' }
+    { id: 'cat-bills',     label: 'Bills',         iconSvg: '<path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z" stroke-width="1.8"/>' },
+    { id: 'cat-subs',      label: 'Subscriptions', iconSvg: '<path d="M5 4v16l15-8z" stroke-width="1.8"/>' },
+    { id: 'cat-dine',      label: 'Dining',        iconSvg: '<path d="M5 9h12l-1 9a3 3 0 01-3 3H9a3 3 0 01-3-3L5 9z"/><path d="M4 7h14"/><path d="M17 11h1a2 2 0 010 4h-1"/>' },
+    { id: 'cat-transport', label: 'Transport',     iconSvg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
+    { id: 'cat-transfer',  label: 'Transfers',     iconSvg: '<path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/>' }
+  ];
+
+  // ---- icon library for category customisation ----
+  var ICON_LIBRARY = [
+    { id: 'icon-bolt',     svg: '<path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z"/>' },
+    { id: 'icon-play',     svg: '<path d="M5 4v16l15-8z"/>' },
+    { id: 'icon-coffee',   svg: '<path d="M3 8h14v5a5 5 0 01-5 5H8a5 5 0 01-5-5V8z"/><path d="M17 8h2a2 2 0 010 4h-2"/>' },
+    { id: 'icon-car',      svg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
+    { id: 'icon-transfer', svg: '<path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/>' },
+    { id: 'icon-home',     svg: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>' },
+    { id: 'icon-phone',    svg: '<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>' },
+    { id: 'icon-wifi',     svg: '<path d="M2 8.5a15.3 15.3 0 0120 0"/><path d="M5.5 12a10.5 10.5 0 0113 0"/><path d="M9 15.5a5.7 5.7 0 016 0"/><circle cx="12" cy="19" r="0.6" fill="currentColor" stroke="none"/>' },
+    { id: 'icon-music',    svg: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>' },
+    { id: 'icon-heart',    svg: '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' },
+    { id: 'icon-plane',    svg: '<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.52 9.5 19.79 19.79 0 01.46 1.46a2 2 0 012-.22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.59 8a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>' },
+    { id: 'icon-water',    svg: '<path d="M12 2s7 8 7 13a7 7 0 11-14 0c0-5 7-13 7-13z"/>' },
+    { id: 'icon-shop',     svg: '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>' },
+    { id: 'icon-shield',   svg: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
+    { id: 'icon-dollar',   svg: '<circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/>' },
+    { id: 'icon-star',     svg: '<path d="M12 2l3 6.5 7 .9-5 5 1.2 7L12 18l-6.2 3.4L7 14.4l-5-5 7-.9z"/>' }
   ];
 
   // Transfers is a movement of money, not spending — excluded from budgets,
@@ -745,7 +944,7 @@
   var compareChartType = 'line';
 
   // ---- static navbar / overlay-page plumbing ----
-  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page'];
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page'];
 
   function hideAllOverlays() {
     OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
@@ -784,6 +983,7 @@
     var uncategorized = !parentCategory || parentCategory.id === 'cat-uncategorized';
     row.insertAdjacentHTML('beforeend', '<span class="cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : '') + '">' + shortLabelFor(parentCategory) + '</span>');
     refreshAllCategoryTotals();
+    refreshAllDateGroupHeaders();
   }
 
   // Recalculates and displays the total spending for every named category.
@@ -809,6 +1009,45 @@
       } else {
         row.style.cursor = 'default';
       }
+    });
+  }
+
+  // Formats a DD/MM/YYYY (or DD-MM-YYYY) date string to "17 Jun 2026".
+  // Returns the original string unchanged if it doesn't match the pattern.
+  function formatDateForDisplay(s) {
+    var m = (s || '').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if (!m) return s;
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var day = parseInt(m[1], 10);
+    var mon = parseInt(m[2], 10) - 1;
+    var year = m[3].length === 2 ? '20' + m[3] : m[3];
+    return day + ' ' + (MONTHS[mon] || m[2]) + ' ' + year;
+  }
+
+  // Inserts .date-group-header divs before the first .bill-row of each new date
+  // within a direct-child-row scan of the given container element.
+  function insertDateGroupHeaders(container) {
+    Array.prototype.slice.call(container.querySelectorAll(':scope > .date-group-header')).forEach(function(h) { h.remove(); });
+    var rows = Array.prototype.filter.call(container.children, function(n) {
+      return n.classList && n.classList.contains('bill-row');
+    });
+    var lastDate = null;
+    rows.forEach(function(row) {
+      var dateEl = row.querySelector('.bill-date');
+      var dateStr = dateEl ? dateEl.textContent.trim() : '';
+      if (dateStr && dateStr !== lastDate) {
+        var header = document.createElement('div');
+        header.className = 'date-group-header';
+        header.textContent = dateStr;
+        container.insertBefore(header, row);
+        lastDate = dateStr;
+      }
+    });
+  }
+
+  function refreshAllDateGroupHeaders() {
+    document.querySelectorAll('.category-content, .sub-content').forEach(function(container) {
+      insertDateGroupHeaders(container);
     });
   }
 
@@ -1421,6 +1660,47 @@
       return;
     }
 
+    if (e.target.closest('[data-action="open-settings"]')) {
+      renderSettingsPage();
+      showOverlay('settings-page', null);
+      return;
+    }
+    if (e.target.closest('[data-action="close-settings"]')) {
+      hideAllOverlays();
+      setActiveNav('home');
+      return;
+    }
+    var themeBtn = e.target.closest('[data-action="apply-theme"]');
+    if (themeBtn) {
+      applyTheme(themeBtn.dataset.theme);
+      renderSettingsPage();
+      return;
+    }
+
+    var pickIconBtn = e.target.closest('[data-action="pick-cat-icon"]');
+    if (pickIconBtn) {
+      var piCatId = pickIconBtn.dataset.catId;
+      var piIconId = pickIconBtn.dataset.iconId;
+      var piIcon = ICON_LIBRARY.filter(function(ic){ return ic.id === piIconId; })[0];
+      if (!piIcon) return;
+      var piCat = CATEGORIES.filter(function(c){ return c.id === piCatId; })[0];
+      if (piCat) piCat.iconSvg = piIcon.svg;
+      // update home screen category icon
+      var piCatEl = document.getElementById(piCatId);
+      if (piCatEl) {
+        var piSvg = piCatEl.querySelector(':scope > summary .icon-box svg');
+        if (piSvg) piSvg.innerHTML = piIcon.svg;
+      }
+      // update active state in manage page without full re-render
+      var piCard = pickIconBtn.closest('.manage-card');
+      if (piCard) {
+        piCard.querySelectorAll('.manage-icon-btn').forEach(function(b) {
+          b.classList.toggle('active', b.dataset.iconId === piIconId);
+        });
+      }
+      return;
+    }
+
     if (e.target.closest('[data-action="prev-month"]')) {
       if (monthIndex > 0) { monthIndex--; renderMonth(); }
       return;
@@ -1833,7 +2113,7 @@
       var row = document.createElement('div');
       row.className = 'bill-row';
 
-      var dateEl = document.createElement('div'); dateEl.className = 'bill-date'; dateEl.textContent = t.date;
+      var dateEl = document.createElement('div'); dateEl.className = 'bill-date'; dateEl.textContent = formatDateForDisplay(t.date);
       var descEl = document.createElement('div'); descEl.className = 'bill-merchant'; descEl.textContent = t.desc;
       var amtEl = document.createElement('div'); amtEl.className = 'bill-amount' + (t.amount < 0 ? ' negative' : '');
       amtEl.textContent = (t.amount < 0 ? '-' : '+') + formatMoney(Math.abs(t.amount));
@@ -1860,6 +2140,8 @@
       addedCount++;
     });
 
+    refreshAllDateGroupHeaders();
+
     // show success screen
     var result = document.getElementById('import-result');
     result.innerHTML = '<div class="import-success">' +
@@ -1885,6 +2167,16 @@
       var kwLists = KEYWORDS[c.id] || [];
       html += '<div class="manage-card">' +
         '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">';
+
+      // icon picker
+      html += '<div class="manage-icon-label">Category icon</div><div class="manage-icon-grid">';
+      ICON_LIBRARY.forEach(function(ic) {
+        var active = (c.iconSvg || '') === ic.svg;
+        html += '<button type="button" class="manage-icon-btn' + (active ? ' active' : '') + '" data-action="pick-cat-icon" data-cat-id="' + c.id + '" data-icon-id="' + ic.id + '" title="' + ic.id.replace('icon-','') + '">' +
+          '<svg viewBox="0 0 24 24">' + ic.svg + '</svg></button>';
+      });
+      html += '</div>';
+
       subs.forEach(function (s, i) {
         var keywords = kwLists[i] || [];
         html += '<div class="manage-sub-block"><div class="manage-sub-row">' +
@@ -1904,6 +2196,36 @@
     });
     html += '<button type="button" class="manage-add-category" data-action="manage-add-category">+ New category</button>';
     document.getElementById('manage-body').innerHTML = html;
+  }
+
+  // ---- settings page ----
+  var currentTheme = 'light';
+
+  function applyTheme(name) {
+    currentTheme = name;
+    var phoneEl = document.querySelector('.phone');
+    phoneEl.className = 'phone' + (name !== 'light' ? ' theme-' + name : '');
+  }
+
+  function renderSettingsPage() {
+    var themes = [
+      { id: 'light',  name: 'Light',  gradFrom: '#6c5ce7', gradTo: '#a29bfe' },
+      { id: 'dark',   name: 'Dark',   gradFrom: '#1f1d3a', gradTo: '#2d2b55' },
+      { id: 'ocean',  name: 'Ocean',  gradFrom: '#00b894', gradTo: '#00cec9' },
+      { id: 'sunset', name: 'Sunset', gradFrom: '#e17055', gradTo: '#fdcb6e' }
+    ];
+    var html = '<div class="settings-section-label">Color theme</div>' +
+      '<div class="theme-grid">';
+    themes.forEach(function(t) {
+      var isActive = currentTheme === t.id;
+      html += '<div class="theme-swatch' + (isActive ? ' active' : '') + '" data-action="apply-theme" data-theme="' + t.id + '">' +
+        '<div class="theme-swatch-preview" style="background:linear-gradient(135deg,' + t.gradFrom + ',' + t.gradTo + ');">' +
+        '<span class="theme-swatch-label">' + (isActive ? '✓ Active' : '') + '</span></div>' +
+        '<div class="theme-swatch-name">' + t.name + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    document.getElementById('settings-body').innerHTML = html;
   }
 
   // ---- chat page ----
@@ -2216,6 +2538,7 @@
   }
 
   refreshAllRowBadges();
+  refreshAllDateGroupHeaders();
   renderMonth();
   renderCategoryBudgetLines();
   refreshTransferRowBadge('transfer-1');
