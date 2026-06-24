@@ -143,6 +143,23 @@
   .modal-sheet .inline-form { padding: 4px 0 8px; }
   .modal-close { margin-top: 14px; border: none; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
 
+  /* ---------- Keyword-learn & rescan steps (inside modal) ---------- */
+  .modal-learn-step { padding: 6px 0 2px; }
+  .modal-learn-step h4 { font-size: 13px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .modal-learn-step p { font-size: 12px; color: #777; margin-bottom: 10px; line-height: 1.4; }
+  .modal-kw-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .modal-kw-input { flex: 1; border: 1px solid #d8d6f0; border-radius: 9px; padding: 8px 10px; font-size: 13px; color: #1a1a1a; background: #f7f5ff; }
+  .modal-kw-input:focus { outline: none; border-color: #6c5ce7; background: #fff; }
+  .modal-action-row { display: flex; gap: 8px; }
+  .modal-primary-btn { flex: 1; background: #6c5ce7; color: #fff; border: none; border-radius: 11px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .modal-secondary-btn { flex: 1; background: #f5f5f7; color: #555; border: none; border-radius: 11px; padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .modal-match-stat { font-size: 28px; font-weight: 800; color: #6c5ce7; text-align: center; margin: 4px 0; }
+  .modal-match-desc { font-size: 12.5px; color: #666; text-align: center; margin-bottom: 16px; line-height: 1.4; }
+  .modal-review-counter { font-size: 11px; color: #aaa; text-align: center; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .modal-review-desc { font-size: 13.5px; font-weight: 700; color: #1a1a1a; text-align: center; margin-bottom: 4px; }
+  .modal-review-meta { font-size: 12px; color: #999; text-align: center; margin-bottom: 14px; }
+  .modal-review-target { font-size: 12.5px; color: #6c5ce7; font-weight: 700; text-align: center; background: #f0eeff; border-radius: 8px; padding: 6px 10px; margin-bottom: 14px; }
+
   /* ---------- Uncategorized transactions ---------- */
   .uncategorized-card .icon-bold { background: #fff3e8; }
   .uncategorized-card .icon-bold svg { stroke: #e07b1a; }
@@ -615,8 +632,10 @@
         <div class="modal-handle"></div>
         <div class="modal-merchant" id="modal-merchant"></div>
         <div class="modal-meta" id="modal-meta"></div>
-        <div class="modal-section-label">Choose a category</div>
-        <div id="modal-cat-list"></div>
+        <div id="modal-step-wrap">
+          <div class="modal-section-label">Choose a category</div>
+          <div id="modal-cat-list"></div>
+        </div>
         <button type="button" class="modal-close" data-action="close-modal">Done</button>
       </div>
     </div>
@@ -797,6 +816,11 @@
 
   // ---- tap-to-categorize modal ----
   var activeRow = null;
+  // state for keyword-learn + rescan flow
+  var learnKwCatId = null;
+  var learnKwSubName = null;
+  var rescanMatches = [];
+  var rescanIdx = 0;
 
   function modalCategoryListHTML(currentCatId, currentSubName) {
     var html = '<button type="button" class="modal-cat-btn' + (!currentCatId ? ' active' : '') + '" data-action="assign-category" data-cat-id="">Uncategorized</button>';
@@ -821,6 +845,119 @@
     return html;
   }
 
+  // Derives a suggested keyword from a cleaned transaction description.
+  function suggestKeyword(desc) {
+    var s = desc.trim();
+    var starIdx = s.indexOf('*');
+    if (starIdx >= 0 && starIdx < s.length - 1) s = s.substring(starIdx + 1).trim();
+    var slashIdx = s.indexOf('/');
+    if (slashIdx > 1) s = s.substring(0, slashIdx).trim();
+    s = s.replace(/\s+\d[\d\S]*(\s+.*)?$/, '').trim();
+    var words = s.split(/\s+/).filter(Boolean);
+    if (words.length > 2) words = words.slice(0, 2);
+    return words.join(' ') || desc.trim().split(/\s+/)[0] || desc.trim();
+  }
+
+  // Adds keyword to the given cat/sub's keyword list (no duplicates).
+  function addKeywordToCategory(catId, subName, kw) {
+    if (!kw) return;
+    if (!KEYWORDS[catId]) KEYWORDS[catId] = [];
+    var subIdx = subName ? (SUBCATEGORIES[catId] || []).indexOf(subName) : -1;
+    if (subIdx >= 0) {
+      if (!KEYWORDS[catId][subIdx]) KEYWORDS[catId][subIdx] = [];
+      var arr = KEYWORDS[catId][subIdx];
+      if (arr.map(function(k){return k.toLowerCase();}).indexOf(kw.toLowerCase()) === -1) arr.push(kw);
+    } else {
+      // category-level: add to all subcategory lists that have at least one keyword, or first slot
+      var added = false;
+      (KEYWORDS[catId] || []).forEach(function(kwList) {
+        if (!added && Array.isArray(kwList)) { kwList.push(kw); added = true; }
+      });
+      if (!added) KEYWORDS[catId].push([kw]);
+    }
+  }
+
+  // Returns all .bill-row elements in #cat-uncategorized whose description contains kw.
+  function findUncategorizedMatches(kw) {
+    var lower = kw.toLowerCase();
+    var rows = document.querySelectorAll('#cat-uncategorized .bill-row');
+    return Array.prototype.filter.call(rows, function(r) {
+      var merchantEl = r.querySelector('.bill-merchant');
+      var text = merchantEl ? merchantEl.textContent.toLowerCase() : '';
+      return text.indexOf(lower) !== -1;
+    });
+  }
+
+  function descTextOf(row) {
+    var el = row.querySelector('.bill-merchant');
+    return el ? (el.childNodes[0] ? el.childNodes[0].textContent.trim() : el.textContent.trim()) : '';
+  }
+
+  // Shows the "add keyword + scan" step inside the modal.
+  function showLearnKeywordStep(catId, subName) {
+    learnKwCatId = catId;
+    learnKwSubName = subName || null;
+    var desc = descTextOf(activeRow || document.createElement('div'));
+    var kw = suggestKeyword(desc);
+    var catLabel = catId ? ((CATEGORIES.filter(function(c){return c.id===catId;})[0]||{}).label||'') : 'Uncategorized';
+    var destination = catLabel + (subName ? ' › ' + subName : '');
+    var wrap = document.getElementById('modal-step-wrap');
+    wrap.innerHTML =
+      '<div class="modal-learn-step">' +
+        '<div class="modal-section-label">Keyword learning</div>' +
+        '<p>Add a keyword so future transactions like this are auto-categorised into <strong>' + escapeHtml(destination) + '</strong>.</p>' +
+        '<div class="modal-kw-row"><input class="modal-kw-input" id="modal-kw-input" type="text" value="' + escapeHtml(kw) + '" placeholder="keyword…"></div>' +
+        '<div class="modal-action-row">' +
+          '<button class="modal-primary-btn" data-action="learn-kw-add">Add &amp; Scan</button>' +
+          '<button class="modal-secondary-btn" data-action="learn-kw-skip">Skip</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // Shows the "N matches found" rescan choice step.
+  function showRescanStep(kw, matches) {
+    rescanMatches = matches;
+    rescanIdx = 0;
+    var wrap = document.getElementById('modal-step-wrap');
+    wrap.innerHTML =
+      '<div class="modal-learn-step">' +
+        '<div class="modal-section-label">Similar transactions found</div>' +
+        '<div class="modal-match-stat">' + matches.length + '</div>' +
+        '<p class="modal-match-desc">Uncategorized transactions contain <strong>' + escapeHtml(kw) + '</strong>. What would you like to do?</p>' +
+        '<div class="modal-action-row" style="flex-direction:column;gap:8px;">' +
+          '<button class="modal-primary-btn" data-action="rescan-auto-all">Auto-categorize all ' + matches.length + '</button>' +
+          '<button class="modal-primary-btn" style="background:#a29bfe;" data-action="rescan-review-start">Review one by one</button>' +
+          '<button class="modal-secondary-btn" data-action="learn-kw-skip">Done</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // Shows the per-transaction review prompt.
+  function showRescanReviewStep() {
+    if (rescanIdx >= rescanMatches.length) { closeCategorizeModal(); return; }
+    var row = rescanMatches[rescanIdx];
+    var desc = descTextOf(row);
+    var amtEl = row.querySelector('.bill-amount');
+    var dateEl = row.querySelector('.bill-date');
+    var catLabel = learnKwCatId ? ((CATEGORIES.filter(function(c){return c.id===learnKwCatId;})[0]||{}).label||'') : 'Uncategorized';
+    var destination = catLabel + (learnKwSubName ? ' › ' + learnKwSubName : '');
+    var wrap = document.getElementById('modal-step-wrap');
+    wrap.innerHTML =
+      '<div class="modal-learn-step">' +
+        '<div class="modal-review-counter">' + (rescanIdx + 1) + ' of ' + rescanMatches.length + '</div>' +
+        '<div class="modal-review-desc">' + escapeHtml(desc) + '</div>' +
+        '<div class="modal-review-meta">' + (dateEl ? escapeHtml(dateEl.textContent) + ' · ' : '') + (amtEl ? escapeHtml(amtEl.textContent) : '') + '</div>' +
+        '<div class="modal-review-target">→ ' + escapeHtml(destination) + '</div>' +
+        '<div id="modal-review-cat-list">' + modalCategoryListHTML(learnKwCatId, learnKwSubName) + '</div>' +
+        '<div class="modal-action-row" style="margin-top:10px;">' +
+          '<button class="modal-primary-btn" data-action="rescan-review-confirm">Confirm</button>' +
+          '<button class="modal-secondary-btn" data-action="rescan-review-skip">Skip</button>' +
+        '</div>' +
+      '</div>';
+    // Swap activeRow to this match so assign handlers work
+    activeRow = row;
+  }
+
   function openCategorizeModal(row) {
     activeRow = row;
     var merchantEl = row.querySelector('.bill-merchant');
@@ -837,13 +974,18 @@
     }
     document.getElementById('modal-merchant').textContent = merchantName;
     document.getElementById('modal-meta').textContent = (dateEl ? dateEl.textContent + ' · ' : '') + (amountEl ? amountEl.textContent : '');
-    document.getElementById('modal-cat-list').innerHTML = modalCategoryListHTML(currentCatId, currentSubName);
+    // Reset to category-picker step
+    document.getElementById('modal-step-wrap').innerHTML =
+      '<div class="modal-section-label">Choose a category</div>' +
+      '<div id="modal-cat-list">' + modalCategoryListHTML(currentCatId, currentSubName) + '</div>';
     document.getElementById('categorize-modal').hidden = false;
   }
 
   function closeCategorizeModal() {
     document.getElementById('categorize-modal').hidden = true;
     activeRow = null;
+    learnKwCatId = null; learnKwSubName = null;
+    rescanMatches = []; rescanIdx = 0;
   }
 
   // finds an existing subcategory by name inside a category, or creates it
@@ -879,9 +1021,12 @@
 
     var assignCatBtn = e.target.closest('[data-action="assign-category"]');
     if (assignCatBtn) {
-      var acTargetCat = assignCatBtn.dataset.catId ? document.getElementById(assignCatBtn.dataset.catId) : document.getElementById('cat-uncategorized');
+      var acCatId = assignCatBtn.dataset.catId || '';
+      var acTargetCat = acCatId ? document.getElementById(acCatId) : document.getElementById('cat-uncategorized');
+      var wasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (acTargetCat && activeRow) acTargetCat.querySelector('.category-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
+      if (wasUncategorized && acCatId) { showLearnKeywordStep(acCatId, null); return; }
       closeCategorizeModal();
       return;
     }
@@ -889,11 +1034,13 @@
     var assignSubBtn = e.target.closest('[data-action="assign-subcategory"]');
     if (assignSubBtn) {
       var asTargetCat = document.getElementById(assignSubBtn.dataset.catId);
+      var wasUncategorizedSub = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (asTargetCat && activeRow) {
         var asSubDetails = findOrCreateSubcategoryDetails(asTargetCat, assignSubBtn.dataset.subName);
         asSubDetails.querySelector('.sub-content').appendChild(activeRow);
       }
       refreshRowBadge(activeRow);
+      if (wasUncategorizedSub) { showLearnKeywordStep(assignSubBtn.dataset.catId, assignSubBtn.dataset.subName); return; }
       closeCategorizeModal();
       return;
     }
@@ -917,8 +1064,10 @@
       SUBCATEGORIES[mncId] = [];
       KEYWORDS[mncId] = [];
 
+      var mncWasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (activeRow) document.getElementById(mncId).querySelector('.category-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
+      if (mncWasUncategorized) { showLearnKeywordStep(mncId, null); return; }
       closeCategorizeModal();
       return;
     }
@@ -939,12 +1088,115 @@
       if (!KEYWORDS[mnsCatId]) KEYWORDS[mnsCatId] = [];
       KEYWORDS[mnsCatId].push([]);
 
+      var mnsWasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       var mnsSubDetails = findOrCreateSubcategoryDetails(mnsTargetCategory, mnsName);
       if (activeRow) mnsSubDetails.querySelector('.sub-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
+      if (mnsWasUncategorized) { showLearnKeywordStep(mnsCatId, mnsName); return; }
       closeCategorizeModal();
       return;
     }
+
+    // ---- keyword-learn + rescan actions ----
+    if (e.target.closest('[data-action="learn-kw-add"]')) {
+      var kwInput = document.getElementById('modal-kw-input');
+      var kw = kwInput ? kwInput.value.trim() : '';
+      if (kw) {
+        addKeywordToCategory(learnKwCatId, learnKwSubName, kw);
+        var matches = findUncategorizedMatches(kw);
+        if (matches.length > 0) { showRescanStep(kw, matches); return; }
+      }
+      closeCategorizeModal();
+      return;
+    }
+
+    if (e.target.closest('[data-action="learn-kw-skip"]')) {
+      closeCategorizeModal();
+      return;
+    }
+
+    if (e.target.closest('[data-action="rescan-auto-all"]')) {
+      var targetCat = learnKwCatId ? document.getElementById(learnKwCatId) : document.getElementById('cat-uncategorized');
+      rescanMatches.forEach(function(r) {
+        if (learnKwSubName && targetCat) {
+          findOrCreateSubcategoryDetails(targetCat, learnKwSubName).querySelector('.sub-content').appendChild(r);
+        } else if (targetCat) {
+          targetCat.querySelector('.category-content').appendChild(r);
+        }
+        refreshRowBadge(r);
+      });
+      closeCategorizeModal();
+      return;
+    }
+
+    if (e.target.closest('[data-action="rescan-review-start"]')) {
+      showRescanReviewStep();
+      return;
+    }
+
+    if (e.target.closest('[data-action="rescan-review-confirm"]')) {
+      var rowToMove = rescanMatches[rescanIdx];
+      // activeRow was set to rowToMove in showRescanReviewStep; check if user changed the target
+      var chosenCatId = learnKwCatId;
+      var chosenSub = learnKwSubName;
+      // peek at any active selection in the review cat list
+      var activeSubBtn = document.querySelector('#modal-review-cat-list .modal-sub-btn.active');
+      var activeCatName = document.querySelector('#modal-review-cat-list .modal-cat-name.active');
+      var activeCatBtn = document.querySelector('#modal-review-cat-list .modal-cat-btn.active');
+      if (activeSubBtn) {
+        chosenCatId = activeSubBtn.dataset.catId;
+        chosenSub = activeSubBtn.dataset.subName;
+      } else if (activeCatName) {
+        chosenCatId = activeCatName.dataset.catId || activeCatName.closest('[data-cat-id]').dataset.catId;
+        chosenSub = null;
+      } else if (activeCatBtn && activeCatBtn.dataset.catId) {
+        chosenCatId = activeCatBtn.dataset.catId;
+        chosenSub = null;
+      }
+      var moveCat = chosenCatId ? document.getElementById(chosenCatId) : document.getElementById('cat-uncategorized');
+      if (moveCat && rowToMove) {
+        if (chosenSub) {
+          findOrCreateSubcategoryDetails(moveCat, chosenSub).querySelector('.sub-content').appendChild(rowToMove);
+        } else {
+          moveCat.querySelector('.category-content').appendChild(rowToMove);
+        }
+        refreshRowBadge(rowToMove);
+      }
+      rescanIdx++;
+      if (rescanIdx < rescanMatches.length) { showRescanReviewStep(); } else { closeCategorizeModal(); }
+      return;
+    }
+
+    if (e.target.closest('[data-action="rescan-review-skip"]')) {
+      rescanIdx++;
+      if (rescanIdx < rescanMatches.length) { showRescanReviewStep(); } else { closeCategorizeModal(); }
+      return;
+    }
+
+    // Allow inline assign-category/subcategory clicks inside the review cat list too
+    var reviewAssignSub = e.target.closest('#modal-review-cat-list [data-action="assign-subcategory"]');
+    if (reviewAssignSub) {
+      document.querySelectorAll('#modal-review-cat-list .modal-sub-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('#modal-review-cat-list .modal-cat-name').forEach(function(b){b.classList.remove('active');});
+      reviewAssignSub.classList.add('active');
+      // Update preview target label
+      var catLabel = (CATEGORIES.filter(function(c){return c.id===reviewAssignSub.dataset.catId;})[0]||{}).label||'';
+      var tgt = document.querySelector('.modal-review-target');
+      if (tgt) tgt.textContent = '→ ' + catLabel + ' › ' + reviewAssignSub.dataset.subName;
+      return;
+    }
+
+    var reviewAssignCat = e.target.closest('#modal-review-cat-list [data-action="assign-category"]');
+    if (reviewAssignCat && reviewAssignCat.dataset.catId) {
+      document.querySelectorAll('#modal-review-cat-list .modal-sub-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('#modal-review-cat-list .modal-cat-name').forEach(function(b){b.classList.remove('active');});
+      reviewAssignCat.classList.add('active');
+      var catLbl = (CATEGORIES.filter(function(c){return c.id===reviewAssignCat.dataset.catId;})[0]||{}).label||'';
+      var tgt2 = document.querySelector('.modal-review-target');
+      if (tgt2) tgt2.textContent = '→ ' + catLbl;
+      return;
+    }
+    // ---- end keyword-learn + rescan ----
 
     var splitBtn = e.target.closest('[data-action="split-to-goals"]');
     if (splitBtn) {
