@@ -661,19 +661,25 @@
   // subcategory names per category, and the keyword "database" used to
   // simulate future auto-categorization of merchant transactions
   var SUBCATEGORIES = {
-    'cat-bills': ['Electricity', 'Water', 'Internet', 'Mobile'],
+    'cat-bills': ['Electricity', 'Water', 'Internet', 'Mobile', 'Insurance'],
     'cat-subs': ['Streaming', 'Music', 'Cloud & other'],
-    'cat-dine': ['Takeout Delivery', 'Coffee', 'Restaurants'],
-    'cat-transport': ['Public Transit', 'Rideshare']
+    'cat-dine': ['Takeout Delivery', 'Coffee', 'Restaurants', 'Grocery'],
+    'cat-transport': ['Public Transit', 'Rideshare', 'Tolls']
   };
   // keywords are scoped per-subcategory, array-of-arrays index-aligned to
   // each category's SUBCATEGORIES list (KEYWORDS['cat-bills'][0] matches
   // SUBCATEGORIES['cat-bills'][0], i.e. "Electricity")
   var KEYWORDS = {
-    'cat-bills': [['AGL', 'Energy', 'Electricity'], ['Sydney Water', 'Water'], ['Broadband', 'Internet'], ['Telstra', 'Mobile']],
-    'cat-subs': [['Netflix', 'Streaming'], ['Spotify', 'Music'], ['iCloud', 'Amazon Prime', 'Subscription']],
-    'cat-dine': [['UberEats', 'Menulog'], ['Espresso', 'Cafe'], ['Restaurant']],
-    'cat-transport': [['Opal', 'Transit'], ['Uber Trip', 'Taxi']]
+    'cat-bills': [
+      ['AGL', 'Energy', 'Electricity', 'Red Energy', 'Origin Energy', 'Powershop'],
+      ['Sydney Water', 'Water', 'Yarra Valley Water'],
+      ['Broadband', 'Internet', 'TPG', 'NBN', 'iiNet', 'Internode', 'Aussie Broadband'],
+      ['Telstra', 'Optus', 'Vodafone', 'Mobile', 'Phone Plan'],
+      ['Medibank', 'Budget Direct', 'Allianz', 'NIB', 'Bupa', 'HCF', 'Insurance', 'AAMI', 'RACQ', 'NRMA']
+    ],
+    'cat-subs': [['Netflix', 'Streaming', 'Disney'], ['Spotify', 'Music', 'Apple Music'], ['iCloud', 'Amazon Prime', 'Adobe', 'Google One', 'Subscription']],
+    'cat-dine': [['UberEats', 'Menulog', 'DoorDash'], ['Espresso', 'Cafe', 'Coffee'], ['Restaurant', 'Bistro', 'Max Brenner'], ['Woolworths', 'Coles', 'ALDI', 'IGA', 'Costco', 'Harris Farm']],
+    'cat-transport': [['Opal', 'Transit', 'TFNSW', 'Transport NSW', 'Bus', 'Train'], ['Uber Trip', 'Taxi', 'Ola', 'DiDi'], ['ETOLL', 'Etoll', 'Linkt', 'Roam', 'Toll']]
   };
 
   // monthly budget per category, editable from the Budget page
@@ -1208,13 +1214,12 @@
     var row = [];
     var field = '';
     var inQuotes = false;
-    // normalise line endings
     text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     for (var i = 0; i < text.length; i++) {
       var ch = text[i];
       if (inQuotes) {
         if (ch === '"') {
-          if (text[i + 1] === '"') { field += '"'; i++; } // escaped quote
+          if (text[i + 1] === '"') { field += '"'; i++; } // standard "" escape
           else inQuotes = false;
         } else {
           field += ch;
@@ -1232,6 +1237,71 @@
     row.push(field.trim());
     if (row.some(function (c) { return c !== ''; })) rows.push(row);
     return rows;
+  }
+
+  function looksLikeDate(s) {
+    return /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test((s || '').trim());
+  }
+
+  // Detects header-free / metadata-prefixed bank CSVs (e.g. Bankwest).
+  // Returns { headerRow, dataRows, bankHint }.
+  function preprocessCSVRows(rows) {
+    // Find the first row whose first cell looks like a date — that's where data starts.
+    var dataStart = -1;
+    for (var i = 0; i < rows.length; i++) {
+      if (looksLikeDate(rows[i][0])) { dataStart = i; break; }
+    }
+    if (dataStart <= 0) {
+      // Normal format: first row is a header row.
+      return { headerRow: rows[0] || [], dataRows: rows.slice(1), bankHint: null };
+    }
+    // Metadata rows precede the data. Synthesise headers from column count.
+    var colCount = rows[dataStart].length;
+    var syntheticHeaders;
+    if (colCount === 4) {
+      syntheticHeaders = ['Date', 'Description', 'Amount', 'Balance'];
+    } else if (colCount === 3) {
+      syntheticHeaders = ['Date', 'Description', 'Amount'];
+    } else {
+      syntheticHeaders = ['Date', 'Description', 'Amount'];
+    }
+    // Check for Bankwest-style account header in metadata rows
+    var bankHint = null;
+    for (var j = 0; j < dataStart; j++) {
+      var cell = (rows[j][0] || '').toLowerCase();
+      if (cell.indexOf('bankwest') !== -1 || cell.indexOf('account history') !== -1 ||
+          cell.indexOf('everyday options') !== -1 || cell.indexOf('055') !== -1) {
+        bankHint = 'Bankwest';
+        break;
+      }
+    }
+    return { headerRow: syntheticHeaders, dataRows: rows.slice(dataStart), bankHint: bankHint };
+  }
+
+  // Strips verbose AU bank description prefixes and trailing location/date suffixes.
+  var BANK_DESC_PREFIXES = [
+    'VISA PURCHASE', 'EFTPOS WDL', 'DIRECT DEBIT', 'DIRECT CREDIT',
+    'NPP PAYMENT FROM', 'INTERNET TRANSFER DEBIT TO', 'INTERNET TRANSFER CREDIT FROM',
+    'INTERNET TRANSFER DEBIT', 'INTERNET TRANSFER CREDIT',
+    'TRANSFER DEBIT TO', 'TRANSFER CREDIT FROM', 'TRANSFER DEBIT', 'TRANSFER CREDIT'
+  ];
+  function cleanBankDesc(desc) {
+    var s = desc.trim();
+    // Strip leading type prefix (case-insensitive)
+    for (var i = 0; i < BANK_DESC_PREFIXES.length; i++) {
+      var pfx = BANK_DESC_PREFIXES[i];
+      if (s.toUpperCase().indexOf(pfx) === 0) {
+        s = s.slice(pfx.length).trim();
+        break;
+      }
+    }
+    // Strip trailing AU date suffix like "21/06 AU AUD" or " AU AUD" or " AU"
+    s = s.replace(/\s+\d{1,2}\/\d{2}\s+AU\s+AUD\s*$/i, '').trim();
+    s = s.replace(/\s+AU\s+AUD\s*$/i, '').trim();
+    s = s.replace(/\s+AU\s*$/i, '').trim();
+    // Collapse multiple spaces and strip stray trailing backslashes
+    s = s.replace(/\s{2,}/g, ' ').replace(/\\+$/, '').trim();
+    return s || desc.trim();
   }
 
   // Known AU bank CSV formats — scored against the header row.
@@ -1262,6 +1332,11 @@
       name: 'ING',
       score: function (h) { return (has(h,'Date') + has(h,'Description') + has(h,'Credit') + has(h,'Debit')); },
       map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit') }; }
+    },
+    {
+      name: 'Bankwest',
+      score: function (h) { return (has(h,'Date') + has(h,'Description') + has(h,'Amount') + has(h,'Balance')); },
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
     }
   ];
 
@@ -1290,14 +1365,17 @@
     var desc = colMap.desc >= 0 ? (row[colMap.desc] || '') : '';
     var amount = 0;
     if (colMap.amount >= 0) {
-      amount = parseFloat((row[colMap.amount] || '0').replace(/[^0-9.-]/g, '')) || 0;
+      // Bankwest amounts include a $ sign and may be negative with a leading '-'
+      var rawAmt = (row[colMap.amount] || '0');
+      var negative = rawAmt.indexOf('-') !== -1;
+      amount = parseFloat(rawAmt.replace(/[^0-9.]/g, '')) || 0;
+      if (negative) amount = -amount;
     } else {
-      var debit = parseFloat((row[colMap.debit] || '0').replace(/[^0-9.-]/g, '')) || 0;
-      var credit = parseFloat((row[colMap.credit] || '0').replace(/[^0-9.-]/g, '')) || 0;
-      // debits are outflows (positive spend), credits are inflows
+      var debit = parseFloat((row[colMap.debit] || '0').replace(/[^0-9.]/g, '')) || 0;
+      var credit = parseFloat((row[colMap.credit] || '0').replace(/[^0-9.]/g, '')) || 0;
       amount = credit > 0 ? credit : -debit;
     }
-    return { date: dateStr, desc: desc.trim(), amount: amount };
+    return { date: dateStr, desc: cleanBankDesc(desc), amount: amount };
   }
 
   // Tries to auto-categorise a transaction description using KEYWORDS (per-subcategory).
@@ -1369,17 +1447,23 @@
 
   function processCSVText(text, filename) {
     var rows = parseCSV(text);
-    if (rows.length < 2) { showImportError('This file appears to be empty or not a valid CSV.'); return; }
+    if (rows.length < 1) { showImportError('This file appears to be empty or not a valid CSV.'); return; }
 
-    importHeaders = rows[0];
-    importRows = rows.slice(1);
+    var pre = preprocessCSVRows(rows);
+    importHeaders = pre.headerRow;
+    importRows = pre.dataRows;
+
+    if (importRows.length === 0) { showImportError('No transaction rows found in this file.'); return; }
 
     var detected = detectFormat(importHeaders);
+    // If format-detection fails but we have a bankHint, force-match that bank
+    if (!detected && pre.bankHint) {
+      detected = BANK_FORMATS.filter(function (f) { return f.name === pre.bankHint; })[0] || null;
+    }
     if (detected) {
       importColMap = detected.map(importHeaders);
       renderImportPreview(detected.name, true);
     } else {
-      // Unknown format — let user map columns manually
       importColMap = { date: 0, desc: 1, amount: 2, debit: -1, credit: -1 };
       renderImportManualMap();
     }
