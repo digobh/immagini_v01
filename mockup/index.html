@@ -91,23 +91,24 @@
 
   details.subcategory { border-top: 1px solid #f5f5f7; }
   details.subcategory:first-child { border-top: none; }
-  .subcategory-row { display: flex; justify-content: space-between; padding: 9px 14px 9px 50px; font-size: 12.5px; font-weight: 600; color: #555; }
+  .subcategory-row { display: flex; justify-content: space-between; padding: 9px 16px 9px 28px; font-size: 12.5px; font-weight: 600; color: #555; }
   .subcategory-row .chevron { margin-left: 8px; }
   details.subcategory[open] > summary .chevron { transform: rotate(180deg); }
   .sub-content { padding-bottom: 4px; }
 
-  .bill-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 64px; font-size: 12.5px; border-top: 1px solid #f7f7f9; flex-wrap: wrap; cursor: pointer; }
+  .bill-row { display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; padding: 10px 16px; font-size: 12.5px; border-top: 1px solid #f7f7f9; cursor: pointer; }
   .bill-row:first-child { border-top: none; }
-  .bill-date { color: #999; font-size: 11px; min-width: 48px; }
-  .bill-merchant { flex: 1; color: #333; min-width: 90px; }
-  .bill-amount { font-weight: 600; color: #1a1a1a; }
+  .bill-date { grid-column: 1; grid-row: 1 / 3; align-self: center; color: #999; font-size: 11px; white-space: nowrap; }
+  .bill-merchant { grid-column: 2; grid-row: 1 / 3; align-self: center; color: #333; font-size: 12.5px; line-height: 1.35; }
+  .bill-amount { grid-column: 3; grid-row: 1; font-weight: 700; font-size: 13px; color: #1a1a1a; text-align: right; white-space: nowrap; align-self: end; }
+  .bill-amount.negative { color: #e74c3c; }
   .bill-recurring { font-size: 9.5px; background: #eef0ff; color: #6c5ce7; border-radius: 6px; padding: 1px 5px; margin-left: 5px; font-weight: 600; }
-  .split-goal-btn { border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
-  .split-summary { font-size: 11px; color: #6c5ce7; font-weight: 600; width: 100%; }
+  .split-goal-btn { grid-column: 1 / 4; border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; justify-self: start; }
+  .split-summary { grid-column: 1 / 4; font-size: 11px; color: #6c5ce7; font-weight: 600; }
   .split-summary:empty { display: none; }
 
   /* static category badge shown on every transaction row (click the row to recategorize) */
-  .cat-chip { font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; margin-left: auto; }
+  .cat-chip { grid-column: 3; grid-row: 2; justify-self: end; font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
   .cat-chip-uncategorized { background: #fff3e8; color: #e07b1a; }
 
   details.picker-new-form summary { font-size: 11.5px; color: #6c5ce7; font-weight: 700; padding: 6px 8px; cursor: pointer; list-style: none; }
@@ -782,6 +783,23 @@
     var parentCategory = row.closest('details.category');
     var uncategorized = !parentCategory || parentCategory.id === 'cat-uncategorized';
     row.insertAdjacentHTML('beforeend', '<span class="cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : '') + '">' + shortLabelFor(parentCategory) + '</span>');
+    refreshAllCategoryTotals();
+  }
+
+  // Recalculates and displays the total spending for every named category.
+  function refreshAllCategoryTotals() {
+    document.querySelectorAll('details.category').forEach(function(catEl) {
+      if (catEl.id === 'cat-uncategorized') return;
+      var total = 0;
+      catEl.querySelectorAll('.bill-row').forEach(function(row) {
+        if (!isRealBillRow(row)) return;
+        var amtEl = row.querySelector('.bill-amount');
+        if (!amtEl) return;
+        total += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
+      });
+      var display = catEl.querySelector(':scope > summary .cat-amount');
+      if (display) display.textContent = formatMoney(total);
+    });
   }
 
   function refreshAllRowBadges() {
@@ -1817,8 +1835,8 @@
 
       var dateEl = document.createElement('div'); dateEl.className = 'bill-date'; dateEl.textContent = t.date;
       var descEl = document.createElement('div'); descEl.className = 'bill-merchant'; descEl.textContent = t.desc;
-      var amtEl = document.createElement('div'); amtEl.className = 'bill-amount';
-      amtEl.textContent = (t.amount < 0 ? '-' : '') + formatMoney(Math.abs(t.amount));
+      var amtEl = document.createElement('div'); amtEl.className = 'bill-amount' + (t.amount < 0 ? ' negative' : '');
+      amtEl.textContent = (t.amount < 0 ? '-' : '+') + formatMoney(Math.abs(t.amount));
 
       row.appendChild(dateEl); row.appendChild(descEl); row.appendChild(amtEl);
 
