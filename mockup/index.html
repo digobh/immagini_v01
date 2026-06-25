@@ -40,12 +40,18 @@
   .ai-bubble .msg { margin-top: 4px; line-height: 1.4; }
 
   /* ---------- Safe-to-spend projection ---------- */
-  details.safe-spend-card { background: #fff; border-radius: 16px; margin: 14px 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
-  .safe-spend-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
-  .safe-spend-label { font-size: 11.5px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  details.safe-spend-card { background: #fff; border-radius: 16px; margin: 14px 16px 0; box-shadow: 0 4px 18px rgba(108,92,231,0.13); overflow: hidden; border: 1.5px solid #ebe8ff; }
+  .safe-spend-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 10px; }
+  .safe-spend-label { font-size: 11.5px; color: #6c5ce7; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
   .safe-spend-amount { font-size: 25px; font-weight: 800; color: #1a1a1a; margin-top: 2px; }
   .safe-spend-sub { font-size: 11.5px; color: #999; margin-top: 2px; }
   details.safe-spend-card[open] > summary .chevron { transform: rotate(180deg); }
+  .safe-spend-bar-wrap { padding: 2px 16px 14px; }
+  .safe-spend-bar-track { background: #f0f0f0; border-radius: 8px; height: 8px; overflow: hidden; }
+  .safe-spend-bar-fill { height: 100%; border-radius: 8px; width: 100%; transition: width .5s ease, background-color .5s ease; }
+  .safe-spend-bar-meta { display: flex; justify-content: space-between; margin-top: 5px; }
+  .safe-spend-spent { font-size: 11px; color: #aaa; }
+  .safe-spend-pct { font-size: 11px; color: #aaa; }
   .safe-spend-breakdown { border-top: 1px solid #f0f0f0; padding: 10px 16px 14px; }
   .breakdown-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 5px 0; color: #555; }
   .breakdown-row[hidden] { display: none; }
@@ -333,20 +339,39 @@
 
   /* ---------- Category icon picker (in Manage categories) ---------- */
   .manage-icon-label { font-size: 10.5px; color: #999; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; margin: 8px 0 6px; }
-  .manage-icon-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-bottom: 10px; }
-  .manage-icon-btn { width: 100%; aspect-ratio: 1; border: 1.5px solid #eee; border-radius: 8px; background: #f7f8fc; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-  .manage-icon-btn svg { width: 15px; height: 15px; fill: none; stroke: #666; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-  .manage-icon-btn.active { border-color: #6c5ce7; background: #eef0ff; }
-  .manage-icon-btn.active svg { stroke: #6c5ce7; }
+  .manage-icon-current-btn { display: flex; align-items: center; gap: 10px; width: 100%; border: 1.5px solid #e8e4ff; border-radius: 12px; background: #f7f6ff; cursor: pointer; padding: 10px 12px; margin-bottom: 12px; }
+  .manage-icon-current-btn svg { width: 22px; height: 22px; fill: none; stroke: #6c5ce7; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .manage-icon-current-btn span { font-size: 12.5px; color: #6c5ce7; font-weight: 600; }
+  /* Icon picker popup */
+  .icon-picker-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; align-items: flex-end; }
+  .icon-picker-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); }
+  .icon-picker-sheet { position: relative; width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 0 20px; }
+  .icon-picker-title { padding: 4px 16px 10px; font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .icon-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px 8px; }
+  .icon-picker-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; border: 1.5px solid #eee; border-radius: 12px; background: #f7f8fc; cursor: pointer; padding: 12px 4px 10px; }
+  .icon-picker-btn svg { width: 22px; height: 22px; fill: none; stroke: #666; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-picker-btn span { font-size: 10px; color: #999; text-transform: capitalize; }
+  .icon-picker-btn.active { border-color: #6c5ce7; background: #eef0ff; }
+  .icon-picker-btn.active svg { stroke: #6c5ce7; }
 
   /* ---------- Settings page ---------- */
-  .settings-section-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; margin: 4px 0 12px; }
+  .settings-section-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; margin: 4px 0 10px; }
   .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
   .theme-swatch { border: 2.5px solid transparent; border-radius: 16px; overflow: hidden; cursor: pointer; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-  .theme-swatch.active { border-color: #1a1a1a; }
-  .theme-swatch-preview { height: 60px; display: flex; align-items: flex-end; padding: 8px; }
-  .theme-swatch-label { background: rgba(0,0,0,0.3); color: #fff; font-size: 10.5px; font-weight: 700; border-radius: 6px; padding: 2px 6px; }
-  .theme-swatch-name { font-size: 13px; font-weight: 700; color: #1a1a1a; padding: 8px 10px 10px; }
+  .theme-swatch.active { border-color: #6c5ce7; box-shadow: 0 0 0 3px rgba(108,92,231,0.18); }
+  .theme-swatch-preview { height: 52px; display: flex; align-items: flex-end; padding: 8px; }
+  .theme-swatch-body { height: 16px; }
+  .theme-swatch-label { background: rgba(255,255,255,0.88); color: #333; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 2px 6px; }
+  .theme-swatch-name { font-size: 13px; font-weight: 700; color: #1a1a1a; padding: 7px 10px 10px; }
+  /* Settings list rows */
+  .settings-list { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 8px; }
+  .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; font-size: 13.5px; color: #1a1a1a; border-bottom: 1px solid #f5f5f7; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-value { color: #999; font-size: 13px; }
+  .toggle-track { display: inline-flex; align-items: center; width: 38px; height: 22px; border-radius: 11px; background: #ccc; padding: 2px; cursor: pointer; transition: background .2s; }
+  .toggle-track.active { background: #6c5ce7; }
+  .toggle-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle-track.active .toggle-thumb { transform: translateX(16px); }
 
   /* ---------- Theme: Ocean (teal) ---------- */
   .phone.theme-ocean .header, .phone.theme-ocean .manage-header, .phone.theme-ocean .subpage-header { background: linear-gradient(135deg,#00b894,#00cec9); }
@@ -365,6 +390,15 @@
   .phone.theme-ocean .manage-icon-btn.active svg { stroke: #00b894; }
   .phone.theme-ocean .manage-add-sub, .phone.theme-ocean .manage-add-category { color: #00b894; }
   .phone.theme-ocean .manage-add-category { border-color: #b3f0e6; }
+  .phone.theme-ocean .safe-spend-label { color: #00b894; }
+  .phone.theme-ocean details.safe-spend-card { border-color: #b3f0e6; box-shadow: 0 4px 18px rgba(0,184,148,0.12); }
+  .phone.theme-ocean .manage-icon-current-btn { border-color: #b3f0e6; background: #f0fff9; }
+  .phone.theme-ocean .manage-icon-current-btn svg { stroke: #00b894; }
+  .phone.theme-ocean .manage-icon-current-btn span { color: #00b894; }
+  .phone.theme-ocean .icon-picker-btn.active { border-color: #00b894; background: #e0fff9; }
+  .phone.theme-ocean .icon-picker-btn.active svg { stroke: #00b894; }
+  .phone.theme-ocean .theme-swatch.active { border-color: #00b894; box-shadow: 0 0 0 3px rgba(0,184,148,0.18); }
+  .phone.theme-ocean .toggle-track.active { background: #00b894; }
 
   /* ---------- Theme: Sunset (warm orange) ---------- */
   .phone.theme-sunset .header, .phone.theme-sunset .manage-header, .phone.theme-sunset .subpage-header { background: linear-gradient(135deg,#e17055,#fdcb6e); }
@@ -383,6 +417,15 @@
   .phone.theme-sunset .manage-icon-btn.active svg { stroke: #e17055; }
   .phone.theme-sunset .manage-add-sub, .phone.theme-sunset .manage-add-category { color: #e17055; }
   .phone.theme-sunset .manage-add-category { border-color: #fbd2c4; }
+  .phone.theme-sunset .safe-spend-label { color: #e17055; }
+  .phone.theme-sunset details.safe-spend-card { border-color: #fbd2c4; box-shadow: 0 4px 18px rgba(225,112,85,0.12); }
+  .phone.theme-sunset .manage-icon-current-btn { border-color: #fbd2c4; background: #fff5f2; }
+  .phone.theme-sunset .manage-icon-current-btn svg { stroke: #e17055; }
+  .phone.theme-sunset .manage-icon-current-btn span { color: #e17055; }
+  .phone.theme-sunset .icon-picker-btn.active { border-color: #e17055; background: #fff0ea; }
+  .phone.theme-sunset .icon-picker-btn.active svg { stroke: #e17055; }
+  .phone.theme-sunset .theme-swatch.active { border-color: #e17055; box-shadow: 0 0 0 3px rgba(225,112,85,0.18); }
+  .phone.theme-sunset .toggle-track.active { background: #e17055; }
 
   /* ---------- Theme: Dark ---------- */
   .phone.theme-dark { background: #12121e; }
@@ -443,6 +486,27 @@
   .phone.theme-dark .manage-icon-btn.active { border-color: #a29bfe; background: #2d2b55; }
   .phone.theme-dark .manage-icon-btn.active svg { stroke: #a29bfe; }
   .phone.theme-dark .subpage-add-btn, .phone.theme-dark .manage-add-category { border-color: #2a2838; color: #a29bfe; }
+  .phone.theme-dark .safe-spend-label { color: #a29bfe; }
+  .phone.theme-dark details.safe-spend-card { border-color: #2a2838; box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
+  .phone.theme-dark .safe-spend-bar-track { background: #2a2838; }
+  .phone.theme-dark .safe-spend-spent, .phone.theme-dark .safe-spend-pct { color: #3a3850; }
+  .phone.theme-dark .manage-icon-current-btn { background: #2a2838; border-color: #3a3850; }
+  .phone.theme-dark .manage-icon-current-btn svg { stroke: #a29bfe; }
+  .phone.theme-dark .manage-icon-current-btn span { color: #a29bfe; }
+  .phone.theme-dark .icon-picker-sheet { background: #1e1d30; }
+  .phone.theme-dark .icon-picker-title { color: #e8e6ff; }
+  .phone.theme-dark .icon-picker-btn { background: #2a2838; border-color: #3a3850; }
+  .phone.theme-dark .icon-picker-btn svg { stroke: #a29bfe; }
+  .phone.theme-dark .icon-picker-btn span { color: #3a3850; }
+  .phone.theme-dark .icon-picker-btn.active { border-color: #a29bfe; background: #1f1d3a; }
+  .phone.theme-dark .settings-list { background: #1e1d30; }
+  .phone.theme-dark .settings-row { color: #e8e6ff; border-bottom-color: #2a2838; }
+  .phone.theme-dark .settings-value { color: #555; }
+  .phone.theme-dark .theme-swatch { background: #1e1d30; }
+  .phone.theme-dark .theme-swatch-name { color: #e8e6ff; }
+  .phone.theme-dark .theme-swatch.active { border-color: #a29bfe; box-shadow: 0 0 0 3px rgba(162,155,254,0.2); }
+  .phone.theme-dark .toggle-track { background: #3a3850; }
+  .phone.theme-dark .toggle-track.active { background: #a29bfe; }
   .phone.theme-dark .goal-card, .phone.theme-dark .budget-card, .phone.theme-dark .insight-card { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
   .phone.theme-dark .goal-top .label, .phone.theme-dark .insight-card h3 { color: #e8e6ff; }
   .phone.theme-dark .goal-top .value { color: #a29bfe; }
@@ -519,14 +583,25 @@
       </div>
 
       <details class="safe-spend-card">
-        <summary><div class="safe-spend-row">
-          <div>
-            <div class="safe-spend-label">Safe to spend</div>
-            <div class="safe-spend-amount">$2,004.11</div>
-            <div class="safe-spend-sub">After $336.07 in upcoming recurring bills</div>
+        <summary>
+          <div class="safe-spend-row">
+            <div>
+              <div class="safe-spend-label">Safe to spend</div>
+              <div class="safe-spend-amount" id="safe-spend-amount">$2,004.11</div>
+              <div class="safe-spend-sub">After $336.07 in upcoming recurring bills</div>
+            </div>
+            <div class="chevron">▾</div>
           </div>
-          <div class="chevron">▾</div>
-        </div></summary>
+          <div class="safe-spend-bar-wrap">
+            <div class="safe-spend-bar-track">
+              <div class="safe-spend-bar-fill" id="safe-spend-bar" style="width:100%;background-color:#27ae60;"></div>
+            </div>
+            <div class="safe-spend-bar-meta">
+              <span class="safe-spend-spent" id="safe-spend-spent"></span>
+              <span class="safe-spend-pct" id="safe-spend-pct">100% remaining</span>
+            </div>
+          </div>
+        </summary>
         <div class="safe-spend-breakdown">
           <div class="breakdown-row"><span>Current balance</span><span>$2,340.18</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>AGL Electricity &middot; 3 Jul</span><span>-$142.10</span></div>
@@ -806,6 +881,16 @@
       <div class="subpage-body" id="settings-body"></div>
     </div>
 
+    <div class="icon-picker-overlay" id="icon-picker-modal" hidden>
+      <div class="icon-picker-backdrop" data-action="close-icon-picker"></div>
+      <div class="icon-picker-sheet">
+        <div class="modal-handle"></div>
+        <div class="icon-picker-title">Choose icon</div>
+        <div class="icon-picker-grid" id="icon-picker-grid"></div>
+        <button type="button" class="modal-close" data-action="close-icon-picker">Done</button>
+      </div>
+    </div>
+
     <div class="modal-overlay" id="categorize-modal" hidden>
       <div class="modal-backdrop" data-action="close-modal"></div>
       <div class="modal-sheet">
@@ -870,6 +955,29 @@
   // Transfers is a movement of money, not spending — excluded from budgets,
   // the Budget page and the Insights "vs last month" / compare-chart totals
   var EXCLUDE_FROM_SPENDING = ['cat-transfer'];
+
+  // base safe-to-spend value (balance minus upcoming bills)
+  var SAFE_TO_SPEND_BASE = 2004.11;
+
+  function renderSafeSpendBar() {
+    var totalSpent = 0;
+    CATEGORIES.forEach(function(c) {
+      if (EXCLUDE_FROM_SPENDING.indexOf(c.id) >= 0) return;
+      totalSpent += getCategorySpent(c.id);
+    });
+    var remaining = Math.max(0, SAFE_TO_SPEND_BASE - totalSpent);
+    var pct = SAFE_TO_SPEND_BASE > 0 ? (remaining / SAFE_TO_SPEND_BASE) * 100 : 0;
+    var barEl = document.getElementById('safe-spend-bar');
+    if (!barEl) return;
+    barEl.style.width = pct.toFixed(1) + '%';
+    barEl.style.backgroundColor = pct > 60 ? '#27ae60' : pct > 30 ? '#f39c12' : '#e74c3c';
+    var amtEl = document.getElementById('safe-spend-amount');
+    if (amtEl) amtEl.textContent = formatMoney(remaining);
+    var spentEl = document.getElementById('safe-spend-spent');
+    if (spentEl) spentEl.textContent = formatMoney(totalSpent) + ' spent';
+    var pctEl = document.getElementById('safe-spend-pct');
+    if (pctEl) pctEl.textContent = pct.toFixed(0) + '% remaining';
+  }
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (ch) {
@@ -944,7 +1052,7 @@
   var compareChartType = 'line';
 
   // ---- static navbar / overlay-page plumbing ----
-  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page'];
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page', 'icon-picker-modal'];
 
   function hideAllOverlays() {
     OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
@@ -1000,6 +1108,7 @@
       var display = catEl.querySelector(':scope > summary .cat-amount');
       if (display) display.textContent = formatMoney(total);
     });
+    renderSafeSpendBar();
   }
 
   function refreshAllRowBadges() {
@@ -1505,6 +1614,7 @@
       return;
     }
     if (e.target.closest('[data-action="close-manage"]')) {
+      closeIconPickerModal();
       hideAllOverlays();
       setActiveNav('home');
       return;
@@ -1677,6 +1787,16 @@
       return;
     }
 
+    var openPickerBtn = e.target.closest('[data-action="open-icon-picker"]');
+    if (openPickerBtn) {
+      openIconPickerModal(openPickerBtn.dataset.catId);
+      return;
+    }
+    if (e.target.closest('[data-action="close-icon-picker"]')) {
+      closeIconPickerModal();
+      return;
+    }
+
     var pickIconBtn = e.target.closest('[data-action="pick-cat-icon"]');
     if (pickIconBtn) {
       var piCatId = pickIconBtn.dataset.catId;
@@ -1691,13 +1811,17 @@
         var piSvg = piCatEl.querySelector(':scope > summary .icon-box svg');
         if (piSvg) piSvg.innerHTML = piIcon.svg;
       }
-      // update active state in manage page without full re-render
-      var piCard = pickIconBtn.closest('.manage-card');
-      if (piCard) {
-        piCard.querySelectorAll('.manage-icon-btn').forEach(function(b) {
-          b.classList.toggle('active', b.dataset.iconId === piIconId);
-        });
+      // update active state in picker modal
+      document.querySelectorAll('#icon-picker-grid .icon-picker-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.iconId === piIconId);
+      });
+      // update compact button in manage card
+      var manageBtn = document.querySelector('.manage-icon-current-btn[data-cat-id="' + piCatId + '"]');
+      if (manageBtn) {
+        var mSvg = manageBtn.querySelector('svg');
+        if (mSvg) mSvg.innerHTML = piIcon.svg;
       }
+      closeIconPickerModal();
       return;
     }
 
@@ -2168,14 +2292,13 @@
       html += '<div class="manage-card">' +
         '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">';
 
-      // icon picker
-      html += '<div class="manage-icon-label">Category icon</div><div class="manage-icon-grid">';
-      ICON_LIBRARY.forEach(function(ic) {
-        var active = (c.iconSvg || '') === ic.svg;
-        html += '<button type="button" class="manage-icon-btn' + (active ? ' active' : '') + '" data-action="pick-cat-icon" data-cat-id="' + c.id + '" data-icon-id="' + ic.id + '" title="' + ic.id.replace('icon-','') + '">' +
-          '<svg viewBox="0 0 24 24">' + ic.svg + '</svg></button>';
-      });
-      html += '</div>';
+      // icon picker — compact button, full grid opens in popup
+      var activeIconObj = ICON_LIBRARY.filter(function(ic){ return (c.iconSvg || '') === ic.svg; })[0];
+      var currentIconSvg = activeIconObj ? activeIconObj.svg : (c.iconSvg || ICON_LIBRARY[0].svg);
+      html += '<div class="manage-icon-label">Category icon</div>' +
+        '<button type="button" class="manage-icon-current-btn" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
+        '<svg viewBox="0 0 24 24">' + currentIconSvg + '</svg>' +
+        '<span>Change icon ›</span></button>';
 
       subs.forEach(function (s, i) {
         var keywords = kwLists[i] || [];
@@ -2198,6 +2321,28 @@
     document.getElementById('manage-body').innerHTML = html;
   }
 
+  // ---- icon picker modal ----
+  var iconPickerCatId = null;
+
+  function openIconPickerModal(catId) {
+    iconPickerCatId = catId;
+    var cat = CATEGORIES.filter(function(c){ return c.id === catId; })[0];
+    var html = '';
+    ICON_LIBRARY.forEach(function(ic) {
+      var active = cat && (cat.iconSvg || '') === ic.svg;
+      html += '<button type="button" class="icon-picker-btn' + (active ? ' active' : '') + '" data-action="pick-cat-icon" data-cat-id="' + catId + '" data-icon-id="' + ic.id + '">' +
+        '<svg viewBox="0 0 24 24">' + ic.svg + '</svg>' +
+        '<span>' + ic.id.replace('icon-','') + '</span></button>';
+    });
+    document.getElementById('icon-picker-grid').innerHTML = html;
+    document.getElementById('icon-picker-modal').hidden = false;
+  }
+
+  function closeIconPickerModal() {
+    document.getElementById('icon-picker-modal').hidden = true;
+    iconPickerCatId = null;
+  }
+
   // ---- settings page ----
   var currentTheme = 'light';
 
@@ -2209,22 +2354,36 @@
 
   function renderSettingsPage() {
     var themes = [
-      { id: 'light',  name: 'Light',  gradFrom: '#6c5ce7', gradTo: '#a29bfe' },
-      { id: 'dark',   name: 'Dark',   gradFrom: '#1f1d3a', gradTo: '#2d2b55' },
-      { id: 'ocean',  name: 'Ocean',  gradFrom: '#00b894', gradTo: '#00cec9' },
-      { id: 'sunset', name: 'Sunset', gradFrom: '#e17055', gradTo: '#fdcb6e' }
+      { id: 'light',  name: 'Light',  grad: ['#6c5ce7','#a29bfe'], bodyBg: '#f3f1ff' },
+      { id: 'dark',   name: 'Dark',   grad: ['#1f1d3a','#2d2b55'], bodyBg: '#12121e' },
+      { id: 'ocean',  name: 'Ocean',  grad: ['#00b894','#00cec9'], bodyBg: '#e8fffb' },
+      { id: 'sunset', name: 'Sunset', grad: ['#e17055','#fdcb6e'], bodyBg: '#fff3ee' }
     ];
-    var html = '<div class="settings-section-label">Color theme</div>' +
-      '<div class="theme-grid">';
+    var html = '<div class="settings-section-label">Color theme</div><div class="theme-grid">';
     themes.forEach(function(t) {
       var isActive = currentTheme === t.id;
       html += '<div class="theme-swatch' + (isActive ? ' active' : '') + '" data-action="apply-theme" data-theme="' + t.id + '">' +
-        '<div class="theme-swatch-preview" style="background:linear-gradient(135deg,' + t.gradFrom + ',' + t.gradTo + ');">' +
-        '<span class="theme-swatch-label">' + (isActive ? '✓ Active' : '') + '</span></div>' +
-        '<div class="theme-swatch-name">' + t.name + '</div>' +
-        '</div>';
+        '<div class="theme-swatch-preview" style="background:linear-gradient(135deg,' + t.grad[0] + ',' + t.grad[1] + ');">' +
+        (isActive ? '<span class="theme-swatch-label">✓ Active</span>' : '') + '</div>' +
+        '<div class="theme-swatch-body" style="background:' + t.bodyBg + ';"></div>' +
+        '<div class="theme-swatch-name">' + t.name + '</div></div>';
     });
     html += '</div>';
+
+    html += '<div class="settings-section-label" style="margin-top:8px;">Appearance</div>';
+    html += '<div class="settings-list">' +
+      '<div class="settings-row"><span>Currency</span><span class="settings-value">AUD ($)</span></div>' +
+      '<div class="settings-row"><span>Date format</span><span class="settings-value">DD / MM / YYYY</span></div>' +
+      '<div class="settings-row"><span>Show cents</span><span class="settings-value"><span class="toggle-track active"><span class="toggle-thumb"></span></span></span></div>' +
+      '</div>';
+
+    html += '<div class="settings-section-label" style="margin-top:8px;">About</div>';
+    html += '<div class="settings-list">' +
+      '<div class="settings-row"><span>App</span><span class="settings-value">Immagini Finance</span></div>' +
+      '<div class="settings-row"><span>Version</span><span class="settings-value">0.1 (mockup)</span></div>' +
+      '<div class="settings-row"><span>Region</span><span class="settings-value">Australia 🇦🇺</span></div>' +
+      '</div>';
+
     document.getElementById('settings-body').innerHTML = html;
   }
 
@@ -2528,9 +2687,10 @@
       if (match) upcomingTotal += Math.abs(parseFloat(row.querySelector('span:last-child').textContent.replace(/[^0-9.-]/g, '')));
     });
     var safeAmount = balance - upcomingTotal;
-    document.querySelector('.safe-spend-amount').textContent = formatMoney(safeAmount);
+    SAFE_TO_SPEND_BASE = safeAmount;
     document.querySelector('.safe-spend-sub').textContent = 'After ' + formatMoney(upcomingTotal) + ' in upcoming recurring bills';
     document.querySelector('.breakdown-row.total span:last-child').textContent = formatMoney(safeAmount);
+    renderSafeSpendBar();
 
     var isCurrent = monthIndex === CURRENT_DATA_MONTH_INDEX;
     document.getElementById('month-data-sections').hidden = !isCurrent;
@@ -2541,6 +2701,7 @@
   refreshAllDateGroupHeaders();
   renderMonth();
   renderCategoryBudgetLines();
+  renderSafeSpendBar();
   refreshTransferRowBadge('transfer-1');
   wireImportFileInput();
   wireImportDropZone();
