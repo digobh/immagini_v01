@@ -104,7 +104,7 @@
 
   .bill-row { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; padding: 10px 16px; font-size: 12.5px; border-top: 1px solid #f7f7f9; cursor: pointer; }
   .bill-row:first-child { border-top: none; }
-  .date-group-header { font-size: 11px; font-weight: 700; color: #bbb; padding: 10px 16px 3px; letter-spacing: .04em; background: #f7f8fc; border-top: 1px solid #f0f0f0; }
+  .date-group-header { font-size: 10.5px; font-weight: 700; color: #6c5ce7; padding: 8px 16px 6px; letter-spacing: .05em; background: #efecff; border-top: 1.5px solid #e6e1ff; text-transform: uppercase; }
   .date-group-header:first-child { border-top: none; }
   .date-group-header + .bill-row { border-top: none; }
   .bill-date { display: none; }
@@ -115,6 +115,50 @@
   .split-goal-btn { grid-column: 1 / 3; border: none; background: #eef0ff; color: #6c5ce7; border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; justify-self: start; }
   .split-summary { grid-column: 1 / 3; font-size: 11px; color: #6c5ce7; font-weight: 600; }
   .split-summary:empty { display: none; }
+
+  /* ---------- Per-category transaction row tinting ---------- */
+  #cat-bills .bill-row { background: #fff8f4; }
+  #cat-subs .bill-row { background: #f6f6ff; }
+  #cat-dine .bill-row { background: #fff5f5; }
+  #cat-transport .bill-row { background: #f3fdf7; }
+  #cat-uncategorized .bill-row { background: #fffaf2; }
+
+  /* ---------- Transaction search / filter bar ---------- */
+  .txn-filter-wrap { padding: 0 0 10px; }
+  .txn-search-row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .txn-search-box { flex: 1; display: flex; align-items: center; background: #fff; border: 1.5px solid #eee; border-radius: 12px; padding: 0 10px; gap: 7px; height: 38px; }
+  .txn-search-box:focus-within { border-color: #a29bfe; }
+  .txn-search-icon { width: 14px; height: 14px; fill: none; stroke: #bbb; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .txn-search-input { flex: 1; border: none; outline: none; font-size: 13px; color: #333; background: transparent; min-width: 0; }
+  .txn-search-input::placeholder { color: #ccc; }
+  .txn-clear-btn { border: none; background: none; color: #ccc; font-size: 14px; cursor: pointer; padding: 0 2px; line-height: 1; }
+  .txn-filter-btn { background: #fff; border: 1.5px solid #eee; border-radius: 12px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; padding: 0; }
+  .txn-filter-btn svg { width: 15px; height: 15px; fill: none; stroke: #aaa; stroke-width: 2.2; stroke-linecap: round; }
+  .txn-filter-btn.has-filter { border-color: #6c5ce7; background: #f3f0ff; }
+  .txn-filter-btn.has-filter svg { stroke: #6c5ce7; }
+  .txn-chips { display: flex; flex-wrap: wrap; gap: 5px; padding-bottom: 2px; }
+  .txn-chips[hidden] { display: none; }
+  .txn-chip { display: inline-flex; align-items: center; gap: 4px; background: #eef0ff; color: #6c5ce7; font-size: 11px; font-weight: 600; padding: 4px 8px 4px 10px; border-radius: 20px; }
+  .txn-chip button { border: none; background: none; color: #a29bfe; font-size: 13px; cursor: pointer; padding: 0; line-height: 1; }
+  .txn-no-results { text-align: center; padding: 32px 0; color: #bbb; font-size: 13px; }
+  .txn-no-results[hidden] { display: none; }
+
+  /* ---------- Filter panel (bottom sheet) ---------- */
+  .filter-sheet-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; align-items: flex-end; }
+  .filter-sheet-overlay[hidden] { display: none; }
+  .filter-sheet-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); }
+  .filter-sheet { position: relative; width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 0 24px; }
+  .filter-sheet-title { padding: 4px 16px 14px; font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .filter-section-lbl { font-size: 10.5px; color: #999; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; padding: 0 16px 8px; }
+  .filter-cat-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 16px 16px; }
+  .filter-cat-chip { border: 1.5px solid #eee; border-radius: 20px; background: #f7f8fc; color: #555; font-size: 12.5px; font-weight: 600; padding: 6px 14px; cursor: pointer; }
+  .filter-cat-chip.active { border-color: #6c5ce7; background: #eef0ff; color: #6c5ce7; }
+  .filter-date-row { display: flex; align-items: center; gap: 8px; padding: 0 16px 16px; }
+  .filter-date-input { flex: 1; border: 1.5px solid #eee; border-radius: 10px; padding: 8px 10px; font-size: 12px; color: #333; background: #f7f8fc; outline: none; min-width: 0; }
+  .filter-date-input:focus { border-color: #a29bfe; }
+  .filter-date-sep { color: #ccc; font-size: 14px; flex-shrink: 0; }
+  .filter-apply-btn { display: block; width: calc(100% - 32px); margin: 4px 16px 8px; border: none; background: #6c5ce7; color: #fff; border-radius: 14px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .filter-clear-btn { display: block; width: calc(100% - 32px); margin: 0 16px; border: none; background: none; color: #aaa; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px; text-align: center; }
 
   /* static category badge shown on every transaction row (click the row to recategorize) */
   .cat-chip { grid-column: 2; grid-row: 2; justify-self: end; font-size: 10.5px; background: #f5f5f8; color: #555; border-radius: 8px; padding: 3px 7px; font-weight: 700; white-space: nowrap; }
@@ -391,6 +435,14 @@
   .phone.theme-ocean .manage-icon-btn.active svg { stroke: #00b894; }
   .phone.theme-ocean .manage-add-sub, .phone.theme-ocean .manage-add-category { color: #00b894; }
   .phone.theme-ocean .manage-add-category { border-color: #b3f0e6; }
+  .phone.theme-ocean .date-group-header { background: #e0fff9; color: #00b894; border-top-color: #b3f0e6; }
+  .phone.theme-ocean .txn-search-box:focus-within { border-color: #00b894; }
+  .phone.theme-ocean .txn-chip { background: #e0fff9; color: #00b894; }
+  .phone.theme-ocean .txn-chip button { color: #00b894; }
+  .phone.theme-ocean .txn-filter-btn.has-filter { border-color: #00b894; background: #e0fff9; }
+  .phone.theme-ocean .txn-filter-btn.has-filter svg { stroke: #00b894; }
+  .phone.theme-ocean .filter-cat-chip.active { border-color: #00b894; background: #e0fff9; color: #00b894; }
+  .phone.theme-ocean .filter-apply-btn { background: #00b894; }
   .phone.theme-ocean .safe-spend-label { color: #00b894; }
   .phone.theme-ocean details.safe-spend-card { border-color: #b3f0e6; box-shadow: 0 4px 18px rgba(0,184,148,0.12); }
   .phone.theme-ocean .manage-icon-current-btn { border-color: #b3f0e6; background: #f0fff9; }
@@ -418,6 +470,14 @@
   .phone.theme-sunset .manage-icon-btn.active svg { stroke: #e17055; }
   .phone.theme-sunset .manage-add-sub, .phone.theme-sunset .manage-add-category { color: #e17055; }
   .phone.theme-sunset .manage-add-category { border-color: #fbd2c4; }
+  .phone.theme-sunset .date-group-header { background: #fff0ea; color: #e17055; border-top-color: #fbd2c4; }
+  .phone.theme-sunset .txn-search-box:focus-within { border-color: #e17055; }
+  .phone.theme-sunset .txn-chip { background: #fff0ea; color: #e17055; }
+  .phone.theme-sunset .txn-chip button { color: #e17055; }
+  .phone.theme-sunset .txn-filter-btn.has-filter { border-color: #e17055; background: #fff0ea; }
+  .phone.theme-sunset .txn-filter-btn.has-filter svg { stroke: #e17055; }
+  .phone.theme-sunset .filter-cat-chip.active { border-color: #e17055; background: #fff0ea; color: #e17055; }
+  .phone.theme-sunset .filter-apply-btn { background: #e17055; }
   .phone.theme-sunset .safe-spend-label { color: #e17055; }
   .phone.theme-sunset details.safe-spend-card { border-color: #fbd2c4; box-shadow: 0 4px 18px rgba(225,112,85,0.12); }
   .phone.theme-sunset .manage-icon-current-btn { border-color: #fbd2c4; background: #fff5f2; }
@@ -482,6 +542,21 @@
   .phone.theme-dark .manage-sub-row input, .phone.theme-dark .keyword-add-row input { border-color: #2a2838; background: #25234a; color: #c8c5f0; }
   .phone.theme-dark .manage-keywords-label { color: #555; }
   .phone.theme-dark .keyword-tag { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .date-group-header { background: #1f1d3a; color: #7a72e8; border-top-color: #2d2b55; }
+  .phone.theme-dark #cat-bills .bill-row { background: #201c1c; }
+  .phone.theme-dark #cat-subs .bill-row { background: #1d1c2c; }
+  .phone.theme-dark #cat-dine .bill-row { background: #211820; }
+  .phone.theme-dark #cat-transport .bill-row { background: #181e1c; }
+  .phone.theme-dark #cat-uncategorized .bill-row { background: #201c17; }
+  .phone.theme-dark .txn-search-box { background: #1e1d30; border-color: #2a2838; }
+  .phone.theme-dark .txn-search-input { color: #e8e6ff; }
+  .phone.theme-dark .txn-filter-btn { background: #1e1d30; border-color: #2a2838; }
+  .phone.theme-dark .txn-chip { background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .filter-sheet { background: #1e1d30; }
+  .phone.theme-dark .filter-sheet-title { color: #e8e6ff; }
+  .phone.theme-dark .filter-cat-chip { background: #2a2838; border-color: #3a3850; color: #888; }
+  .phone.theme-dark .filter-cat-chip.active { border-color: #a29bfe; background: #2d2b55; color: #a29bfe; }
+  .phone.theme-dark .filter-date-input { background: #2a2838; border-color: #3a3850; color: #e8e6ff; }
   .phone.theme-dark .manage-icon-btn { border-color: #2a2838; background: #25234a; }
   .phone.theme-dark .manage-icon-btn svg { stroke: #888; }
   .phone.theme-dark .manage-icon-btn.active { border-color: #a29bfe; background: #2d2b55; }
@@ -619,26 +694,27 @@
       <div id="month-data-sections">
       <div class="section">
         <h2>This month, by category</h2>
-        <div class="pie-card">
-          <svg viewBox="0 0 200 200">
-            <a href="#cat-bills" class="jump-link" data-target="cat-bills"><path class="pie-slice" fill="#ff8a3d" d="M 100,10 A 90,90 0 0,1 131.82,184.21 L 119.44,151.46 A 55,55 0 0,0 100,45 Z"/></a>
-            <a href="#cat-subs" class="jump-link" data-target="cat-subs"><path class="pie-slice" fill="#5b8def" d="M 131.82,184.21 A 90,90 0 0,1 96.23,189.92 L 97.70,154.95 A 55,55 0 0,0 119.44,151.46 Z"/></a>
-            <a href="#cat-dine" class="jump-link" data-target="cat-dine"><path class="pie-slice" fill="#ff6b6b" d="M 96.23,189.92 A 90,90 0 0,1 36.95,35.78 L 61.47,60.75 A 55,55 0 0,0 97.70,154.95 Z"/></a>
-            <a href="#cat-transport" class="jump-link" data-target="cat-transport"><path class="pie-slice" fill="#2ecc71" d="M 36.95,35.78 A 90,90 0 0,1 100,10 L 100,45 A 55,55 0 0,0 61.47,60.75 Z"/></a>
-            <text x="100" y="96" class="pie-center-label">spent</text>
-            <text x="100" y="114" class="pie-center-amount">$778</text>
-          </svg>
-          <div class="legend">
-            <a href="#cat-bills" class="jump-link" data-target="cat-bills"><span class="dot" style="background:#ff8a3d;"></span>Bills &amp; Utilities <span class="pct">44%</span></a>
-            <a href="#cat-subs" class="jump-link" data-target="cat-subs"><span class="dot" style="background:#5b8def;"></span>Subscriptions <span class="pct">6%</span></a>
-            <a href="#cat-dine" class="jump-link" data-target="cat-dine"><span class="dot" style="background:#ff6b6b;"></span>Dining &amp; Takeout <span class="pct">37%</span></a>
-            <a href="#cat-transport" class="jump-link" data-target="cat-transport"><span class="dot" style="background:#2ecc71;"></span>Transport <span class="pct">12%</span></a>
-          </div>
-        </div>
+        <div class="pie-card" id="pie-card"></div>
       </div>
 
       <div class="section">
         <h2>Spending by category</h2>
+
+        <div class="txn-filter-wrap">
+          <div class="txn-search-row">
+            <div class="txn-search-box">
+              <svg class="txn-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="text" id="txn-search" class="txn-search-input" placeholder="Search transactions…" autocomplete="off">
+              <button type="button" class="txn-clear-btn" id="txn-clear-btn" data-action="clear-search" hidden>&times;</button>
+            </div>
+            <button type="button" class="txn-filter-btn" id="txn-filter-btn" data-action="open-filter-panel" title="Filter">
+              <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="8" cy="6" r="2" fill="white"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="white"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="white"/></svg>
+            </button>
+          </div>
+          <div id="txn-chips" class="txn-chips" hidden></div>
+        </div>
+
+        <div id="txn-no-results" class="txn-no-results" hidden>No transactions match your search.</div>
 
         <details class="category uncategorized-card" id="cat-uncategorized">
           <summary><div class="category-row">
@@ -882,6 +958,24 @@
       <div class="subpage-body" id="settings-body"></div>
     </div>
 
+    <div class="filter-sheet-overlay" id="filter-panel" hidden>
+      <div class="filter-sheet-backdrop" data-action="close-filter-panel"></div>
+      <div class="filter-sheet">
+        <div class="modal-handle"></div>
+        <div class="filter-sheet-title">Filter transactions</div>
+        <div class="filter-section-lbl">Categories</div>
+        <div id="filter-cats" class="filter-cat-chips"></div>
+        <div class="filter-section-lbl">Date range</div>
+        <div class="filter-date-row">
+          <input type="date" id="filter-date-from" class="filter-date-input">
+          <span class="filter-date-sep">—</span>
+          <input type="date" id="filter-date-to" class="filter-date-input">
+        </div>
+        <button type="button" class="filter-apply-btn" data-action="apply-filters">Apply filters</button>
+        <button type="button" class="filter-clear-btn" data-action="clear-filters">Clear all</button>
+      </div>
+    </div>
+
     <div class="icon-picker-overlay" id="icon-picker-modal" hidden>
       <div class="icon-picker-backdrop" data-action="close-icon-picker"></div>
       <div class="icon-picker-sheet">
@@ -1052,8 +1146,170 @@
   var compareSelectedCats = ['cat-bills', 'cat-dine'];
   var compareChartType = 'line';
 
+  // ---- dynamic pie chart ----
+  function polarToCart(cx, cy, r, deg) {
+    var rad = (deg - 90) * Math.PI / 180;
+    return { x: +(cx + r * Math.cos(rad)).toFixed(3), y: +(cy + r * Math.sin(rad)).toFixed(3) };
+  }
+  function pieDonutPath(cx, cy, outer, inner, startDeg, endDeg) {
+    var o1 = polarToCart(cx, cy, outer, startDeg), o2 = polarToCart(cx, cy, outer, endDeg);
+    var i1 = polarToCart(cx, cy, inner, startDeg), i2 = polarToCart(cx, cy, inner, endDeg);
+    var large = (endDeg - startDeg) > 180 ? 1 : 0;
+    return ['M',o1.x,o1.y,'A',outer,outer,0,large,1,o2.x,o2.y,'L',i2.x,i2.y,'A',inner,inner,0,large,0,i1.x,i1.y,'Z'].join(' ');
+  }
+  function renderPieChart() {
+    var pieCard = document.getElementById('pie-card');
+    if (!pieCard) return;
+    var totals = [];
+    CATEGORIES.forEach(function(c) {
+      if (EXCLUDE_FROM_SPENDING.indexOf(c.id) >= 0) return;
+      var amt = 0;
+      var catEl = document.getElementById(c.id);
+      if (!catEl || catEl.hidden) return;
+      catEl.querySelectorAll('.bill-row').forEach(function(row) {
+        if (!isRealBillRow(row) || row.hidden) return;
+        var amtEl = row.querySelector('.bill-amount');
+        if (amtEl) amt += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
+      });
+      if (amt > 0) totals.push({ catId: c.id, label: c.label, color: colorForCategory(c.id), amount: amt });
+    });
+    var grand = totals.reduce(function(s,t){ return s + t.amount; }, 0);
+    if (grand === 0) {
+      pieCard.innerHTML = '<div style="text-align:center;padding:28px;color:#bbb;font-size:13px;width:100%;">No transactions to display</div>';
+      return;
+    }
+    var totalLabel = grand >= 10000 ? '$' + (grand/1000).toFixed(1) + 'k' : '$' + Math.round(grand);
+    var svgHtml = '<svg viewBox="0 0 200 200">';
+    var startAngle = 0;
+    totals.forEach(function(t) {
+      var angle = (t.amount / grand) * 360;
+      if (angle < 0.5) return;
+      var endAngle = startAngle + angle;
+      svgHtml += '<a class="jump-link" data-target="' + t.catId + '"><path class="pie-slice" fill="' + t.color + '" d="' + pieDonutPath(100,100,90,55,startAngle,endAngle) + '"/></a>';
+      startAngle = endAngle;
+    });
+    svgHtml += '<text x="100" y="96" class="pie-center-label">spent</text><text x="100" y="114" class="pie-center-amount">' + totalLabel + '</text></svg>';
+    var legendHtml = '<div class="legend">';
+    totals.forEach(function(t) {
+      legendHtml += '<a class="jump-link" data-target="' + t.catId + '"><span class="dot" style="background:' + t.color + ';"></span>' + escapeHtml(t.label) + '<span class="pct">' + Math.round(t.amount/grand*100) + '%</span></a>';
+    });
+    legendHtml += '</div>';
+    pieCard.innerHTML = svgHtml + legendHtml;
+  }
+
+  // ---- transaction filter ----
+  var TXN_MONTH_NUMS = { Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12 };
+  function parseBillDate(str) {
+    var m = (str||'').match(/^(\d{1,2})\s+([A-Za-z]{3})(?:\s+(\d{4}))?$/);
+    if (m) { var mon = TXN_MONTH_NUMS[m[2]]; if (mon) return new Date(+(m[3]||2026), mon-1, +m[1]); }
+    m = (str||'').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if (m) return new Date(+m[3] < 100 ? +m[3]+2000 : +m[3], +m[2]-1, +m[1]);
+    return null;
+  }
+  var txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '' };
+
+  function applyTxnFilter() {
+    var q = txnFilter.query.toLowerCase().trim();
+    var cats = txnFilter.catIds;
+    var df = txnFilter.dateFrom ? new Date(txnFilter.dateFrom) : null;
+    var dt = txnFilter.dateTo ? new Date(txnFilter.dateTo + 'T23:59:59') : null;
+    var hasFilter = q || cats.length || df || dt;
+
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (!isRealBillRow(row)) { row.hidden = false; return; }
+      var catEl = row.closest('details.category');
+      var catId = catEl ? catEl.id : '';
+      if (cats.length && cats.indexOf(catId) < 0) { row.hidden = true; return; }
+      if (q) {
+        var text = (row.querySelector('.bill-merchant') || {}).textContent || '';
+        if (text.toLowerCase().indexOf(q) < 0) { row.hidden = true; return; }
+      }
+      if (df || dt) {
+        var dateEl = row.querySelector('.bill-date');
+        var d = parseBillDate(dateEl ? dateEl.textContent.trim() : '');
+        if (d) {
+          if (df && d < df) { row.hidden = true; return; }
+          if (dt && d > dt) { row.hidden = true; return; }
+        }
+      }
+      row.hidden = false;
+    });
+
+    // show/hide whole category blocks
+    var totalVisible = 0;
+    document.querySelectorAll('#month-data-sections details.category').forEach(function(catEl) {
+      if (hasFilter) {
+        var vis = 0;
+        catEl.querySelectorAll('.bill-row').forEach(function(r) { if (isRealBillRow(r) && !r.hidden) vis++; });
+        catEl.hidden = (vis === 0);
+        totalVisible += vis;
+      } else {
+        catEl.hidden = false;
+        totalVisible++;
+      }
+    });
+
+    var noResults = document.getElementById('txn-no-results');
+    if (noResults) noResults.hidden = (totalVisible > 0 || !hasFilter);
+
+    refreshAllDateGroupHeaders();
+    renderPieChart();
+    renderTxnChips();
+  }
+
+  function renderTxnChips() {
+    var chips = document.getElementById('txn-chips');
+    if (!chips) return;
+    var html = '';
+    if (txnFilter.query) html += '<span class="txn-chip">Search: "' + escapeHtml(txnFilter.query) + '" <button data-action="remove-chip" data-chip="query">&times;</button></span>';
+    txnFilter.catIds.forEach(function(catId) {
+      var cat = CATEGORIES.filter(function(c){ return c.id===catId; })[0];
+      html += '<span class="txn-chip">' + escapeHtml(cat ? cat.label : catId) + ' <button data-action="remove-chip" data-chip="cat|' + catId + '">&times;</button></span>';
+    });
+    if (txnFilter.dateFrom) html += '<span class="txn-chip">From: ' + txnFilter.dateFrom + ' <button data-action="remove-chip" data-chip="dateFrom">&times;</button></span>';
+    if (txnFilter.dateTo) html += '<span class="txn-chip">To: ' + txnFilter.dateTo + ' <button data-action="remove-chip" data-chip="dateTo">&times;</button></span>';
+    chips.innerHTML = html;
+    chips.hidden = !html;
+    var filterBtn = document.getElementById('txn-filter-btn');
+    if (filterBtn) filterBtn.classList.toggle('has-filter', !!(txnFilter.catIds.length || txnFilter.dateFrom || txnFilter.dateTo));
+  }
+
+  function openFilterPanel() {
+    var html = '';
+    CATEGORIES.forEach(function(c) {
+      var active = txnFilter.catIds.indexOf(c.id) >= 0;
+      html += '<button type="button" class="filter-cat-chip' + (active ? ' active' : '') + '" data-cat-id="' + c.id + '">' + escapeHtml(c.label) + '</button>';
+    });
+    document.getElementById('filter-cats').innerHTML = html;
+    document.getElementById('filter-date-from').value = txnFilter.dateFrom;
+    document.getElementById('filter-date-to').value = txnFilter.dateTo;
+    document.getElementById('filter-panel').hidden = false;
+  }
+
+  function closeFilterPanel() { document.getElementById('filter-panel').hidden = true; }
+
+  function applyFilters() {
+    var selected = [];
+    document.querySelectorAll('#filter-cats .filter-cat-chip.active').forEach(function(ch) { selected.push(ch.dataset.catId); });
+    txnFilter.catIds = selected;
+    txnFilter.dateFrom = document.getElementById('filter-date-from').value;
+    txnFilter.dateTo = document.getElementById('filter-date-to').value;
+    closeFilterPanel();
+    applyTxnFilter();
+  }
+
+  function clearAllFilters() {
+    txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '' };
+    var searchEl = document.getElementById('txn-search');
+    if (searchEl) searchEl.value = '';
+    var clearBtn = document.getElementById('txn-clear-btn');
+    if (clearBtn) clearBtn.hidden = true;
+    closeFilterPanel();
+    applyTxnFilter();
+  }
+
   // ---- static navbar / overlay-page plumbing ----
-  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page', 'icon-picker-modal'];
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page', 'icon-picker-modal', 'filter-panel'];
 
   function hideAllOverlays() {
     OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
@@ -1139,7 +1395,7 @@
   function insertDateGroupHeaders(container) {
     Array.prototype.slice.call(container.querySelectorAll(':scope > .date-group-header')).forEach(function(h) { h.remove(); });
     var rows = Array.prototype.filter.call(container.children, function(n) {
-      return n.classList && n.classList.contains('bill-row');
+      return n.classList && n.classList.contains('bill-row') && !n.hidden;
     });
     var lastDate = null;
     rows.forEach(function(row) {
@@ -1834,9 +2090,71 @@
       if (monthIndex < MONTHS.length - 1) { monthIndex++; renderMonth(); }
       return;
     }
+
+    if (e.target.closest('[data-action="clear-search"]')) {
+      var s = document.getElementById('txn-search');
+      if (s) s.value = '';
+      document.getElementById('txn-clear-btn').hidden = true;
+      txnFilter.query = '';
+      applyTxnFilter();
+      return;
+    }
+
+    if (e.target.closest('[data-action="open-filter-panel"]')) {
+      openFilterPanel();
+      return;
+    }
+    if (e.target.closest('[data-action="close-filter-panel"]')) {
+      closeFilterPanel();
+      return;
+    }
+    if (e.target.closest('[data-action="apply-filters"]')) {
+      applyFilters();
+      return;
+    }
+    if (e.target.closest('[data-action="clear-filters"]')) {
+      clearAllFilters();
+      return;
+    }
+
+    var filterCatChip = e.target.closest('#filter-panel .filter-cat-chip');
+    if (filterCatChip) {
+      filterCatChip.classList.toggle('active');
+      return;
+    }
+
+    var removeChip = e.target.closest('[data-action="remove-chip"]');
+    if (removeChip) {
+      var chipType = removeChip.dataset.chip;
+      if (chipType === 'query') {
+        txnFilter.query = '';
+        var si = document.getElementById('txn-search');
+        if (si) si.value = '';
+        document.getElementById('txn-clear-btn').hidden = true;
+      } else if (chipType === 'dateFrom') {
+        txnFilter.dateFrom = '';
+      } else if (chipType === 'dateTo') {
+        txnFilter.dateTo = '';
+      } else if (chipType && chipType.indexOf('cat|') === 0) {
+        var removeCatId = chipType.slice(4);
+        txnFilter.catIds = txnFilter.catIds.filter(function(id) { return id !== removeCatId; });
+      }
+      applyTxnFilter();
+      return;
+    }
   });
 
   document.addEventListener('input', function (e) {
+    var searchInput = e.target.closest('#txn-search');
+    if (searchInput) {
+      txnFilter.query = searchInput.value;
+      var clearBtn = document.getElementById('txn-clear-btn');
+      if (clearBtn) clearBtn.hidden = !searchInput.value;
+      clearTimeout(searchInput._timer);
+      searchInput._timer = setTimeout(function() { applyTxnFilter(); }, 200);
+      return;
+    }
+
     var nameInput = e.target.closest('.manage-cat-name');
     if (nameInput) {
       var catId = nameInput.dataset.catId;
@@ -2703,6 +3021,7 @@
   renderMonth();
   renderCategoryBudgetLines();
   renderSafeSpendBar();
+  renderPieChart();
   refreshTransferRowBadge('transfer-1');
   wireImportFileInput();
   wireImportDropZone();
