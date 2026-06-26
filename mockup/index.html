@@ -163,6 +163,24 @@
   .modal-note-input { width: 100%; border: 1.5px solid #eee; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: #333; background: #f7f8fc; outline: none; resize: vertical; font-family: inherit; line-height: 1.4; max-height: 80px; }
   .modal-note-input:focus { border-color: #a29bfe; background: #fff; }
 
+  /* ---------- Split transactions ---------- */
+  .bill-row.is-split { border-left: 3px solid #6c5ce7; padding-left: 13px; }
+  .txn-split-bar { grid-column: 1 / 3; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .txn-split-badge { font-size: 9px; font-weight: 800; background: #6c5ce7; color: #fff; border-radius: 4px; padding: 2px 5px; letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+  .txn-split-part { font-size: 10.5px; color: #6c5ce7; font-weight: 600; background: #f0eeff; border-radius: 5px; padding: 2px 6px; }
+  .cat-chip.cat-chip-split { background: #e9e6ff; color: #6c5ce7; font-weight: 800; }
+  .split-form-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .split-form-row select { flex: 1; border: 1px solid #e3e3e6; border-radius: 8px; padding: 6px 8px; font-size: 12px; background: #fff; }
+  .split-form-row input { width: 80px; border: 1px solid #e3e3e6; border-radius: 8px; padding: 6px 8px; font-size: 12px; text-align: right; }
+  .split-remaining-row { font-size: 12px; color: #999; margin: 8px 0; }
+  .modal-split-section { border-top: 1px solid #f0f0f3; padding-top: 14px; margin-bottom: 14px; }
+  .split-part-undo-card { background: #f7f5ff; border: 1.5px solid #e0dcff; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .split-part-undo-row { display: flex; justify-content: space-between; font-size: 12.5px; color: #555; padding: 3px 0; }
+  .split-part-undo-total { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #6c5ce7; border-top: 1px solid #e0dcff; margin-top: 5px; padding-top: 5px; }
+
+  /* ---------- Tax export button ---------- */
+  .tax-export-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; background: #18a558; color: #fff; border: none; border-radius: 10px; padding: 9px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+
   /* ---------- Insights page filter bar ---------- */
   .insights-filter-wrap { padding: 10px 16px 6px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
   .insights-filter-wrap .txn-search-row { margin-bottom: 5px; }
@@ -1049,6 +1067,7 @@
           <button type="button" class="modal-tax-btn" id="modal-tax-btn" data-action="toggle-tax-tag">Tax claim</button>
           <textarea id="modal-note-input" class="modal-note-input" placeholder="Add a note to help find this later…" rows="2"></textarea>
         </div>
+        <div id="modal-split-section"></div>
         <div id="modal-step-wrap">
           <div class="modal-section-label">Choose a category</div>
           <div id="modal-cat-list"></div>
@@ -1231,6 +1250,7 @@
   // ---- transaction tag state ----
   var TXN_NOTES = {};
   var TXN_TAX = {};
+  var TXN_SPLITS = {};  // rowKey -> { originalCatId, originalSubName, parts: [{catId, label, amount}] }
   function rowKey(row) {
     var m = ((row.querySelector('.bill-merchant') || {}).childNodes[0] || row.querySelector('.bill-merchant') || {}).textContent || '';
     var a = ((row.querySelector('.bill-amount') || {}).textContent || '');
@@ -1477,7 +1497,11 @@
     if (existing) existing.remove();
     var parentCategory = row.closest('details.category');
     var uncategorized = !parentCategory || parentCategory.id === 'cat-uncategorized';
-    row.insertAdjacentHTML('beforeend', '<span class="cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : '') + '">' + shortLabelFor(parentCategory) + '</span>');
+    var rKey = rowKey(row);
+    var rSplit = TXN_SPLITS[rKey];
+    var chipClass = rSplit ? 'cat-chip cat-chip-split' : ('cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : ''));
+    var chipText = rSplit ? ('Split \xd7' + rSplit.parts.length) : shortLabelFor(parentCategory);
+    row.insertAdjacentHTML('beforeend', '<span class="' + chipClass + '">' + chipText + '</span>');
     refreshAllCategoryTotals();
     refreshAllDateGroupHeaders();
   }
@@ -1647,6 +1671,21 @@
     return el ? (el.childNodes[0] ? el.childNodes[0].textContent.trim() : el.textContent.trim()) : '';
   }
 
+  // True if the merchant description already matches a keyword rule inside catId,
+  // so we skip re-offering the keyword-learn step for that category.
+  function merchantAlreadyInCategory(desc, catId) {
+    if (!catId || !desc) return !catId; // no category = uncategorized, skip
+    var lower = desc.toLowerCase();
+    var kwLists = KEYWORDS[catId] || [];
+    for (var si = 0; si < kwLists.length; si++) {
+      var kws = kwLists[si] || [];
+      for (var ki = 0; ki < kws.length; ki++) {
+        if (kws[ki] && lower.indexOf(kws[ki].toLowerCase()) !== -1) return true;
+      }
+    }
+    return false;
+  }
+
   // Shows the "add keyword + scan" step inside the modal.
   function showLearnKeywordStep(catId, subName) {
     learnKwCatId = catId;
@@ -1732,6 +1771,8 @@
     var key = rowKey(row);
     document.getElementById('modal-tax-btn').classList.toggle('active', !!TXN_TAX[key]);
     document.getElementById('modal-note-input').value = TXN_NOTES[key] || '';
+    // Populate split section
+    renderModalSplitSection(row);
     // Reset to category-picker step
     document.getElementById('modal-step-wrap').innerHTML =
       '<div class="modal-section-label">Choose a category</div>' +
@@ -1744,6 +1785,165 @@
     activeRow = null;
     learnKwCatId = null; learnKwSubName = null;
     rescanMatches = []; rescanIdx = 0;
+  }
+
+  // ---- split transaction UI ----
+  function renderModalSplitSection(row) {
+    var wrap = document.getElementById('modal-split-section');
+    if (!wrap) return;
+    var key = rowKey(row);
+    var split = TXN_SPLITS[key];
+    var amtEl = row.querySelector('.bill-amount');
+    var totalAmt = amtEl ? (parseFloat(amtEl.textContent.replace(/[^0-9.]/g, '')) || 0) : 0;
+
+    if (split) {
+      var partsHtml = '';
+      split.parts.forEach(function(p) {
+        partsHtml += '<div class="split-part-undo-row"><span>' + escapeHtml(p.label) + '</span><span>' + formatMoney(p.amount) + '</span></div>';
+      });
+      partsHtml += '<div class="split-part-undo-total"><span>Total</span><span>' + formatMoney(totalAmt) + '</span></div>';
+      wrap.innerHTML =
+        '<div class="modal-split-section">' +
+          '<div class="modal-section-label" style="color:#6c5ce7;">Split &nbsp;<span style="background:#6c5ce7;color:#fff;font-size:9px;border-radius:4px;padding:1px 5px;letter-spacing:.04em;vertical-align:1px;">USER SPLIT</span></div>' +
+          '<div class="split-part-undo-card">' + partsHtml + '</div>' +
+          '<button type="button" class="modal-secondary-btn" data-action="undo-split" style="font-size:12.5px;">↩ Undo split — restore original</button>' +
+        '</div>';
+    } else {
+      if (totalAmt <= 0) { wrap.innerHTML = ''; return; }
+      wrap.innerHTML =
+        '<div class="modal-split-section">' +
+          '<div class="modal-section-label">Split transaction</div>' +
+          '<details id="modal-split-details"><summary style="font-size:12.5px;color:#6c5ce7;font-weight:700;cursor:pointer;padding:4px 0;list-style:none;">⊕ Split across categories</summary>' +
+            '<div id="modal-split-form">' + buildSplitFormHTML(totalAmt) + '</div>' +
+          '</details>' +
+        '</div>';
+    }
+  }
+
+  function buildSplitFormHTML(totalAmt) {
+    var catOptions = CATEGORIES.map(function(c) {
+      return '<option value="' + c.id + '">' + escapeHtml(c.label) + '</option>';
+    }).join('');
+    var html = '<div id="split-parts">';
+    html += buildSplitPartHTML(0, catOptions);
+    html += buildSplitPartHTML(1, catOptions);
+    html += '</div>';
+    html += '<div class="split-remaining-row">Remaining: <strong id="split-remaining" style="color:#999;">' + formatMoney(totalAmt) + '</strong></div>';
+    html += '<div style="display:flex;gap:8px;margin-top:4px;">' +
+      '<button type="button" class="modal-secondary-btn" data-action="add-split-part" style="font-size:12px;padding:8px 10px;">+ Part</button>' +
+      '<button type="button" class="modal-primary-btn" data-action="save-split" data-total="' + totalAmt + '" style="font-size:12.5px;">Save split</button>' +
+      '</div>';
+    return html;
+  }
+
+  function buildSplitPartHTML(idx, catOptions) {
+    return '<div class="split-form-row">' +
+      '<select class="split-part-cat" data-idx="' + idx + '">' + catOptions + '</select>' +
+      '<input type="number" min="0" step="0.01" class="split-part-amt" data-idx="' + idx + '" placeholder="0.00">' +
+      '</div>';
+  }
+
+  function updateSplitRemaining(totalAmt) {
+    var used = 0;
+    document.querySelectorAll('.split-part-amt').forEach(function(inp) { used += parseFloat(inp.value) || 0; });
+    var rem = totalAmt - used;
+    var el = document.getElementById('split-remaining');
+    if (el) {
+      el.textContent = formatMoney(Math.abs(rem));
+      el.style.color = rem < -0.01 ? '#e74c3c' : (Math.abs(rem) < 0.01 ? '#18a558' : '#999');
+    }
+  }
+
+  function saveSplit(totalAmt) {
+    if (!activeRow) return;
+    var parts = [];
+    var sumAmt = 0;
+    document.querySelectorAll('.split-form-row').forEach(function(formRow) {
+      var catSel = formRow.querySelector('.split-part-cat');
+      var amtInp = formRow.querySelector('.split-part-amt');
+      if (!catSel || !amtInp) return;
+      var amt = parseFloat(amtInp.value) || 0;
+      if (amt <= 0) return;
+      var catObj = CATEGORIES.filter(function(c) { return c.id === catSel.value; })[0];
+      parts.push({ catId: catSel.value, label: catObj ? catObj.label : catSel.value, amount: amt });
+      sumAmt += amt;
+    });
+    if (parts.length < 2) {
+      alert('Enter amounts for at least 2 parts before saving.');
+      return;
+    }
+    if (Math.abs(sumAmt - totalAmt) > 0.05) {
+      alert('Parts must add up to ' + formatMoney(totalAmt) + '.\nCurrently: ' + formatMoney(sumAmt));
+      return;
+    }
+    var key = rowKey(activeRow);
+    var parentCat = activeRow.closest('details.category');
+    var parentSub = activeRow.closest('details.subcategory');
+    var origCatId = (parentCat && parentCat.id !== 'cat-uncategorized') ? parentCat.id : null;
+    var origSubName = null;
+    if (parentSub) {
+      var origSubEl = parentSub.querySelector('.subcategory-row > span:first-child');
+      if (origSubEl) origSubName = origSubEl.textContent.trim();
+    }
+    TXN_SPLITS[key] = { originalCatId: origCatId, originalSubName: origSubName, parts: parts };
+    renderRowSplitIndicator(activeRow);
+    refreshRowBadge(activeRow);
+    closeCategorizeModal();
+  }
+
+  function renderRowSplitIndicator(row) {
+    var key = rowKey(row);
+    var split = TXN_SPLITS[key];
+    var existingBar = row.querySelector('.txn-split-bar');
+    if (existingBar) existingBar.remove();
+    if (split) {
+      row.classList.add('is-split');
+      var bar = document.createElement('div');
+      bar.className = 'txn-split-bar';
+      var html = '<span class="txn-split-badge">Split</span>';
+      split.parts.forEach(function(p, i) {
+        if (i > 0) html += '<span style="color:#ddd;font-size:10px;">·</span>';
+        html += '<span class="txn-split-part">' + escapeHtml(p.label) + ' ' + formatMoney(p.amount) + '</span>';
+      });
+      bar.innerHTML = html;
+      var tagRow = row.querySelector('.txn-tag-row');
+      if (tagRow) tagRow.insertAdjacentElement('afterend', bar);
+      else row.appendChild(bar);
+    } else {
+      row.classList.remove('is-split');
+    }
+  }
+
+  // ---- ATO tax CSV export ----
+  function exportTaxCSV() {
+    var rows = [];
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (!isRealBillRow(row) || row.closest('#cat-transfer')) return;
+      var key = rowKey(row);
+      if (!TXN_TAX[key]) return;
+      var merchantEl = row.querySelector('.bill-merchant');
+      var amtEl = row.querySelector('.bill-amount');
+      var dateEl = row.querySelector('.bill-date');
+      var catChip = row.querySelector('.cat-chip');
+      var name = merchantEl ? (merchantEl.childNodes[0] ? merchantEl.childNodes[0].textContent.trim() : merchantEl.textContent.trim()) : '';
+      var amount = amtEl ? amtEl.textContent.trim() : '';
+      var date = dateEl ? dateEl.textContent.trim() : '';
+      var category = catChip ? catChip.textContent.trim() : '';
+      var note = TXN_NOTES[key] || '';
+      rows.push([date, name, category, amount, note]);
+    });
+    if (!rows.length) { alert('No tax claim transactions tagged yet.'); return; }
+    var csv = 'Date,Merchant,Category,Amount,Note\n';
+    rows.forEach(function(r) {
+      csv += r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',') + '\n';
+    });
+    var monthLabel = (document.getElementById('month-label') || {}).textContent || 'report';
+    var filename = 'tax-claim-' + monthLabel.toLowerCase().replace(/\s+/g, '-') + '.csv';
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
   }
 
   // finds an existing subcategory by name inside a category, or creates it
@@ -1781,10 +1981,10 @@
     if (assignCatBtn) {
       var acCatId = assignCatBtn.dataset.catId || '';
       var acTargetCat = acCatId ? document.getElementById(acCatId) : document.getElementById('cat-uncategorized');
-      var wasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (acTargetCat && activeRow) acTargetCat.querySelector('.category-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
-      if (wasUncategorized && acCatId) { showLearnKeywordStep(acCatId, null); return; }
+      var acDesc = activeRow ? descTextOf(activeRow) : '';
+      if (acCatId && acDesc && !merchantAlreadyInCategory(acDesc, acCatId)) { showLearnKeywordStep(acCatId, null); return; }
       closeCategorizeModal();
       return;
     }
@@ -1792,13 +1992,13 @@
     var assignSubBtn = e.target.closest('[data-action="assign-subcategory"]');
     if (assignSubBtn) {
       var asTargetCat = document.getElementById(assignSubBtn.dataset.catId);
-      var wasUncategorizedSub = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (asTargetCat && activeRow) {
         var asSubDetails = findOrCreateSubcategoryDetails(asTargetCat, assignSubBtn.dataset.subName);
         asSubDetails.querySelector('.sub-content').appendChild(activeRow);
       }
       refreshRowBadge(activeRow);
-      if (wasUncategorizedSub) { showLearnKeywordStep(assignSubBtn.dataset.catId, assignSubBtn.dataset.subName); return; }
+      var asDesc = activeRow ? descTextOf(activeRow) : '';
+      if (assignSubBtn.dataset.catId && asDesc && !merchantAlreadyInCategory(asDesc, assignSubBtn.dataset.catId)) { showLearnKeywordStep(assignSubBtn.dataset.catId, assignSubBtn.dataset.subName); return; }
       closeCategorizeModal();
       return;
     }
@@ -1822,10 +2022,10 @@
       SUBCATEGORIES[mncId] = [];
       KEYWORDS[mncId] = [];
 
-      var mncWasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       if (activeRow) document.getElementById(mncId).querySelector('.category-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
-      if (mncWasUncategorized) { showLearnKeywordStep(mncId, null); return; }
+      var mncDesc = activeRow ? descTextOf(activeRow) : '';
+      if (mncDesc && !merchantAlreadyInCategory(mncDesc, mncId)) { showLearnKeywordStep(mncId, null); return; }
       closeCategorizeModal();
       return;
     }
@@ -1846,11 +2046,11 @@
       if (!KEYWORDS[mnsCatId]) KEYWORDS[mnsCatId] = [];
       KEYWORDS[mnsCatId].push([]);
 
-      var mnsWasUncategorized = activeRow && !!activeRow.closest('#cat-uncategorized');
       var mnsSubDetails = findOrCreateSubcategoryDetails(mnsTargetCategory, mnsName);
       if (activeRow) mnsSubDetails.querySelector('.sub-content').appendChild(activeRow);
       refreshRowBadge(activeRow);
-      if (mnsWasUncategorized) { showLearnKeywordStep(mnsCatId, mnsName); return; }
+      var mnsDesc = activeRow ? descTextOf(activeRow) : '';
+      if (mnsDesc && !merchantAlreadyInCategory(mnsDesc, mnsCatId)) { showLearnKeywordStep(mnsCatId, mnsName); return; }
       closeCategorizeModal();
       return;
     }
@@ -1955,6 +2155,38 @@
       return;
     }
     // ---- end keyword-learn + rescan ----
+
+    if (e.target.closest('[data-action="undo-split"]')) {
+      if (!activeRow) return;
+      var undoKey = rowKey(activeRow);
+      delete TXN_SPLITS[undoKey];
+      renderRowSplitIndicator(activeRow);
+      refreshRowBadge(activeRow);
+      openCategorizeModal(activeRow);
+      return;
+    }
+
+    if (e.target.closest('[data-action="add-split-part"]')) {
+      var partsContainer = document.getElementById('split-parts');
+      if (!partsContainer) return;
+      var newIdx = partsContainer.querySelectorAll('.split-form-row').length;
+      var catOpts = CATEGORIES.map(function(c) {
+        return '<option value="' + c.id + '">' + escapeHtml(c.label) + '</option>';
+      }).join('');
+      partsContainer.insertAdjacentHTML('beforeend', buildSplitPartHTML(newIdx, catOpts));
+      return;
+    }
+
+    var saveSplitBtn = e.target.closest('[data-action="save-split"]');
+    if (saveSplitBtn) {
+      saveSplit(parseFloat(saveSplitBtn.dataset.total) || 0);
+      return;
+    }
+
+    if (e.target.closest('[data-action="export-tax-csv"]')) {
+      exportTaxCSV();
+      return;
+    }
 
     var splitBtn = e.target.closest('[data-action="split-to-goals"]');
     if (splitBtn) {
@@ -2384,6 +2616,13 @@
 
     if (e.target.closest('.allocate-input')) {
       updateAllocateRemaining();
+      return;
+    }
+
+    var splitAmtInput = e.target.closest('.split-part-amt');
+    if (splitAmtInput) {
+      var saveSplitEl = document.querySelector('[data-action="save-split"]');
+      updateSplitRemaining(saveSplitEl ? (parseFloat(saveSplitEl.dataset.total) || 0) : 0);
       return;
     }
   });
@@ -3082,7 +3321,8 @@
       taxRows.forEach(function(r) {
         html += '<div class="insight-merchant-row"><span>' + escapeHtml(r.name) + (r.date ? ' <span style="color:#bbb;font-weight:400;">· ' + escapeHtml(r.date) + '</span>' : '') + '</span><span>' + escapeHtml(r.amount) + '</span></div>';
       });
-      html += '<div class="insight-merchant-row" style="border-top:1px solid #f0f0f3;margin-top:6px;padding-top:8px;font-weight:700;color:#18a558;"><span>Total claimable</span><span>' + formatMoney(taxTotal) + '</span></div></div>';
+      html += '<div class="insight-merchant-row" style="border-top:1px solid #f0f0f3;margin-top:6px;padding-top:8px;font-weight:700;color:#18a558;"><span>Total claimable</span><span>' + formatMoney(taxTotal) + '</span></div>';
+      html += '<button type="button" class="tax-export-btn" data-action="export-tax-csv">⬇ Download tax report (CSV)</button></div>';
     }
 
     document.getElementById('insights-body').innerHTML = html;
