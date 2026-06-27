@@ -3315,15 +3315,22 @@
         });
       }
     });
+    html += '<div class="insight-card"><h3>ATO tax claim</h3>';
     if (taxRows.length) {
       var taxTotal = taxRows.reduce(function(s, r) { return s + (parseFloat(r.amount.replace(/[^0-9.]/g, '')) || 0); }, 0);
-      html += '<div class="insight-card"><h3>Tax claim transactions</h3>';
       taxRows.forEach(function(r) {
         html += '<div class="insight-merchant-row"><span>' + escapeHtml(r.name) + (r.date ? ' <span style="color:#bbb;font-weight:400;">· ' + escapeHtml(r.date) + '</span>' : '') + '</span><span>' + escapeHtml(r.amount) + '</span></div>';
       });
       html += '<div class="insight-merchant-row" style="border-top:1px solid #f0f0f3;margin-top:6px;padding-top:8px;font-weight:700;color:#18a558;"><span>Total claimable</span><span>' + formatMoney(taxTotal) + '</span></div>';
-      html += '<button type="button" class="tax-export-btn" data-action="export-tax-csv">⬇ Download tax report (CSV)</button></div>';
+      html += '<button type="button" class="tax-export-btn" data-action="export-tax-csv">⬇ Download tax report (CSV)</button>';
+    } else {
+      html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0;">' +
+        '<span style="font-size:28px;">🧾</span>' +
+        '<span style="font-size:12.5px;color:#888;text-align:center;">No tax claims tagged yet.<br>Open any transaction and tap <strong>Tax claim</strong> to mark it.</span>' +
+        '<button type="button" class="tax-export-btn" data-action="export-tax-csv" disabled style="opacity:0.45;cursor:default;">⬇ Download tax report (CSV)</button>' +
+        '</div>';
     }
+    html += '</div>';
 
     document.getElementById('insights-body').innerHTML = html;
     renderCompareChart();
@@ -3333,7 +3340,7 @@
   // categories over the last 6 illustrative months (BUDGET_HISTORY)
   function renderCompareChart() {
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    var w = 300, h = 150, padL = 30, padR = 10, padT = 10, padB = 18;
+    var w = 300, h = 175, padL = 48, padR = 10, padT = 16, padB = 20;
 
     var maxVal = 0;
     compareSelectedCats.forEach(function (catId) {
@@ -3343,11 +3350,15 @@
 
     function xFor(i) { return padL + (i / (months.length - 1)) * (w - padL - padR); }
     function yFor(val) { return h - padB - (val / maxVal) * (h - padB - padT); }
+    function fmtAmt(v) { return '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v)); }
 
     var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
-    for (var g = 0; g <= 2; g++) {
-      var gy = padT + (g / 2) * (h - padB - padT);
+    // Y-axis gridlines + labels (4 levels: 0%, 33%, 67%, 100%)
+    for (var g = 0; g <= 3; g++) {
+      var gy = padT + (g / 3) * (h - padB - padT);
+      var gVal = Math.round(maxVal * (1 - g / 3));
       svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
+      svg += '<text x="' + (padL - 5) + '" y="' + (gy + 3) + '" font-size="8" fill="#aaa" text-anchor="end">' + fmtAmt(gVal) + '</text>';
     }
     months.forEach(function (m, i) {
       svg += '<text x="' + xFor(i) + '" y="' + (h - 4) + '" font-size="8" fill="#aaa" text-anchor="middle">' + m + '</text>';
@@ -3364,15 +3375,27 @@
           var bx = groupStart + ci * barW;
           var by = yFor(pt.spent);
           svg += '<rect x="' + bx + '" y="' + by + '" width="' + (barW - 1) + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(catId) + '" rx="1.5"/>';
+          // value label above bar (only if bar is wide enough, i.e. single category)
+          if (compareSelectedCats.length === 1 && pt.spent > 0) {
+            svg += '<text x="' + (bx + (barW - 1) / 2) + '" y="' + (by - 3) + '" font-size="7.5" fill="' + colorForCategory(catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
+          }
         });
       });
     } else {
       compareSelectedCats.forEach(function (catId) {
         var hist = BUDGET_HISTORY[catId] || [];
+        var color = colorForCategory(catId);
         var points = hist.map(function (pt, i) { return xFor(i) + ',' + yFor(pt.spent); }).join(' ');
-        svg += '<polyline points="' + points + '" fill="none" stroke="' + colorForCategory(catId) + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+        svg += '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
         hist.forEach(function (pt, i) {
-          svg += '<circle cx="' + xFor(i) + '" cy="' + yFor(pt.spent) + '" r="3" fill="' + colorForCategory(catId) + '"/>';
+          var cx = xFor(i);
+          var cy = yFor(pt.spent);
+          svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="' + color + '"/>';
+          if (pt.spent > 0) {
+            // place label above the dot; if too close to top edge shift it below
+            var labelY = cy > padT + 14 ? cy - 6 : cy + 13;
+            svg += '<text x="' + cx + '" y="' + labelY + '" font-size="7.5" fill="' + color + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
+          }
         });
       });
     }
