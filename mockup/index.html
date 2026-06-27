@@ -733,10 +733,24 @@
         </summary>
         <div class="safe-spend-breakdown">
           <div class="breakdown-row"><span>Current balance</span><span>$2,340.18</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>AGL Electricity &middot; 29 Apr</span><span>-$145.50</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>Telstra Mobile &middot; 16 Apr</span><span>-$65.00</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>Aussie Broadband &middot; 20 Apr</span><span>-$79.00</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>Netflix &middot; 25 Apr</span><span>-$24.99</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>Spotify &middot; 15 Apr</span><span>-$12.99</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>iCloud Storage &middot; 10 Apr</span><span>-$2.99</span></div>
+          <div class="breakdown-row minus" data-month="Apr"><span>Amazon Prime &middot; 2 Apr</span><span>-$9.00</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>AGL Electricity &middot; 29 May</span><span>-$130.00</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>Telstra Mobile &middot; 16 May</span><span>-$65.00</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>Aussie Broadband &middot; 20 May</span><span>-$79.00</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>Netflix &middot; 24 May</span><span>-$24.99</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>Spotify &middot; 23 May</span><span>-$12.99</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>iCloud Storage &middot; 10 May</span><span>-$2.99</span></div>
+          <div class="breakdown-row minus" data-month="May"><span>Amazon Prime &middot; 2 May</span><span>-$9.00</span></div>
+          <div class="breakdown-row minus" data-month="Jun"><span>Netflix &middot; 24 Jun</span><span>-$24.99</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>AGL Electricity &middot; 3 Jul</span><span>-$142.10</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>Telstra Mobile &middot; 8 Jul</span><span>-$65.00</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>Aussie Broadband &middot; 3 Jul</span><span>-$79.00</span></div>
-          <div class="breakdown-row minus" data-month="Jun"><span>Netflix &middot; 24 Jun</span><span>-$24.99</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>Spotify &middot; 15 Jul</span><span>-$12.99</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>iCloud Storage &middot; 10 Jul</span><span>-$2.99</span></div>
           <div class="breakdown-row minus" data-month="Jul"><span>Amazon Prime &middot; 2 Jul</span><span>-$9.00</span></div>
@@ -919,9 +933,11 @@
       </div>
       </div>
 
+      <div id="hist-month-sections" hidden></div>
+
       <div class="month-empty-state" id="month-empty-state" hidden>
-        <strong>No transaction history yet for this month.</strong><br>
-        This prototype only has full category data loaded for June 2026 — try switching back to see it in action.
+        <strong>No transaction history for this month.</strong><br>
+        Switch back to April, May, or June to browse transactions.
       </div>
 
     </div>
@@ -1186,6 +1202,49 @@
     'cat-subs': 50,
     'cat-dine': 250,
     'cat-transport': 100
+  };
+
+  // full transaction data for historical months (April & May 2026)
+  // each entry: { date, merchant, amount, catId, sub, recurring? }
+  var MONTH_TXN_DATA = {
+    'Apr': [
+      { date: '29 Apr', merchant: 'AGL Electricity', amount: 145.50, catId: 'cat-bills', sub: 'Electricity', recurring: true },
+      { date: '27 Apr', merchant: 'Coles', amount: 142.30, catId: 'cat-dine', sub: 'Grocery' },
+      { date: '25 Apr', merchant: 'Netflix', amount: 24.99, catId: 'cat-subs', sub: 'Streaming', recurring: true },
+      { date: '24 Apr', merchant: 'Spotify', amount: 12.99, catId: 'cat-subs', sub: 'Music', recurring: true },
+      { date: '22 Apr', merchant: 'UberEats', amount: 47.90, catId: 'cat-dine', sub: 'Takeout Delivery' },
+      { date: '20 Apr', merchant: 'Aussie Broadband', amount: 79.00, catId: 'cat-bills', sub: 'Internet', recurring: true },
+      { date: '18 Apr', merchant: 'Opal Card Top Up', amount: 45.00, catId: 'cat-transport', sub: 'Public Transit' },
+      { date: '16 Apr', merchant: 'Telstra Mobile', amount: 65.00, catId: 'cat-bills', sub: 'Mobile', recurring: true },
+      { date: '14 Apr', merchant: 'DoorDash', amount: 35.60, catId: 'cat-dine', sub: 'Takeout Delivery' },
+      { date: '12 Apr', merchant: 'Woolworths', amount: 81.50, catId: 'cat-dine', sub: 'Grocery' },
+      { date: '10 Apr', merchant: 'iCloud Storage', amount: 2.99, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
+      { date: '8 Apr', merchant: 'NRMA Insurance', amount: 65.00, catId: 'cat-bills', sub: 'Insurance' },
+      { date: '7 Apr', merchant: 'Espresso Machine Cafe', amount: 12.50, catId: 'cat-dine', sub: 'Coffee' },
+      { date: '5 Apr', merchant: 'Amazon Prime', amount: 9.00, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
+      { date: '3 Apr', merchant: 'Uber Trip', amount: 22.90, catId: 'cat-transport', sub: 'Rideshare' },
+      { date: '2 Apr', merchant: 'Koi Dessert Bar', amount: 38.40, catId: 'cat-dine', sub: 'Restaurants' },
+      { date: '1 Apr', merchant: 'Sydney Water', amount: 34.80, catId: 'cat-bills', sub: 'Water' }
+    ],
+    'May': [
+      { date: '29 May', merchant: 'AGL Electricity', amount: 130.00, catId: 'cat-bills', sub: 'Electricity', recurring: true },
+      { date: '26 May', merchant: 'Coles', amount: 156.40, catId: 'cat-dine', sub: 'Grocery' },
+      { date: '24 May', merchant: 'Netflix', amount: 24.99, catId: 'cat-subs', sub: 'Streaming', recurring: true },
+      { date: '23 May', merchant: 'Spotify', amount: 12.99, catId: 'cat-subs', sub: 'Music', recurring: true },
+      { date: '22 May', merchant: 'Menulog', amount: 38.50, catId: 'cat-dine', sub: 'Takeout Delivery' },
+      { date: '20 May', merchant: 'Aussie Broadband', amount: 79.00, catId: 'cat-bills', sub: 'Internet', recurring: true },
+      { date: '18 May', merchant: 'Opal Card Top Up', amount: 40.00, catId: 'cat-transport', sub: 'Public Transit' },
+      { date: '16 May', merchant: 'Telstra Mobile', amount: 65.00, catId: 'cat-bills', sub: 'Mobile', recurring: true },
+      { date: '14 May', merchant: 'Uber Trip', amount: 18.60, catId: 'cat-transport', sub: 'Rideshare' },
+      { date: '12 May', merchant: 'Woolworths', amount: 98.20, catId: 'cat-dine', sub: 'Grocery' },
+      { date: '10 May', merchant: 'iCloud Storage', amount: 2.99, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
+      { date: '8 May', merchant: 'Olive & Vine Restaurant', amount: 74.50, catId: 'cat-dine', sub: 'Restaurants' },
+      { date: '7 May', merchant: 'Gloria Jeans', amount: 8.50, catId: 'cat-dine', sub: 'Coffee' },
+      { date: '5 May', merchant: 'Linkt Toll', amount: 36.00, catId: 'cat-transport', sub: 'Tolls' },
+      { date: '3 May', merchant: 'Sydney Water', amount: 34.80, catId: 'cat-bills', sub: 'Water' },
+      { date: '2 May', merchant: 'Amazon Prime', amount: 9.00, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
+      { date: '1 May', merchant: 'Bunnings Warehouse', amount: 67.30, catId: 'cat-dine', sub: 'Grocery' }
+    ]
   };
 
   // illustrative last-6-months spend per category, used for the Budget page's
@@ -1914,6 +1973,168 @@
     }
   }
 
+  // ---- Historical month rendering ----
+  function buildHistPieSvg(pieData, total) {
+    if (!total) return '<svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="50" fill="#f0f0f0"/></svg>';
+    var cx = 60, cy = 60, r = 50, ri = 28;
+    var svg = '<svg viewBox="0 0 120 120" width="120" height="120">';
+    var angle = -Math.PI / 2;
+    pieData.forEach(function(p) {
+      var slice = (p.amount / total) * 2 * Math.PI;
+      var x1 = cx + r * Math.cos(angle);
+      var y1 = cy + r * Math.sin(angle);
+      angle += slice;
+      var x2 = cx + r * Math.cos(angle);
+      var y2 = cy + r * Math.sin(angle);
+      var largeArc = slice > Math.PI ? 1 : 0;
+      svg += '<path d="M' + cx + ' ' + cy + ' L' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' A' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x2.toFixed(2) + ' ' + y2.toFixed(2) + ' Z" fill="' + p.color + '"/>';
+    });
+    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + ri + '" fill="#fff"/>';
+    svg += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="8" fill="#999">Total</text>';
+    svg += '<text x="' + cx + '" y="' + (cy + 9) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1a1a">' + formatMoney(total) + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function renderHistoricalMonth(tag) {
+    var data = MONTH_TXN_DATA[tag] || [];
+    var histEl = document.getElementById('hist-month-sections');
+    var emptyEl = document.getElementById('month-empty-state');
+    if (!data.length) {
+      histEl.hidden = true;
+      emptyEl.hidden = false;
+      return;
+    }
+    histEl.hidden = false;
+    emptyEl.hidden = true;
+
+    // group by catId then sub
+    var catGroups = {};
+    data.forEach(function(t) {
+      if (!catGroups[t.catId]) catGroups[t.catId] = { total: 0, subs: {} };
+      catGroups[t.catId].total += t.amount;
+      if (!catGroups[t.catId].subs[t.sub]) catGroups[t.catId].subs[t.sub] = [];
+      catGroups[t.catId].subs[t.sub].push(t);
+    });
+    var grandTotal = data.reduce(function(s, t) { return s + t.amount; }, 0);
+
+    // pie data (exclude transfers)
+    var pieData = [];
+    CATEGORIES.forEach(function(c) {
+      if (catGroups[c.id] && EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1) {
+        pieData.push({ label: c.label, amount: catGroups[c.id].total, color: colorForCategory(c.id) });
+      }
+    });
+
+    var html = '<div class="section"><h2 style="margin-bottom:10px;">Spending by category</h2><div class="pie-card">';
+    html += buildHistPieSvg(pieData, grandTotal);
+    html += '<div class="legend">';
+    pieData.forEach(function(p) {
+      html += '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#333;padding:3px 0;">' +
+        '<span style="width:9px;height:9px;border-radius:50%;background:' + p.color + ';flex-shrink:0;display:inline-block;"></span>' +
+        escapeHtml(p.label) +
+        '<span style="margin-left:auto;font-weight:700;">' + formatMoney(p.amount) + '</span></div>';
+    });
+    html += '</div></div></div>';
+
+    html += '<div class="section" style="padding-top:4px;"><h2>Transactions</h2>';
+    CATEGORIES.forEach(function(c) {
+      var group = catGroups[c.id];
+      if (!group) return;
+      var catObj = CATEGORIES.filter(function(x) { return x.id === c.id; })[0];
+      if (!catObj) return;
+      var subCount = Object.keys(group.subs).length;
+      html += '<details class="category" style="margin-bottom:8px;">' +
+        '<summary><div class="category-row">' +
+        '<div class="icon-box icon-bold"><svg viewBox="0 0 24 24">' + catObj.iconSvg + '</svg></div>' +
+        '<div class="cat-info"><div class="cat-name">' + escapeHtml(catObj.label) + '</div><div class="cat-meta">' + subCount + ' subcategor' + (subCount === 1 ? 'y' : 'ies') + '</div></div>' +
+        '<div class="cat-amount-wrap"><div class="cat-amount">' + formatMoney(group.total) + '</div></div>' +
+        '<div class="chevron">▾</div></div></summary>' +
+        '<div class="category-content">';
+      Object.keys(group.subs).forEach(function(subName) {
+        var txns = group.subs[subName];
+        var subTotal = txns.reduce(function(s, t) { return s + t.amount; }, 0);
+        html += '<details class="subcategory"><summary><div class="subcategory-row">' +
+          '<span>' + escapeHtml(subName) + '</span>' +
+          '<span>' + formatMoney(subTotal) + '<span class="chevron">▾</span></span>' +
+          '</div></summary><div class="sub-content">';
+        txns.forEach(function(t) {
+          html += '<div class="bill-row">' +
+            '<div class="bill-date">' + escapeHtml(t.date) + '</div>' +
+            '<div class="bill-merchant">' + escapeHtml(t.merchant) + (t.recurring ? ' <span class="bill-recurring">recurring</span>' : '') + '</div>' +
+            '<div class="bill-amount">' + formatMoney(t.amount) + '</div>' +
+            '</div>';
+        });
+        html += '</div></details>';
+      });
+      html += '</div></details>';
+    });
+    html += '</div>';
+
+    histEl.innerHTML = html;
+  }
+
+  // ---- ATO tax PDF export ----
+  function exportTaxPDF() {
+    var rows = [];
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (!isRealBillRow(row) || row.closest('#cat-transfer')) return;
+      var key = rowKey(row);
+      if (!TXN_TAX[key]) return;
+      var merchantEl = row.querySelector('.bill-merchant');
+      var amtEl = row.querySelector('.bill-amount');
+      var dateEl = row.querySelector('.bill-date');
+      var catChip = row.querySelector('.cat-chip');
+      rows.push({
+        date: dateEl ? dateEl.textContent.trim() : '',
+        name: merchantEl ? (merchantEl.childNodes[0] ? merchantEl.childNodes[0].textContent.trim() : merchantEl.textContent.trim()) : '',
+        category: catChip ? catChip.textContent.trim() : '',
+        amount: amtEl ? amtEl.textContent.trim() : '',
+        note: TXN_NOTES[key] || ''
+      });
+    });
+    if (!rows.length) { alert('No tax claim transactions tagged yet.'); return; }
+    var monthLabel = (document.getElementById('month-label') || {}).textContent || 'Report';
+    var total = rows.reduce(function(s, r) { return s + (parseFloat(r.amount.replace(/[^0-9.]/g, '')) || 0); }, 0);
+    var generated = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+    var rowsHtml = rows.map(function(r, i) {
+      return '<tr style="background:' + (i % 2 === 0 ? '#fafafa' : '#fff') + ';">' +
+        '<td>' + escapeHtml(r.date) + '</td>' +
+        '<td style="text-align:left;">' + escapeHtml(r.name) + '</td>' +
+        '<td>' + escapeHtml(r.category) + '</td>' +
+        '<td style="text-align:right;font-weight:600;">' + escapeHtml(r.amount) + '</td>' +
+        '<td style="text-align:left;color:#666;">' + escapeHtml(r.note) + '</td></tr>';
+    }).join('');
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tax Report – ' + escapeHtml(monthLabel) + '</title>' +
+      '<style>' +
+      'body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:40px 48px;color:#1a1a1a;}' +
+      'h1{text-align:center;font-size:22px;margin-bottom:4px;color:#1a1a1a;}' +
+      '.subtitle{text-align:center;color:#666;font-size:13px;margin-bottom:28px;}' +
+      'table{width:100%;border-collapse:collapse;font-size:13px;}' +
+      'thead tr{background:#6c5ce7;color:#fff;}' +
+      'th{padding:10px 12px;text-align:center;font-weight:700;letter-spacing:.03em;}' +
+      'th.left{text-align:left;}' +
+      'td{padding:9px 12px;text-align:center;border-bottom:1px solid #eee;vertical-align:top;}' +
+      '.total-row td{background:#f0eeff;font-weight:700;color:#6c5ce7;border-top:2px solid #6c5ce7;border-bottom:none;}' +
+      '.footer{text-align:center;margin-top:28px;font-size:11px;color:#aaa;}' +
+      '@media print{body{padding:20px 30px;}@page{margin:1.5cm;}}' +
+      '</style></head><body>' +
+      '<h1>ATO Tax Claim Report</h1>' +
+      '<div class="subtitle">' + escapeHtml(monthLabel) + ' &nbsp;&middot;&nbsp; Generated ' + escapeHtml(generated) + '</div>' +
+      '<table><thead><tr>' +
+      '<th>Date</th><th class="left">Merchant</th><th>Category</th><th>Amount</th><th class="left">Note</th>' +
+      '</tr></thead><tbody>' + rowsHtml +
+      '<tr class="total-row"><td colspan="3">Total claimable</td><td style="text-align:right;">$' + total.toFixed(2) + '</td><td></td></tr>' +
+      '</tbody></table>' +
+      '<div class="footer">This report was generated from your Immagini finance app. Keep a copy for your ATO records.</div>' +
+      '</body></html>';
+    var w = window.open('', '_blank');
+    if (!w) { alert('Pop-up blocked — please allow pop-ups to generate the PDF.'); return; }
+    w.document.write(html);
+    w.document.close();
+    w.onload = function() { w.print(); };
+  }
+
   // ---- ATO tax CSV export ----
   function exportTaxCSV() {
     var rows = [];
@@ -2185,6 +2406,10 @@
 
     if (e.target.closest('[data-action="export-tax-csv"]')) {
       exportTaxCSV();
+      return;
+    }
+    if (e.target.closest('[data-action="export-tax-pdf"]')) {
+      exportTaxPDF();
       return;
     }
 
@@ -3322,13 +3547,18 @@
         html += '<div class="insight-merchant-row"><span>' + escapeHtml(r.name) + (r.date ? ' <span style="color:#bbb;font-weight:400;">· ' + escapeHtml(r.date) + '</span>' : '') + '</span><span>' + escapeHtml(r.amount) + '</span></div>';
       });
       html += '<div class="insight-merchant-row" style="border-top:1px solid #f0f0f3;margin-top:6px;padding-top:8px;font-weight:700;color:#18a558;"><span>Total claimable</span><span>' + formatMoney(taxTotal) + '</span></div>';
-      html += '<button type="button" class="tax-export-btn" data-action="export-tax-csv">⬇ Download tax report (CSV)</button>';
+      html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
+        '<button type="button" class="tax-export-btn" data-action="export-tax-csv">⬇ CSV</button>' +
+        '<button type="button" class="tax-export-btn" data-action="export-tax-pdf" style="background:#4a3ab5;">⬇ PDF</button>' +
+        '</div>';
     } else {
       html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 0;">' +
         '<span style="font-size:28px;">🧾</span>' +
         '<span style="font-size:12.5px;color:#888;text-align:center;">No tax claims tagged yet.<br>Open any transaction and tap <strong>Tax claim</strong> to mark it.</span>' +
-        '<button type="button" class="tax-export-btn" data-action="export-tax-csv" disabled style="opacity:0.45;cursor:default;">⬇ Download tax report (CSV)</button>' +
-        '</div>';
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px;">' +
+        '<button type="button" class="tax-export-btn" data-action="export-tax-csv" disabled style="opacity:0.45;cursor:default;">⬇ CSV</button>' +
+        '<button type="button" class="tax-export-btn" data-action="export-tax-pdf" disabled style="opacity:0.45;cursor:default;background:#4a3ab5;">⬇ PDF</button>' +
+        '</div></div>';
     }
     html += '</div>';
 
@@ -3460,10 +3690,10 @@
   // ---- month switcher ----
   // this prototype only has full transaction history loaded for June 2026;
   // other months still show the upcoming-bills list, scoped to that month
-  var MONTHS = ['May 2026', 'June 2026', 'July 2026'];
-  var MONTH_TAGS = ['May', 'Jun', 'Jul'];
-  var CURRENT_DATA_MONTH_INDEX = 1;
-  var monthIndex = 1;
+  var MONTHS = ['April 2026', 'May 2026', 'June 2026', 'July 2026'];
+  var MONTH_TAGS = ['Apr', 'May', 'Jun', 'Jul'];
+  var CURRENT_DATA_MONTH_INDEX = 2;
+  var monthIndex = 2;
 
   function formatMoney(n) {
     return '$' + n.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
@@ -3490,7 +3720,12 @@
 
     var isCurrent = monthIndex === CURRENT_DATA_MONTH_INDEX;
     document.getElementById('month-data-sections').hidden = !isCurrent;
-    document.getElementById('month-empty-state').hidden = isCurrent;
+    if (isCurrent) {
+      document.getElementById('hist-month-sections').hidden = true;
+      document.getElementById('month-empty-state').hidden = true;
+    } else {
+      renderHistoricalMonth(MONTH_TAGS[monthIndex]);
+    }
   }
 
   refreshAllRowBadges();
