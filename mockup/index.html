@@ -142,6 +142,9 @@
   .txn-chip button { border: none; background: none; color: #a29bfe; font-size: 13px; cursor: pointer; padding: 0; line-height: 1; }
   .txn-no-results { text-align: center; padding: 32px 0; color: #bbb; font-size: 13px; }
   .txn-no-results[hidden] { display: none; }
+  /* bill-row uses display:grid which overrides UA [hidden]; must be explicit */
+  .bill-row[hidden] { display: none; }
+  .date-group-header[hidden] { display: none; }
 
   /* ---------- AI nudge cycling ---------- */
   .ai-bubble { cursor: pointer; user-select: none; }
@@ -1057,6 +1060,12 @@
           <span class="filter-date-sep">—</span>
           <input type="date" id="filter-date-to" class="filter-date-input">
         </div>
+        <div class="filter-section-lbl">Amount range</div>
+        <div class="filter-date-row">
+          <input type="number" id="filter-amt-min" class="filter-date-input" placeholder="Min $" min="0" step="0.01">
+          <span class="filter-date-sep">—</span>
+          <input type="number" id="filter-amt-max" class="filter-date-input" placeholder="Max $" min="0" step="0.01">
+        </div>
         <button type="button" class="filter-apply-btn" data-action="apply-filters">Apply filters</button>
         <button type="button" class="filter-clear-btn" data-action="clear-filters">Clear all</button>
       </div>
@@ -1405,7 +1414,7 @@
     if (m) return new Date(+m[3] < 100 ? +m[3]+2000 : +m[3], +m[2]-1, +m[1]);
     return null;
   }
-  var txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false };
+  var txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false, amtMin: '', amtMax: '' };
 
   function applyTxnFilter() {
     var q = txnFilter.query.toLowerCase().trim();
@@ -1413,7 +1422,9 @@
     var df = txnFilter.dateFrom ? new Date(txnFilter.dateFrom) : null;
     var dt = txnFilter.dateTo ? new Date(txnFilter.dateTo + 'T23:59:59') : null;
     var taxOnly = txnFilter.filterTax;
-    var hasFilter = q || cats.length || df || dt || taxOnly;
+    var amtMin = txnFilter.amtMin !== '' ? parseFloat(txnFilter.amtMin) : null;
+    var amtMax = txnFilter.amtMax !== '' ? parseFloat(txnFilter.amtMax) : null;
+    var hasFilter = q || cats.length || df || dt || taxOnly || amtMin !== null || amtMax !== null;
 
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
       if (!isRealBillRow(row)) { row.hidden = false; return; }
@@ -1422,9 +1433,11 @@
       if (cats.length && cats.indexOf(catId) < 0) { row.hidden = true; return; }
       if (taxOnly && !TXN_TAX[rowKey(row)]) { row.hidden = true; return; }
       if (q) {
-        var text = (row.querySelector('.bill-merchant') || {}).textContent || '';
+        var merchantEl = row.querySelector('.bill-merchant');
+        var text = merchantEl ? ((merchantEl.childNodes[0] || {}).textContent || merchantEl.textContent) : '';
+        var amtText = (row.querySelector('.bill-amount') || {}).textContent || '';
         var note = TXN_NOTES[rowKey(row)] || '';
-        if (text.toLowerCase().indexOf(q) < 0 && note.toLowerCase().indexOf(q) < 0) { row.hidden = true; return; }
+        if (text.toLowerCase().indexOf(q) < 0 && note.toLowerCase().indexOf(q) < 0 && amtText.toLowerCase().indexOf(q) < 0) { row.hidden = true; return; }
       }
       if (df || dt) {
         var dateEl = row.querySelector('.bill-date');
@@ -1433,6 +1446,11 @@
           if (df && d < df) { row.hidden = true; return; }
           if (dt && d > dt) { row.hidden = true; return; }
         }
+      }
+      if (amtMin !== null || amtMax !== null) {
+        var rowAmt = parseFloat(((row.querySelector('.bill-amount') || {}).textContent || '').replace(/[^0-9.]/g, '')) || 0;
+        if (amtMin !== null && rowAmt < amtMin) { row.hidden = true; return; }
+        if (amtMax !== null && rowAmt > amtMax) { row.hidden = true; return; }
       }
       row.hidden = false;
     });
@@ -1470,11 +1488,14 @@
     if (txnFilter.dateFrom) html += '<span class="txn-chip">From: ' + txnFilter.dateFrom + ' <button data-action="remove-chip" data-chip="dateFrom">&times;</button></span>';
     if (txnFilter.dateTo) html += '<span class="txn-chip">To: ' + txnFilter.dateTo + ' <button data-action="remove-chip" data-chip="dateTo">&times;</button></span>';
     if (txnFilter.filterTax) html += '<span class="txn-chip">Tax claim <button data-action="remove-chip" data-chip="tax">&times;</button></span>';
+    if (txnFilter.amtMin !== '' && txnFilter.amtMax !== '') html += '<span class="txn-chip">$' + txnFilter.amtMin + '–$' + txnFilter.amtMax + ' <button data-action="remove-chip" data-chip="amt">&times;</button></span>';
+    else if (txnFilter.amtMin !== '') html += '<span class="txn-chip">Min $' + txnFilter.amtMin + ' <button data-action="remove-chip" data-chip="amt">&times;</button></span>';
+    else if (txnFilter.amtMax !== '') html += '<span class="txn-chip">Max $' + txnFilter.amtMax + ' <button data-action="remove-chip" data-chip="amt">&times;</button></span>';
     ['txn-chips', 'insights-chips'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) { el.innerHTML = html; el.hidden = !html; }
     });
-    var hasNonText = !!(txnFilter.catIds.length || txnFilter.dateFrom || txnFilter.dateTo || txnFilter.filterTax);
+    var hasNonText = !!(txnFilter.catIds.length || txnFilter.dateFrom || txnFilter.dateTo || txnFilter.filterTax || txnFilter.amtMin !== '' || txnFilter.amtMax !== '');
     document.querySelectorAll('.txn-filter-btn').forEach(function(btn) { btn.classList.toggle('has-filter', hasNonText); });
   }
 
@@ -1488,6 +1509,8 @@
     document.getElementById('filter-date-from').value = txnFilter.dateFrom;
     document.getElementById('filter-date-to').value = txnFilter.dateTo;
     document.getElementById('filter-tax-chip').classList.toggle('active', txnFilter.filterTax);
+    document.getElementById('filter-amt-min').value = txnFilter.amtMin;
+    document.getElementById('filter-amt-max').value = txnFilter.amtMax;
     document.getElementById('filter-panel').hidden = false;
   }
 
@@ -1500,12 +1523,14 @@
     txnFilter.dateFrom = document.getElementById('filter-date-from').value;
     txnFilter.dateTo = document.getElementById('filter-date-to').value;
     txnFilter.filterTax = document.getElementById('filter-tax-chip').classList.contains('active');
+    txnFilter.amtMin = document.getElementById('filter-amt-min').value;
+    txnFilter.amtMax = document.getElementById('filter-amt-max').value;
     closeFilterPanel();
     applyTxnFilter();
   }
 
   function clearAllFilters() {
-    txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false };
+    txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false, amtMin: '', amtMax: '' };
     ['txn-search', 'insights-search'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.value = '';
@@ -2765,6 +2790,8 @@
         txnFilter.dateTo = '';
       } else if (chipType === 'tax') {
         txnFilter.filterTax = false;
+      } else if (chipType === 'amt') {
+        txnFilter.amtMin = ''; txnFilter.amtMax = '';
       } else if (chipType && chipType.indexOf('cat|') === 0) {
         var removeCatId = chipType.slice(4);
         txnFilter.catIds = txnFilter.catIds.filter(function(id) { return id !== removeCatId; });
