@@ -152,6 +152,34 @@
   .ai-nudge-dot { width: 5px; height: 5px; border-radius: 50%; background: #e0dcff; transition: background .25s; flex-shrink: 0; }
   .ai-nudge-dot.active { background: #6c5ce7; }
 
+  /* ---------- Feature tips bubble ---------- */
+  .tips-bubble { margin: 10px 16px 0; background: linear-gradient(135deg,#5a4bd1,#8b7cf8); color: #fff; border-radius: 16px; padding: 13px 42px 13px 16px; box-shadow: 0 8px 24px rgba(108,92,231,0.28); position: relative; cursor: pointer; user-select: none; }
+  .tips-bubble[hidden] { display: none; }
+  .tips-bubble-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; opacity: .82; margin-bottom: 4px; }
+  .tips-bubble-msg { font-size: 12.5px; line-height: 1.45; }
+  .tips-bubble-more { font-size: 11px; opacity: .7; font-weight: 600; margin-top: 6px; }
+  .tips-bubble-close { position: absolute; top: -7px; right: -7px; width: 22px; height: 22px; background: #1a1a1a; color: #fff; border: 2px solid #fff; border-radius: 50%; font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.35); padding: 0; }
+  .tips-bubble-dots { display: flex; gap: 5px; margin-top: 8px; }
+  .tips-bubble-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.35); transition: background .25s; flex-shrink: 0; }
+  .tips-bubble-dot.active { background: rgba(255,255,255,0.95); }
+
+  /* ---------- FAQ / Help page ---------- */
+  .faq-section { padding: 16px 16px 4px; }
+  .faq-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #6c5ce7; margin-bottom: 8px; }
+  details.faq-item { background: #fff; border-radius: 12px; margin-bottom: 8px; border: 1px solid #f0f0f3; overflow: hidden; }
+  details.faq-item summary { padding: 13px 16px; font-size: 13px; font-weight: 600; color: #1a1a1a; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  details.faq-item summary::-webkit-details-marker { display: none; }
+  details.faq-item summary::after { content: '›'; font-size: 16px; color: #bbb; flex-shrink: 0; transition: transform .2s; }
+  details.faq-item[open] summary::after { transform: rotate(90deg); }
+  .faq-answer { padding: 0 16px 14px; font-size: 12.5px; color: #555; line-height: 1.55; }
+  .faq-answer a { color: #6c5ce7; font-weight: 600; text-decoration: none; }
+
+  /* dark theme overrides for tips & faq */
+  .phone.theme-dark .tips-bubble { background: linear-gradient(135deg,#2d2b55,#3d3a78); }
+  .phone.theme-dark details.faq-item { background: #1e1d30; border-color: #2a2838; }
+  .phone.theme-dark details.faq-item summary { color: #e8e6ff; }
+  .phone.theme-dark .faq-answer { color: #888; }
+
   /* ---------- Transaction tags ---------- */
   .txn-tag-row { grid-column: 1 / 3; display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
   .txn-tag-row:empty { display: none; }
@@ -945,12 +973,18 @@
 
     </div>
 
-    <div class="chat-fab" data-action="open-chat"><span class="mini-icon" style="width:16px;height:16px;"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.34A8.5 8.5 0 116 4.92 8.38 8.38 0 0112.5 3a8.5 8.5 0 018.5 8.5z"/></svg></span> Ask about your money — "How much did I spend on coffee?"</div>
+    <div class="tips-bubble" id="tips-bubble" data-action="open-faq">
+      <button type="button" class="tips-bubble-close" data-action="dismiss-tip" title="Dismiss">&times;</button>
+      <div class="tips-bubble-tag">Did you know?</div>
+      <div class="tips-bubble-msg" id="tips-bubble-msg"></div>
+      <div class="tips-bubble-more">Tap to learn more →</div>
+      <div class="tips-bubble-dots" id="tips-bubble-dots"></div>
+    </div>
 
     <div class="navbar">
       <div class="nav-item active" data-nav="home" data-action="show-home"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Home</div>
       <div class="nav-item" data-nav="insights" data-action="open-insights"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
-      <div class="nav-item" data-nav="import" data-action="open-import"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>Import</div>
+      <div class="nav-item" data-nav="chat" data-action="open-chat"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>Chat</div>
       <div class="nav-item" data-nav="goals" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
       <div class="nav-item" data-nav="budget" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
       <div class="nav-item" data-nav="categories" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
@@ -1041,6 +1075,76 @@
         <h2>Settings</h2>
       </div>
       <div class="subpage-body" id="settings-body"></div>
+    </div>
+
+    <div class="subpage" id="faq-page" hidden>
+      <div class="subpage-header">
+        <button type="button" class="back-btn" data-action="close-faq">←</button>
+        <h2>Help &amp; FAQ</h2>
+      </div>
+      <div class="subpage-body">
+
+        <div class="faq-section" id="faq-getting-started">
+          <div class="faq-section-title">Getting Started</div>
+          <details class="faq-item"><summary>What is Immagini Finance?</summary><div class="faq-answer">Immagini is a personal finance tracker for Australians. It lets you categorise your bank transactions, set budgets, track savings goals, tag tax claims, and get AI-powered insights — all in one place.</div></details>
+          <details class="faq-item"><summary>How do I navigate between pages?</summary><div class="faq-answer">Use the tabs at the bottom: <strong>Home</strong> for your transactions, <strong>Insights</strong> for charts and analysis, <strong>Chat</strong> to ask the AI assistant, <strong>Goals</strong> for savings tracking, <strong>Budget</strong> for monthly limits, and <strong>Categories</strong> to manage your category list. Import is available under Settings (top-right gear icon).</div></details>
+          <details class="faq-item"><summary>How does the month switcher work?</summary><div class="faq-answer">Tap the ‹ or › arrows next to the month label at the top to move between months. Full transaction data is available for April, May, and June 2026. July shows upcoming bills only.</div></details>
+          <details class="faq-item"><summary>How do I search my transactions?</summary><div class="faq-answer">Use the search bar above your transactions to find by merchant name, note, or dollar amount. Tap the filter icon (≡) to also filter by category, date range, or amount range — you can combine all at once.</div></details>
+          <details class="faq-item"><summary>What is the "Safe to spend" bar?</summary><div class="faq-answer">The safe-to-spend bar shows your current balance minus all upcoming recurring bills due this month (like rent, subscriptions, utilities). It tells you what you can comfortably spend without missing a bill.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-categorising">
+          <div class="faq-section-title">Categorising Transactions</div>
+          <details class="faq-item"><summary>How do I categorise a transaction?</summary><div class="faq-answer">Tap any transaction row to open its detail panel. Choose a category and subcategory from the list. The app will ask if you want to teach it that keyword so future transactions from the same merchant are categorised automatically.</div></details>
+          <details class="faq-item"><summary>What is the Split feature?</summary><div class="faq-answer">Split lets you divide a single transaction across multiple categories. For example, a $150 Woolworths shop could be split $100 Grocery + $50 Household. The transaction shows a "Split ×2" badge and a purple left border. You can undo a split at any time from the same panel.</div></details>
+          <details class="faq-item"><summary>How do keywords work?</summary><div class="faq-answer">When you assign a category, the app can learn a keyword from the merchant name. Next time a transaction with the same keyword appears (e.g. "Woolworths"), it will suggest the same category automatically. You can manage keywords under Categories.</div></details>
+          <details class="faq-item"><summary>Can I add a note to a transaction?</summary><div class="faq-answer">Yes — tap the transaction to open its panel and type in the note field. Notes appear as a small badge on the transaction row and are also searchable from the search bar.</div></details>
+          <details class="faq-item"><summary>How do I customise category icons and names?</summary><div class="faq-answer">Go to the <strong>Categories</strong> tab in the footer. Tap any category to edit its name or tap its icon to choose from the icon library.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-tax">
+          <div class="faq-section-title">Tax &amp; EOFY</div>
+          <details class="faq-item"><summary>How do I tag a transaction as a tax claim?</summary><div class="faq-answer">Tap any transaction to open its panel, then tap the <strong>Tax claim</strong> button. The transaction gets a green "Tax" badge. You can find all your tax-tagged transactions using the Tax claim filter in the filter panel.</div></details>
+          <details class="faq-item"><summary>How do I see all my tax claim transactions?</summary><div class="faq-answer">On the Home screen, tap the filter icon and select <strong>Tax claim</strong> under Tags, then tap Apply. Or go to <strong>Insights</strong> — the ATO Tax Claim card always shows your tagged transactions for the current month.</div></details>
+          <details class="faq-item"><summary>How do I export my ATO tax report?</summary><div class="faq-answer">From the <strong>Insights</strong> page, scroll to the ATO Tax Claim card. Tap <strong>⬇ CSV</strong> to download a spreadsheet, or <strong>⬇ PDF</strong> to get a print-ready report with a centered table layout, totals, and ATO reference note. You need at least one tax-tagged transaction for the export to be active.</div></details>
+          <details class="faq-item"><summary>What does the PDF tax report include?</summary><div class="faq-answer">The PDF includes: transaction date, merchant name, category, dollar amount, and any notes you added. It also shows the total claimable amount and a footer noting the report is for ATO records. It opens in a new tab — use your browser's Print → Save as PDF option.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-budgets">
+          <div class="faq-section-title">Budgets</div>
+          <details class="faq-item"><summary>How do I set a monthly budget?</summary><div class="faq-answer">Go to the <strong>Budget</strong> tab. Tap the number field next to any category and type in your monthly limit. The progress bar updates live as you type.</div></details>
+          <details class="faq-item"><summary>What does "over budget" mean?</summary><div class="faq-answer">When your spending in a category exceeds the monthly limit you set, the bar turns red and shows how much you're over. Under budget shows in green with the remaining amount.</div></details>
+          <details class="faq-item"><summary>Can I see budget history?</summary><div class="faq-answer">Yes — tap <strong>View yearly trend</strong> under any category to see month-by-month spending vs. your budget for the past 6 months.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-insights">
+          <div class="faq-section-title">Insights</div>
+          <details class="faq-item"><summary>What does the Compare chart show?</summary><div class="faq-answer">The Compare chart shows your monthly spending per category over the last 6 months. Select one or more categories using the chips above the chart, and toggle between Line and Bar view. Dollar values are shown on data points and on the Y-axis.</div></details>
+          <details class="faq-item"><summary>Does the Insights page respond to filters?</summary><div class="faq-answer">Yes — the search bar and filter panel on the Insights page are shared with the Home screen. Filtering by category, date, or amount will update the top-merchant list and ATO tax card to reflect only the filtered transactions.</div></details>
+          <details class="faq-item"><summary>What is the "Category trends" card?</summary><div class="faq-answer">It highlights the top 3 categories with the biggest month-over-month change — useful for spotting where your spending has jumped or dropped compared to last month.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-goals">
+          <div class="faq-section-title">Goals</div>
+          <details class="faq-item"><summary>How do I create a savings goal?</summary><div class="faq-answer">Go to the <strong>Goals</strong> tab. In this version, goals (like Bali Trip and Emergency Fund) are pre-loaded. In a future version you'll be able to add custom goals with names, targets, and deadlines.</div></details>
+          <details class="faq-item"><summary>How do I allocate a transfer to a goal?</summary><div class="faq-answer">Tap any transaction in the <strong>Transfers</strong> category to open the Allocate panel. You can split the transfer amount across one or more savings goals — for example, $500 to Bali and $500 to Emergency Fund.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-importing">
+          <div class="faq-section-title">Importing Data</div>
+          <details class="faq-item"><summary>How do I import my bank transactions?</summary><div class="faq-answer">Go to <strong>Settings → Import transactions</strong>. Drag and drop or tap to choose a CSV file exported from your bank. Immagini will parse the date, merchant, and amount columns automatically.</div></details>
+          <details class="faq-item"><summary>What CSV format is supported?</summary><div class="faq-answer">Any CSV with columns for date, description/merchant, and amount (debit or credit). The parser tries common bank formats automatically. If a column isn't detected, a mapping screen will appear.</div></details>
+          <details class="faq-item"><summary>Which Australian banks are supported?</summary><div class="faq-answer">CommBank, Westpac, ANZ, NAB, Macquarie, ING, and most banks that export standard CSV statements. More formats are added regularly.</div></details>
+        </div>
+
+        <div class="faq-section" id="faq-chat">
+          <div class="faq-section-title">AI Assistant</div>
+          <details class="faq-item"><summary>What can I ask the AI assistant?</summary><div class="faq-answer">You can ask anything about your spending — for example: "How much did I spend on coffee this month?", "What's my biggest expense category?", "Am I on track with my budget?", or "Show me all my subscriptions." The AI reads your transaction data to give you personalised answers.</div></details>
+          <details class="faq-item"><summary>Is my financial data shared with AI servers?</summary><div class="faq-answer">In this prototype, the chat is a demo with pre-set responses. In the live version, your data would be processed securely and never used to train AI models. Privacy controls will be available in Settings.</div></details>
+        </div>
+
+        <div style="height:24px;"></div>
+      </div>
     </div>
 
     <div class="filter-sheet-overlay" id="filter-panel" hidden>
@@ -1290,13 +1394,15 @@
   var compareSelectedCats = ['cat-bills', 'cat-dine'];
   var compareChartType = 'line';
 
-  // ---- AI nudge cycling ----
+  // ---- Heads Up financial nudges ----
   var AI_NUDGES = [
     "You've spent $42 more on takeout this month than usual. Netflix renews in 3 days for $24.99.",
     "Dining & Takeout is tracking 32% higher than last month. Consider a home-cook day this week.",
     "Your electricity bill is due in 8 days. Based on your balance, you're well covered.",
     "You haven't made a savings deposit in 18 days — even $50 helps keep momentum.",
-    "Transport costs dropped 15% this month vs. your 6-month average. Nice work. 🚗"
+    "Transport costs dropped 15% this month vs. your 6-month average. Nice work.",
+    "Subscriptions renew automatically — tap the Subscriptions category to review them all.",
+    "You still have 3 uncategorised transactions this month. Sorting them keeps your budget accurate."
   ];
   var currentNudgeIdx = 0;
   function renderNudge() {
@@ -1314,6 +1420,53 @@
     currentNudgeIdx = (currentNudgeIdx + 1) % AI_NUDGES.length;
     renderNudge();
   }, 7000);
+
+  // ---- Did you know? feature tips ----
+  // Each tip links to a section in the FAQ page (faq-<section> id)
+  var FEATURE_TIPS = [
+    { msg: "You can tag transactions as tax claims and export a formatted ATO report for EOFY — both CSV and PDF.", section: 'faq-tax' },
+    { msg: "Tap any transaction to categorise it, add a personal note, or mark it as a tax claim.", section: 'faq-categorising' },
+    { msg: "Use the Split feature to divide one purchase across multiple categories — great for mixed receipts.", section: 'faq-categorising' },
+    { msg: "The filter icon lets you search by category, date range, or dollar amount — or combine all three.", section: 'faq-getting-started' },
+    { msg: "Swipe back using the ‹ arrow to review previous months and spot longer-term spending patterns.", section: 'faq-getting-started' },
+    { msg: "Set monthly budgets under the Budget tab to see how much runway is left in each category.", section: 'faq-budgets' },
+    { msg: "Tap any slice of the pie chart to jump straight to that category's transactions.", section: 'faq-getting-started' },
+    { msg: "The Compare chart in Insights shows your spending across categories side by side over 6 months.", section: 'faq-insights' },
+    { msg: "Allocate transfers to savings goals — tap any transfer to split it across Bali, Emergency Fund, and more.", section: 'faq-goals' },
+    { msg: "Import a bank CSV to load all your transactions at once — go to Settings to find the Import page.", section: 'faq-importing' },
+    { msg: "Search by merchant name, note, or dollar amount using the search bar above your transactions.", section: 'faq-getting-started' },
+    { msg: "Customise category icons and names any time from the Categories tab in the footer.", section: 'faq-categorising' },
+    { msg: "Ask the AI assistant anything about your spending — try 'How much did I spend on coffee this month?'", section: 'faq-chat' },
+    { msg: "The Safe to Spend bar automatically deducts upcoming recurring bills so you always know your true balance.", section: 'faq-getting-started' },
+    { msg: "Your PDF tax report is print-ready with a centred table layout, totals, and an ATO reference note.", section: 'faq-tax' }
+  ];
+  // load last-seen index from localStorage so each page load starts on a fresh tip
+  var currentTipIdx = (function() {
+    try { return parseInt(localStorage.getItem('imm_tip_idx') || '0', 10) % FEATURE_TIPS.length; } catch(e) { return 0; }
+  })();
+  var tipDismissed = false;
+
+  function renderTip() {
+    var bubble = document.getElementById('tips-bubble');
+    var msgEl = document.getElementById('tips-bubble-msg');
+    var dotsEl = document.getElementById('tips-bubble-dots');
+    if (!bubble || !msgEl || !dotsEl) return;
+    if (tipDismissed) { bubble.hidden = true; return; }
+    bubble.hidden = false;
+    msgEl.textContent = FEATURE_TIPS[currentTipIdx].msg;
+    var dotsHtml = '';
+    for (var i = 0; i < FEATURE_TIPS.length; i++) {
+      dotsHtml += '<div class="tips-bubble-dot' + (i === currentTipIdx ? ' active' : '') + '"></div>';
+    }
+    dotsEl.innerHTML = dotsHtml;
+  }
+
+  function dismissTip() {
+    tipDismissed = true;
+    var nextIdx = (currentTipIdx + 1) % FEATURE_TIPS.length;
+    try { localStorage.setItem('imm_tip_idx', String(nextIdx)); } catch(e) {}
+    document.getElementById('tips-bubble').hidden = true;
+  }
 
   // ---- transaction tag state ----
   var TXN_NOTES = {};
@@ -1544,7 +1697,7 @@
   }
 
   // ---- static navbar / overlay-page plumbing ----
-  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page', 'icon-picker-modal', 'filter-panel'];
+  var OVERLAY_IDS = ['manage-page', 'insights-page', 'chat-page', 'goals-page', 'budget-page', 'import-page', 'settings-page', 'faq-page', 'icon-picker-modal', 'filter-panel'];
 
   function hideAllOverlays() {
     OVERLAY_IDS.forEach(function (id) { document.getElementById(id).hidden = true; });
@@ -2533,6 +2686,26 @@
       setActiveNav('home');
       return;
     }
+
+    if (e.target.closest('[data-action="dismiss-tip"]')) {
+      e.stopPropagation();
+      dismissTip();
+      return;
+    }
+    if (e.target.closest('[data-action="open-faq"]')) {
+      showOverlay('faq-page', null);
+      var section = FEATURE_TIPS[currentTipIdx] && FEATURE_TIPS[currentTipIdx].section;
+      if (section) {
+        var el = document.getElementById(section);
+        if (el) { el.open = true; setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); }
+      }
+      return;
+    }
+    if (e.target.closest('[data-action="close-faq"]')) {
+      hideAllOverlays();
+      setActiveNav('home');
+      return;
+    }
     if (e.target.closest('[data-action="chat-send"]')) {
       sendChatMessage();
       return;
@@ -3383,6 +3556,15 @@
       '<div class="settings-row"><span>Show cents</span><span class="settings-value"><span class="toggle-track active"><span class="toggle-thumb"></span></span></span></div>' +
       '</div>';
 
+    html += '<div class="settings-section-label" style="margin-top:8px;">Data</div>';
+    html += '<div class="settings-list">' +
+      '<div class="settings-row" data-action="open-import" style="cursor:pointer;">' +
+        '<span>Import transactions</span>' +
+        '<span class="settings-value" style="color:#6c5ce7;font-weight:600;">CSV ›</span>' +
+      '</div>' +
+      '<div class="settings-row"><span>Export all data</span><span class="settings-value">Coming soon</span></div>' +
+      '</div>';
+
     html += '<div class="settings-section-label" style="margin-top:8px;">About</div>';
     html += '<div class="settings-list">' +
       '<div class="settings-row"><span>App</span><span class="settings-value">Immagini Finance</span></div>' +
@@ -3762,6 +3944,7 @@
   renderSafeSpendBar();
   renderPieChart();
   renderNudge();
+  renderTip();
   refreshTransferRowBadge('transfer-1');
   wireImportFileInput();
   wireImportDropZone();
