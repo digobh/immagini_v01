@@ -97,6 +97,17 @@
 
   details.subcategory { border-top: 1px solid #f5f5f7; }
   details.subcategory:first-child { border-top: none; }
+  details.category[hidden] { display: none; }
+  details.subcategory[hidden] { display: none; }
+  .uncategorized-card[hidden] { display: none; }
+  /* Empty state shown on home when no transactions imported yet */
+  .no-txn-state { padding: 40px 24px; text-align: center; }
+  .no-txn-state .no-txn-icon { font-size: 44px; margin-bottom: 14px; }
+  .no-txn-state .no-txn-title { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .no-txn-state .no-txn-sub { font-size: 12.5px; color: #888; line-height: 1.5; margin-bottom: 22px; }
+  .no-txn-state .no-txn-btn { display: inline-block; background: #6c5ce7; color: #fff; border: none; border-radius: 14px; padding: 13px 28px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .no-txn-state[hidden] { display: none; }
+  .phone.theme-dark .no-txn-state .no-txn-title { color: #e8e6ff; }
   .subcategory-row { display: flex; justify-content: space-between; padding: 9px 16px 9px 28px; font-size: 12.5px; font-weight: 600; color: #555; }
   .subcategory-row .chevron { margin-left: 8px; }
   details.subcategory[open] > summary .chevron { transform: rotate(180deg); }
@@ -827,6 +838,13 @@
             <div class="bill-row"><div class="bill-date">13 Jun</div><div class="bill-merchant">Direct Debit - Unknown</div><div class="bill-amount">$35.00</div></div>
           </div>
         </details>
+
+        <div class="no-txn-state" id="no-transactions-state" hidden>
+          <div class="no-txn-icon">📂</div>
+          <div class="no-txn-title">No transactions yet</div>
+          <div class="no-txn-sub">Import your bank CSV to see your spending<br>categorised and tracked automatically.</div>
+          <button type="button" class="no-txn-btn" data-action="open-import">Import transactions</button>
+        </div>
 
         <div id="category-list">
         <details class="category" id="cat-bills">
@@ -1737,20 +1755,49 @@
     refreshAllDateGroupHeaders();
   }
 
-  // Recalculates and displays the total spending for every named category.
+  // Recalculates totals, hides empty categories and subcategories,
+  // and shows the import prompt when no transactions exist.
   function refreshAllCategoryTotals() {
+    var totalRowCount = 0;
+
     document.querySelectorAll('details.category').forEach(function(catEl) {
-      if (catEl.id === 'cat-uncategorized') return;
+      // Count real bill-rows in this category (excludes "more transactions" placeholders)
+      var realRows = [];
+      catEl.querySelectorAll('.bill-row').forEach(function(r) {
+        if (isRealBillRow(r)) realRows.push(r);
+      });
+
+      if (catEl.id === 'cat-uncategorized') {
+        catEl.hidden = realRows.length === 0;
+        if (realRows.length > 0) totalRowCount += realRows.length;
+        return;
+      }
+
+      // Hide/show each subcategory based on whether it has any bill-rows
+      catEl.querySelectorAll('details.subcategory').forEach(function(subEl) {
+        var subRows = subEl.querySelectorAll('.bill-row').length;
+        subEl.hidden = subRows === 0;
+      });
+
+      // Sum total for this category
       var total = 0;
-      catEl.querySelectorAll('.bill-row').forEach(function(row) {
-        if (!isRealBillRow(row)) return;
+      realRows.forEach(function(row) {
         var amtEl = row.querySelector('.bill-amount');
         if (!amtEl) return;
         total += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
       });
+
+      catEl.hidden = realRows.length === 0;
+      if (realRows.length > 0) totalRowCount += realRows.length;
+
       var display = catEl.querySelector(':scope > summary .cat-amount');
       if (display) display.textContent = formatMoney(total);
     });
+
+    // Show import prompt when there are no transactions at all
+    var noTxnEl = document.getElementById('no-transactions-state');
+    if (noTxnEl) noTxnEl.hidden = totalRowCount > 0;
+
     renderSafeSpendBar();
   }
 
