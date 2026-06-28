@@ -3918,7 +3918,7 @@
     document.getElementById('next-month-btn').disabled = monthIndex === MONTHS.length - 1;
 
     var tag = MONTH_TAGS[monthIndex];
-    var balance = 2340.18;
+    var balance = parseFloat((document.querySelector('.balance') || {}).textContent.replace(/[^0-9.]/g, '')) || 0;
     var upcomingTotal = 0;
     document.querySelectorAll('.breakdown-row.minus').forEach(function (row) {
       var match = row.dataset.month === tag;
@@ -3927,6 +3927,8 @@
     });
     var safeAmount = balance - upcomingTotal;
     SAFE_TO_SPEND_BASE = safeAmount;
+    var balRow = document.querySelector('.breakdown-row:not(.minus):not(.total) span:last-child');
+    if (balRow) balRow.textContent = formatMoney(balance);
     document.querySelector('.safe-spend-sub').textContent = 'After ' + formatMoney(upcomingTotal) + ' in upcoming recurring bills';
     document.querySelector('.breakdown-row.total span:last-child').textContent = formatMoney(safeAmount);
     renderSafeSpendBar();
