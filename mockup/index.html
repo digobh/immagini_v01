@@ -323,6 +323,11 @@
   .goal-top .value { color: #6c5ce7; font-weight: 700; }
   .bar-track { background: #eee; height: 8px; border-radius: 6px; overflow: hidden; }
   .bar-fill { background: linear-gradient(90deg,#6c5ce7,#a29bfe); height: 100%; border-radius: 6px; }
+  /* goal progress bar — traffic-light colours override the theme gradient */
+  .goal-bar-fill { height: 100%; border-radius: 6px; transition: width .4s ease, background .4s ease; }
+  .goal-bar-fill.safe   { background: linear-gradient(90deg,#27ae60,#2ecc71); }
+  .goal-bar-fill.warn   { background: linear-gradient(90deg,#d68910,#f39c12); }
+  .goal-bar-fill.danger { background: linear-gradient(90deg,#c0392b,#e74c3c); }
 
   /* ---------- Transfer -> goal allocation modal ---------- */
   .allocate-goal-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; font-size: 13px; border-top: 1px solid #f5f5f7; }
@@ -336,10 +341,10 @@
   .chat-fab .mini-icon { width: 16px; height: 16px; margin-right: 2px; }
 
   .navbar { flex-shrink: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 10px; border-top: 1px solid #eee; position: relative; z-index: 45; }
-  .nav-item { font-size: 10.5px; color: #999; text-align: center; cursor: pointer; }
+  .nav-item { font-size: 9px; color: #999; text-align: center; cursor: pointer; }
   .nav-item.active { color: #6c5ce7; font-weight: 700; }
   .nav-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
-  .nav-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
   .hint { text-align: center; color: #999; font-size: 12px; max-width: 380px; }
 
@@ -410,8 +415,23 @@
   details.budget-history { margin-top: 6px; }
   details.budget-history summary { font-size: 11.5px; color: #6c5ce7; font-weight: 700; padding: 6px 0 2px; cursor: pointer; list-style: none; }
   details.budget-history summary::-webkit-details-marker { display: none; }
-  .budget-history-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 0; border-top: 1px solid #f5f5f7; color: #555; }
+  .budget-history-row { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 7px 0; border-top: 1px solid #f5f5f7; }
   .budget-history-row:first-child { border-top: none; }
+  .hist-month { width: 26px; flex-shrink: 0; color: #888; font-weight: 600; }
+  .hist-mini-track { flex: 1; height: 5px; border-radius: 3px; background: #f0f0f0; overflow: hidden; }
+  .hist-mini-fill { height: 100%; border-radius: 3px; }
+  .hist-mini-fill.safe   { background: #27ae60; }
+  .hist-mini-fill.warn   { background: #e67e22; }
+  .hist-mini-fill.danger { background: #e74c3c; }
+  .hist-amount { width: 54px; text-align: right; flex-shrink: 0; font-weight: 600; }
+  .hist-amount.safe   { color: #27ae60; }
+  .hist-amount.warn   { color: #e67e22; }
+  .hist-amount.danger { color: #e74c3c; }
+  .hist-badge { flex-shrink: 0; font-size: 10px; font-weight: 700; border-radius: 6px; padding: 2px 6px; }
+  .hist-badge.safe   { background: #e8f8ee; color: #27ae60; }
+  .hist-badge.warn   { background: #fef3e0; color: #d68910; }
+  .hist-badge.danger { background: #fdeaea; color: #c0392b; }
+  .hist-badge.neutral { background: #f5f5f7; color: #aaa; }
 
   /* ---------- Budget visibility on the home category list ---------- */
   .cat-amount-wrap { display: flex; flex-direction: column; align-items: flex-end; margin-right: 8px; }
@@ -691,7 +711,9 @@
   .phone.theme-dark .budget-input-row input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
   .phone.theme-dark .budget-progress-label { color: #999; }
   .phone.theme-dark .budget-history summary { color: #a29bfe; }
-  .phone.theme-dark .budget-history-row { color: #999; border-top-color: #25234a; }
+  .phone.theme-dark .budget-history-row { border-top-color: #25234a; }
+  .phone.theme-dark .hist-month { color: #666; }
+  .phone.theme-dark .hist-mini-track { background: #25234a; }
   .phone.theme-dark .safe-spend-breakdown { border-top-color: #2a2838; }
   .phone.theme-dark .breakdown-row.minus span:last-child { color: #ff6b6b; }
   .phone.theme-dark .settings-section-label { color: #555; }
@@ -988,6 +1010,7 @@
       <div class="nav-item" data-nav="goals" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
       <div class="nav-item" data-nav="budget" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
       <div class="nav-item" data-nav="categories" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
+      <div class="nav-item" data-nav="faq" data-action="open-faq"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="2.5"/></svg></span>Help</div>
     </div>
 
     <div class="manage-page" id="manage-page" hidden>
@@ -2693,11 +2716,14 @@
       return;
     }
     if (e.target.closest('[data-action="open-faq"]')) {
-      showOverlay('faq-page', null);
-      var section = FEATURE_TIPS[currentTipIdx] && FEATURE_TIPS[currentTipIdx].section;
-      if (section) {
-        var el = document.getElementById(section);
-        if (el) { el.open = true; setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); }
+      var fromNav = !!e.target.closest('.nav-item');
+      showOverlay('faq-page', 'faq');
+      if (!fromNav) {
+        var section = FEATURE_TIPS[currentTipIdx] && FEATURE_TIPS[currentTipIdx].section;
+        if (section) {
+          var el = document.getElementById(section);
+          if (el) { el.open = true; setTimeout(function() { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); }
+        }
       }
       return;
     }
@@ -3601,10 +3627,11 @@
     var html = '';
     GOALS.forEach(function (g) {
       var pct = g.target > 0 ? Math.min(100, (g.saved / g.target) * 100) : 0;
+      var barCls = pct < 50 ? 'safe' : pct < 75 ? 'warn' : 'danger';
       html += '<div class="goal-card" data-goal-id="' + g.id + '">' +
         '<div class="goal-top"><div class="label"><span class="mini-icon"><svg viewBox="0 0 24 24">' + g.icon + '</svg></span>' + escapeHtml(g.label) + '</div>' +
         '<div class="value">' + formatMoney(g.saved) + ' / ' + formatMoney(g.target) + '</div></div>' +
-        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;"></div></div>' +
+        '<div class="bar-track"><div class="goal-bar-fill ' + barCls + '" style="width:' + pct + '%;"></div></div>' +
         '</div>';
     });
     html += '<button type="button" class="subpage-add-btn" data-action="add-goal">+ New goal</button>';
@@ -3867,9 +3894,15 @@
       if (history.length) {
         html += '<details class="budget-history"><summary>View yearly trend</summary>';
         history.forEach(function (h) {
-          var hOver = budget > 0 && h.spent > budget;
-          html += '<div class="budget-history-row"><span>' + h.m + '</span><span>' + formatMoney(h.spent) + '</span>' +
-            '<span class="status ' + (hOver ? 'over' : 'under') + '">' + (budget > 0 ? (hOver ? 'Over' : 'Under') : '—') + '</span></div>';
+          var hPct = budget > 0 ? Math.min(120, (h.spent / budget) * 100) : 0;
+          var hCls = budget === 0 ? 'neutral' : hPct < 50 ? 'safe' : hPct < 75 ? 'warn' : 'danger';
+          var hLabel = budget > 0 ? (hPct >= 100 ? 'Over' : Math.round(hPct) + '%') : '—';
+          html += '<div class="budget-history-row">' +
+            '<span class="hist-month">' + h.m + '</span>' +
+            '<div class="hist-mini-track"><div class="hist-mini-fill ' + hCls + '" style="width:' + Math.min(100, hPct) + '%;"></div></div>' +
+            '<span class="hist-amount ' + hCls + '">' + formatMoney(h.spent) + '</span>' +
+            '<span class="hist-badge ' + hCls + '">' + hLabel + '</span>' +
+            '</div>';
         });
         html += '</details>';
       }
