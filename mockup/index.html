@@ -128,9 +128,20 @@
   .split-summary:empty { display: none; }
 
   /* ---------- Per-category transaction row tinting ---------- */
-  #cat-bills .bill-row { background: #fff8f4; }
-  #cat-subs .bill-row { background: #f6f6ff; }
-  #cat-dine .bill-row { background: #fff5f5; }
+  #cat-housing .bill-row      { background: #fdf9f2; }
+  #cat-utilities .bill-row    { background: #ffffee; }
+  #cat-groceries .bill-row    { background: #f2fbf5; }
+  #cat-dining .bill-row       { background: #fff5f5; }
+  #cat-transport .bill-row    { background: #f2faff; }
+  #cat-health .bill-row       { background: #fff2f7; }
+  #cat-insurance .bill-row    { background: #f2fefd; }
+  #cat-fitness .bill-row      { background: #fff4f8; }
+  #cat-shopping .bill-row     { background: #f8f6ff; }
+  #cat-entertainment .bill-row{ background: #f2f5ff; }
+  #cat-travel .bill-row       { background: #f2f8ff; }
+  #cat-education .bill-row    { background: #f5fde8; }
+  #cat-gifts .bill-row        { background: #fff8f2; }
+  #cat-fees .bill-row         { background: #f8f8fb; }
   #cat-transport .bill-row { background: #f3fdf7; }
   #cat-uncategorized .bill-row { background: #fffaf2; }
 
@@ -495,17 +506,18 @@
   .settings-btn svg { width: 17px; height: 17px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ---------- Category icon picker (in Manage categories) ---------- */
-  .manage-icon-label { font-size: 10.5px; color: #999; text-transform: uppercase; letter-spacing: .03em; font-weight: 700; margin: 8px 0 6px; }
-  .manage-icon-current-btn { display: flex; align-items: center; gap: 10px; width: 100%; border: 1.5px solid #e8e4ff; border-radius: 12px; background: #f7f6ff; cursor: pointer; padding: 10px 12px; margin-bottom: 12px; }
-  .manage-icon-current-btn svg { width: 22px; height: 22px; fill: none; stroke: #6c5ce7; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-  .manage-icon-current-btn span { font-size: 12.5px; color: #6c5ce7; font-weight: 600; }
+  .manage-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .manage-icon-current-btn { width: 42px; height: 42px; flex-shrink: 0; border: 1.5px solid #e8e4ff; border-radius: 12px; background: #f7f6ff; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .manage-icon-current-btn svg { width: 22px; height: 22px; fill: none; stroke: #6c5ce7; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .manage-card-header .manage-cat-name { flex: 1; width: auto; margin-bottom: 0; }
   /* Icon picker popup */
   .icon-picker-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; align-items: flex-end; }
   .icon-picker-overlay[hidden] { display: none; }
   .icon-picker-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); }
-  .icon-picker-sheet { position: relative; width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 0 20px; }
-  .icon-picker-title { padding: 4px 16px 10px; font-size: 15px; font-weight: 700; color: #1a1a1a; }
-  .icon-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px 8px; }
+  .icon-picker-sheet { position: relative; width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 10px 0 0; max-height: 72%; display: flex; flex-direction: column; }
+  .icon-picker-title { padding: 4px 16px 10px; font-size: 15px; font-weight: 700; color: #1a1a1a; flex-shrink: 0; }
+  .icon-picker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px 8px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+  .icon-picker-sheet .modal-close { flex-shrink: 0; margin: 6px 16px 16px; display: block; width: calc(100% - 32px); }
   .icon-picker-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; border: 1.5px solid #eee; border-radius: 12px; background: #f7f8fc; cursor: pointer; padding: 12px 4px 10px; }
   .icon-picker-btn svg { width: 22px; height: 22px; fill: none; stroke: #666; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
   .icon-picker-btn span { font-size: 10px; color: #999; text-transform: capitalize; }
@@ -660,9 +672,7 @@
   .phone.theme-dark .manage-keywords-label { color: #555; }
   .phone.theme-dark .keyword-tag { background: #2d2b55; color: #a29bfe; }
   .phone.theme-dark .date-group-header { background: #1f1d3a; color: #7a72e8; border-top-color: #2d2b55; }
-  .phone.theme-dark #cat-bills .bill-row { background: #201c1c; }
-  .phone.theme-dark #cat-subs .bill-row { background: #1d1c2c; }
-  .phone.theme-dark #cat-dine .bill-row { background: #211820; }
+  .phone.theme-dark .bill-row { background: #1a1927; }
   .phone.theme-dark #cat-transport .bill-row { background: #181e1c; }
   .phone.theme-dark #cat-uncategorized .bill-row { background: #201c17; }
   .phone.theme-dark .txn-search-box { background: #1e1d30; border-color: #2a2838; }
@@ -860,138 +870,142 @@
         </div>
 
         <div id="category-list">
-        <details class="category" id="cat-bills">
+
+        <details class="category" id="cat-housing">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z" stroke-width="1.8"/></svg></div>
-            <div class="cat-info"><div class="cat-name">Bills &amp; Utilities</div><div class="cat-meta">4 subcategories</div></div>
-            <div class="cat-amount-wrap"><div class="cat-amount">$344.40</div><div class="cat-budget-line" data-cat-id="cat-bills"></div></div><div class="chevron">▾</div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Housing</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-housing"></div></div><div class="chevron">▾</div>
           </div></summary>
-          <div class="category-content">
-
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z"/></svg></span>Electricity</span><span>$142.10<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">12 Jun</div><div class="bill-merchant">AGL Electricity <span class="bill-recurring">recurring</span></div><div class="bill-amount">$142.10</div></div>
-              </div>
-            </details>
-
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 2s7 8 7 13a7 7 0 11-14 0c0-5 7-13 7-13z"/></svg></span>Water</span><span>$58.30<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">5 Jun</div><div class="bill-merchant">Sydney Water</div><div class="bill-amount">$58.30</div></div>
-              </div>
-            </details>
-
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M2 8.5a15.3 15.3 0 0120 0"/><path d="M5.5 12a10.5 10.5 0 0113 0"/><path d="M9 15.5a5.7 5.7 0 016 0"/><circle cx="12" cy="19" r="0.6" fill="currentColor" stroke="none"/></svg></span>Internet</span><span>$79.00<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">3 Jun</div><div class="bill-merchant">Aussie Broadband <span class="bill-recurring">recurring</span></div><div class="bill-amount">$79.00</div></div>
-              </div>
-            </details>
-
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span>Mobile</span><span>$65.00<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">8 Jun</div><div class="bill-merchant">Telstra Mobile <span class="bill-recurring">recurring</span></div><div class="bill-amount">$65.00</div></div>
-              </div>
-            </details>
-
-          </div>
+          <div class="category-content"></div>
         </details>
 
-        <details class="category" id="cat-subs">
+        <details class="category" id="cat-utilities">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M5 4v16l15-8z" stroke-width="1.8"/></svg></div>
-            <div class="cat-info"><div class="cat-name">Subscriptions</div><div class="cat-meta">3 subcategories</div></div>
-            <div class="cat-amount-wrap"><div class="cat-amount">$49.97</div><div class="cat-budget-line" data-cat-id="cat-subs"></div></div><div class="chevron">▾</div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Utilities &amp; Bills</div><div class="cat-meta">5 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-utilities"></div></div><div class="chevron">▾</div>
           </div></summary>
-          <div class="category-content">
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="14" rx="2.5"/><path d="M9.5 9v5l5-2.5z" fill="currentColor" stroke="none"/></svg></span>Streaming</span><span>$24.99<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">24 Jun</div><div class="bill-merchant">Netflix <span class="bill-recurring">due in 3d</span></div><div class="bill-amount">$24.99</div></div>
-              </div>
-            </details>
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Music</span><span>$12.99<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">15 Jun</div><div class="bill-merchant">Spotify <span class="bill-recurring">recurring</span></div><div class="bill-amount">$12.99</div></div>
-              </div>
-            </details>
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M6.5 19a4.2 4.2 0 01-.8-8.32A5.5 5.5 0 0117 9.5a4 4 0 01.5 7.96"/></svg></span>Cloud &amp; other</span><span>$11.99<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">10 Jun</div><div class="bill-merchant">iCloud Storage <span class="bill-recurring">recurring</span></div><div class="bill-amount">$2.99</div></div>
-                <div class="bill-row"><div class="bill-date">2 Jun</div><div class="bill-merchant">Amazon Prime <span class="bill-recurring">recurring</span></div><div class="bill-amount">$9.00</div></div>
-              </div>
-            </details>
-          </div>
+          <div class="category-content"></div>
         </details>
 
-        <details class="category" id="cat-dine">
+        <details class="category" id="cat-groceries">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M5 9h12l-1 9a3 3 0 01-3 3H9a3 3 0 01-3-3L5 9z"/><path d="M4 7h14"/><path d="M17 11h1a2 2 0 010 4h-1"/></svg></div>
-            <div class="cat-info"><div class="cat-name">Dining &amp; Takeout</div><div class="cat-meta">3 subcategories</div></div>
-            <div class="cat-amount-wrap"><div class="cat-amount">$287.75</div><div class="cat-budget-line" data-cat-id="cat-dine"></div></div><div class="chevron">▾</div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Groceries</div><div class="cat-meta">3 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-groceries"></div></div><div class="chevron">▾</div>
           </div></summary>
-          <div class="category-content">
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>Takeout Delivery</span><span>$68.10<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">20 Jun</div><div class="bill-merchant">Menulog - Thai Spice</div><div class="bill-amount">$38.20</div></div>
-                <div class="bill-row"><div class="bill-date">17 Jun</div><div class="bill-merchant">UberEats - Guzman y Gomez</div><div class="bill-amount">$29.90</div></div>
-              </div>
-            </details>
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M3 8h14v5a5 5 0 01-5 5H8a5 5 0 01-5-5V8z"/><path d="M17 8h2a2 2 0 010 4h-2"/></svg></span>Coffee</span><span>$11.70<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">18 Jun</div><div class="bill-merchant">Mecca Espresso</div><div class="bill-amount">$6.50</div></div>
-                <div class="bill-row"><div class="bill-date">9 Jun</div><div class="bill-merchant">Mecca Espresso</div><div class="bill-amount">$5.20</div></div>
-              </div>
-            </details>
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M7 2v8M5 2v5a2 2 0 002 2 2 2 0 002-2V2"/><path d="M17 2v20M17 2a3 3 0 00-3 3v4a2 2 0 002 2h1"/></svg></span>Restaurants</span><span>$207.95<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">14 Jun</div><div class="bill-merchant">+ 8 more transactions</div><div class="bill-amount">$207.95</div></div>
-              </div>
-            </details>
-          </div>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-dining">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Dining Out</div><div class="cat-meta">5 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-dining"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
         </details>
 
         <details class="category" id="cat-transport">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="#2d3748" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="#2d3748" stroke="none"/></svg></div>
-            <div class="cat-info"><div class="cat-name">Transport</div><div class="cat-meta">2 subcategories</div></div>
-            <div class="cat-amount-wrap"><div class="cat-amount">$96.20</div><div class="cat-budget-line" data-cat-id="cat-transport"></div></div><div class="chevron">▾</div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Transport</div><div class="cat-meta">5 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-transport"></div></div><div class="chevron">▾</div>
           </div></summary>
-          <div class="category-content">
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="13" rx="3"/><path d="M4 11h16"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg></span>Public Transit</span><span>$77.80<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">19 Jun</div><div class="bill-merchant">Opal Top Up</div><div class="bill-amount">$40.00</div></div>
-                <div class="bill-row"><div class="bill-date">6 Jun</div><div class="bill-merchant">Opal Top Up</div><div class="bill-amount">$30.00</div></div>
-                <div class="bill-row"><div class="bill-date">1 Jun</div><div class="bill-merchant">+ 3 more transactions</div><div class="bill-amount">$7.80</div></div>
-              </div>
-            </details>
-            <details class="subcategory">
-              <summary><div class="subcategory-row"><span><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M3 13l2-5a2 2 0 012-2h10a2 2 0 012 2l2 5"/><path d="M3 13h18v5H3z"/><circle cx="7.5" cy="18" r="1.4" fill="currentColor" stroke="none"/><circle cx="16.5" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg></span>Rideshare</span><span>$18.40<span class="chevron">▾</span></span></div></summary>
-              <div class="sub-content">
-                <div class="bill-row"><div class="bill-date">11 Jun</div><div class="bill-merchant">Uber Trip</div><div class="bill-amount">$18.40</div></div>
-              </div>
-            </details>
-          </div>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-health">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Health &amp; Medical</div><div class="cat-meta">5 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-health"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-insurance">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M23 12a11.05 11.05 0 00-22 0zm-5 7a3 3 0 01-6 0v-7"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Insurance</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-insurance"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-fitness">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Fitness &amp; Wellness</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-fitness"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-shopping">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Shopping</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-shopping"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-entertainment">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Entertainment &amp; Subscriptions</div><div class="cat-meta">5 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-entertainment"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-travel">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Travel &amp; Holidays</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-travel"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-education">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Education &amp; Children</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-education"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-gifts">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Gifts &amp; Charity</div><div class="cat-meta">2 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-gifts"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
+        </details>
+
+        <details class="category" id="cat-fees">
+          <summary><div class="category-row">
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 10V21M19 10V21M12 3L3 10h18L12 3z"/></svg></div>
+            <div class="cat-info"><div class="cat-name">Fees &amp; Financial</div><div class="cat-meta">4 subcategories</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-fees"></div></div><div class="chevron">▾</div>
+          </div></summary>
+          <div class="category-content"></div>
         </details>
 
         <details class="category" id="cat-transfer">
           <summary><div class="category-row">
             <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/></svg></div>
-            <div class="cat-info"><div class="cat-name">Transfers</div><div class="cat-meta">1 transaction</div></div>
-            <div class="cat-amount-wrap"><div class="cat-amount">$1,000.00</div></div><div class="chevron">▾</div>
+            <div class="cat-info"><div class="cat-name">Transfers</div><div class="cat-meta">0 transactions</div></div>
+            <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div></div><div class="chevron">▾</div>
           </div></summary>
-          <div class="category-content">
-            <div class="bill-row" data-row-id="transfer-1"><div class="bill-date">22 Jun</div><div class="bill-merchant">Internal Transfer - Savings</div><div class="bill-amount">$1,000.00</div><button type="button" class="split-goal-btn" data-action="split-to-goals" data-row-id="transfer-1">Split to goals</button><div class="split-summary" data-row-id="transfer-1"></div></div>
-          </div>
+          <div class="category-content"></div>
         </details>
+
         </div>
       </div>
       </div>
@@ -1261,11 +1275,21 @@
 <script>
   // ---- category registry, kept in sync as new categories are created ----
   var CATEGORIES = [
-    { id: 'cat-bills',     label: 'Bills',         iconSvg: '<path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z" stroke-width="1.8"/>' },
-    { id: 'cat-subs',      label: 'Subscriptions', iconSvg: '<path d="M5 4v16l15-8z" stroke-width="1.8"/>' },
-    { id: 'cat-dine',      label: 'Dining',        iconSvg: '<path d="M5 9h12l-1 9a3 3 0 01-3 3H9a3 3 0 01-3-3L5 9z"/><path d="M4 7h14"/><path d="M17 11h1a2 2 0 010 4h-1"/>' },
-    { id: 'cat-transport', label: 'Transport',     iconSvg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
-    { id: 'cat-transfer',  label: 'Transfers',     iconSvg: '<path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/>' }
+    { id: 'cat-housing',       label: 'Housing',           iconSvg: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>' },
+    { id: 'cat-utilities',     label: 'Utilities',         iconSvg: '<path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z"/>' },
+    { id: 'cat-groceries',     label: 'Groceries',         iconSvg: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>' },
+    { id: 'cat-dining',        label: 'Dining & Takeout',  iconSvg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/>' },
+    { id: 'cat-transport',     label: 'Transport',         iconSvg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
+    { id: 'cat-health',        label: 'Health & Medical',  iconSvg: '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' },
+    { id: 'cat-insurance',     label: 'Insurance',         iconSvg: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
+    { id: 'cat-fitness',       label: 'Fitness & Wellness',iconSvg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
+    { id: 'cat-shopping',      label: 'Shopping',          iconSvg: '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>' },
+    { id: 'cat-entertainment', label: 'Entertainment',     iconSvg: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>' },
+    { id: 'cat-travel',        label: 'Travel',            iconSvg: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>' },
+    { id: 'cat-education',     label: 'Education',         iconSvg: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>' },
+    { id: 'cat-gifts',         label: 'Gifts & Donations', iconSvg: '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>' },
+    { id: 'cat-fees',          label: 'Bank Fees',         iconSvg: '<path d="M3 21h18M3 10h18M5 10V21M19 10V21M12 3L3 10h18L12 3z"/>' },
+    { id: 'cat-transfer',      label: 'Transfers',         iconSvg: '<path d="M7 7h13M7 7l4-4M7 7l4 4"/><path d="M17 17H4M17 17l-4 4M17 17l-4-4"/>' }
   ];
 
   // ---- icon library for category customisation ----
@@ -1343,25 +1367,109 @@
   // subcategory names per category, and the keyword "database" used to
   // simulate future auto-categorization of merchant transactions
   var SUBCATEGORIES = {
-    'cat-bills': ['Electricity', 'Water', 'Internet', 'Mobile', 'Insurance'],
-    'cat-subs': ['Streaming', 'Music', 'Cloud & other'],
-    'cat-dine': ['Takeout Delivery', 'Coffee', 'Restaurants', 'Grocery'],
-    'cat-transport': ['Public Transit', 'Rideshare', 'Tolls']
+    'cat-housing':       ['Rent', 'Mortgage', 'Strata / Body Corp', 'Repairs & Maintenance', 'Furniture & Appliances'],
+    'cat-utilities':     ['Electricity', 'Gas', 'Water', 'Internet', 'Mobile Phone'],
+    'cat-groceries':     ['Supermarket', 'Fresh Produce', 'Bulk & Specialty'],
+    'cat-dining':        ['Restaurants', 'Takeout & Delivery', 'Coffee & Cafes', 'Bars & Pubs'],
+    'cat-transport':     ['Public Transit', 'Rideshare & Taxi', 'Fuel', 'Tolls', 'Parking', 'Registration & CTP'],
+    'cat-health':        ['GP & Specialist', 'Dental & Optical', 'Pharmacy', 'Pathology & Imaging'],
+    'cat-insurance':     ['Car Insurance', 'Home & Contents', 'Health Insurance', 'Life Insurance'],
+    'cat-fitness':       ['Gym Membership', 'Sports & Activities', 'Wellbeing & Beauty'],
+    'cat-shopping':      ['Clothing & Shoes', 'Electronics & Tech', 'Home & Garden', 'Online Shopping'],
+    'cat-entertainment': ['Streaming & Music', 'Cinema & Events', 'Games', 'Books & Magazines'],
+    'cat-travel':        ['Flights', 'Accommodation', 'Car Rental', 'Travel Activities'],
+    'cat-education':     ['Tuition & Courses', 'School Supplies', 'Books & Textbooks', 'Childcare'],
+    'cat-gifts':         ['Gifts', 'Charity & Donations'],
+    'cat-fees':          ['Bank Fees', 'ATM Fees', 'Interest Charges', 'Government Fees']
   };
   // keywords are scoped per-subcategory, array-of-arrays index-aligned to
-  // each category's SUBCATEGORIES list (KEYWORDS['cat-bills'][0] matches
-  // SUBCATEGORIES['cat-bills'][0], i.e. "Electricity")
+  // each category's SUBCATEGORIES list (KEYWORDS['cat-utilities'][0] matches
+  // SUBCATEGORIES['cat-utilities'][0], i.e. "Electricity")
   var KEYWORDS = {
-    'cat-bills': [
-      ['AGL', 'Energy', 'Electricity', 'Red Energy', 'Origin Energy', 'Powershop'],
-      ['Sydney Water', 'Water', 'Yarra Valley Water'],
-      ['Broadband', 'Internet', 'TPG', 'NBN', 'iiNet', 'Internode', 'Aussie Broadband'],
-      ['Telstra', 'Optus', 'Vodafone', 'Mobile', 'Phone Plan'],
-      ['Medibank', 'Budget Direct', 'Allianz', 'NIB', 'Bupa', 'HCF', 'Insurance', 'AAMI', 'RACQ', 'NRMA']
+    'cat-housing': [
+      ['Rent', 'Rental', 'REA Group', 'Real Estate', 'Landlord'],
+      ['Mortgage', 'Home Loan', 'CBA Home Loan', 'Westpac Mortgage', 'ANZ Home', 'NAB Home'],
+      ['Strata', 'Body Corporate', 'Body Corp', 'Owners Corp'],
+      ['Bunnings', 'Mitre 10', 'Total Tools', 'Plumber', 'Electrician', 'Tradie', 'Handyman'],
+      ['IKEA', 'Harvey Norman Appliances', 'The Good Guys', 'Freedom Furniture', 'Nick Scali']
     ],
-    'cat-subs': [['Netflix', 'Streaming', 'Disney'], ['Spotify', 'Music', 'Apple Music'], ['iCloud', 'Amazon Prime', 'Adobe', 'Google One', 'Subscription']],
-    'cat-dine': [['UberEats', 'Menulog', 'DoorDash'], ['Espresso', 'Cafe', 'Coffee'], ['Restaurant', 'Bistro', 'Max Brenner'], ['Woolworths', 'Coles', 'ALDI', 'IGA', 'Costco', 'Harris Farm']],
-    'cat-transport': [['Opal', 'Transit', 'TFNSW', 'Transport NSW', 'Bus', 'Train'], ['Uber Trip', 'Taxi', 'Ola', 'DiDi'], ['ETOLL', 'Etoll', 'Linkt', 'Roam', 'Toll']]
+    'cat-utilities': [
+      ['AGL', 'Origin Energy', 'EnergyAustralia', 'Red Energy', 'Powershop', 'ActewAGL', 'Electricity', 'Energy'],
+      ['Jemena', 'Alinta Gas', 'Gas'],
+      ['Sydney Water', 'Melbourne Water', 'SA Water', 'Icon Water', 'Yarra Valley Water', 'Seqwater', 'Water Corp'],
+      ['Aussie Broadband', 'NBN', 'TPG', 'iiNet', 'Internode', 'Tangerine', 'Superloop', 'Broadband', 'Internet'],
+      ['Telstra Mobile', 'Optus', 'Vodafone', 'Boost Mobile', 'Belong', 'amaysim', 'Woolworths Mobile', 'Mobile', 'Phone Plan']
+    ],
+    'cat-groceries': [
+      ['Woolworths', 'Coles', 'ALDI', 'IGA', 'Costco', 'Harris Farm', 'Foodland', 'FoodWorks', 'Drakes', 'Supermarket'],
+      ['Markets', 'Butcher', 'Greengrocer', 'Fishmonger', 'Deli'],
+      ['Costco', 'Coles Online', 'Woolworths Online']
+    ],
+    'cat-dining': [
+      ['Restaurant', 'Bistro', 'Grill', 'Kitchen', 'Dining', 'Thai', 'Sushi', 'Yum Cha', 'Pizzeria', 'Brasserie'],
+      ['UberEats', 'Menulog', 'DoorDash', 'Deliveroo', 'Takeaway', 'Pizza Hut', 'Dominos', 'KFC', 'McDonald', 'Hungry Jack', 'Subway'],
+      ['Cafe', 'Coffee', 'Espresso', 'Gloria Jean', 'Starbucks', 'Muffin Break', 'Jamaica Blue'],
+      ['Bar', 'Hotel', 'Pub', 'Brewery', 'Wine', 'Cocktail', 'Nightclub', 'Liquor', 'BWS', 'Dan Murphy']
+    ],
+    'cat-transport': [
+      ['Opal', 'Myki', 'GoCard', 'TFNSW', 'Transport NSW', 'Bus', 'Train', 'Ferry', 'Tram', 'Transit'],
+      ['Uber Trip', 'Ola', 'DiDi', 'Taxi', 'GoCatch', '13Cabs', 'Yellow Cab'],
+      ['BP', 'Shell', 'Caltex', 'Ampol', '7-Eleven Fuel', 'Puma Energy', 'Petrol', 'Service Station'],
+      ['Linkt', 'Roam', 'ETOLL', 'CityLink', 'EastLink', 'M7', 'Toll'],
+      ['Wilson Parking', 'Secure Parking', 'Parking'],
+      ['Service NSW', 'VicRoads', 'TMR Rego', 'CTP', 'Registration']
+    ],
+    'cat-health': [
+      ['Medical Centre', 'GP', 'Bulk Bill', 'Specialist', 'Doctor', 'Clinic'],
+      ['Dentist', 'Dental', 'Optical', 'Specsavers', 'OPSM', 'Optometrist'],
+      ['Chemist Warehouse', 'Priceline', 'Terry White', 'Pharmacy', 'Script', 'Prescription'],
+      ['Pathology', 'Radiology', 'MRI', 'Ultrasound', 'Blood Test', 'Imaging']
+    ],
+    'cat-insurance': [
+      ['NRMA Car', 'RACQ Car', 'RAA Car', 'Budget Direct Car', 'Bingle', 'Youi', 'AAMI Car', 'Car Insurance'],
+      ['Allianz Home', 'NRMA Home', 'Budget Direct Home', 'Contents Insurance', 'Home Insurance'],
+      ['Medibank', 'Bupa', 'HCF', 'NIB', 'HBF', 'CBHS', 'AHM', 'health insurance'],
+      ['TAL', 'AIA', 'AMP Life', 'Zurich Life', 'MLC Life', 'life insurance', 'income protection']
+    ],
+    'cat-fitness': [
+      ['Anytime Fitness', 'Fitness First', 'Goodlife', 'F45', 'CrossFit', 'YMCA', 'Gym', 'Fitness'],
+      ['Tennis', 'Swim', 'Pool', 'Yoga', 'Pilates', 'Boxing', 'Soccer', 'Football', 'Golf', 'Netball'],
+      ['Hairdresser', 'Salon', 'Spa', 'Massage', 'Nail', 'Wax', 'Beauty']
+    ],
+    'cat-shopping': [
+      ['Cotton On', 'Zara', 'Uniqlo', 'Country Road', 'Myer', 'David Jones', 'Target', 'Kmart', 'Big W', 'Clothing', 'Shoes'],
+      ['Apple Store', 'JB Hi-Fi', 'Harvey Norman', 'Officeworks', 'Electronics', 'Tech'],
+      ['Spotlight', 'Fantastic Furniture', 'Temple & Webster', 'Hardware', 'Home'],
+      ['Amazon', 'eBay', 'Catch', 'Kogan', 'The Iconic', 'Booktopia', 'Mighty Ape', 'Online Shopping']
+    ],
+    'cat-entertainment': [
+      ['Netflix', 'Disney Plus', 'Stan', 'Binge', 'Paramount Plus', 'Apple TV', 'YouTube Premium', 'Spotify', 'Apple Music', 'Tidal', 'Amazon Prime Video', 'Streaming'],
+      ['Village Cinemas', 'Event Cinemas', 'Hoyts', 'Reading Cinemas', 'Cinema', 'Movie', 'Theatre', 'Concert', 'Ticketek', 'Ticketmaster'],
+      ['Steam', 'PlayStation', 'Xbox', 'Nintendo', 'Google Play Games', 'App Store Game'],
+      ['Booktopia', 'Dymocks', 'Audible', 'Kindle', 'Book', 'Magazine']
+    ],
+    'cat-travel': [
+      ['Qantas', 'Virgin Australia', 'Jetstar', 'Rex Airlines', 'Flight Centre', 'Webjet', 'Flight'],
+      ['Airbnb', 'Booking.com', 'Hotels.com', 'Hilton', 'Marriott', 'Accor', 'Hotel', 'Motel', 'Resort', 'Accommodation'],
+      ['Avis', 'Hertz', 'Budget Car', 'Europcar', 'Thrifty', 'Car Rental', 'Hire Car'],
+      ['Viator', 'Tour', 'Attraction', 'Theme Park', 'Dreamworld', 'Sea World', 'Activities']
+    ],
+    'cat-education': [
+      ['TAFE', 'University', 'Monash', 'UNSW', 'Swinburne', 'Course', 'Tuition', 'Udemy', 'Coursera'],
+      ['Officeworks', 'Smiggle', 'School Supplies', 'Uniform', 'Stationery'],
+      ['Textbook', 'Study Materials'],
+      ['Childcare', 'Daycare', 'Kindergarten', 'Early Learning', 'Before School Care']
+    ],
+    'cat-gifts': [
+      ['Gift Card', 'Prezee', 'Gift', 'Birthday', 'Christmas', 'Anniversary'],
+      ['Red Cross', 'Salvation Army', 'St Vincent', 'RSPCA', 'Cancer Council', 'Charity', 'Donation', 'GoFundMe']
+    ],
+    'cat-fees': [
+      ['Account Fee', 'Monthly Fee', 'Service Fee', 'Annual Fee', 'Bank Fee', 'Transaction Fee'],
+      ['ATM Fee', 'Withdrawal Fee', 'Foreign ATM'],
+      ['Interest Charge', 'Overdue', 'Late Fee', 'Finance Charge'],
+      ['Council Rates', 'Land Tax', 'Stamp Duty', 'Rates', 'ASIC Fee', 'Court Fee']
+    ]
   };
 
   // category-level keywords — matched without assigning a subcategory
@@ -1435,13 +1543,24 @@
 
   // ---- insights "compare categories" chart state ----
   var CATEGORY_COLORS = {
-    'cat-bills': '#ff8a3d',
-    'cat-subs': '#5b8def',
-    'cat-dine': '#ff6b6b',
-    'cat-transport': '#2ecc71'
+    'cat-housing':       '#6c5ce7',
+    'cat-utilities':     '#00b894',
+    'cat-groceries':     '#00cec9',
+    'cat-dining':        '#ff6b6b',
+    'cat-transport':     '#2ecc71',
+    'cat-health':        '#fd79a8',
+    'cat-insurance':     '#74b9ff',
+    'cat-fitness':       '#a29bfe',
+    'cat-shopping':      '#fdcb6e',
+    'cat-entertainment': '#e17055',
+    'cat-travel':        '#55efc4',
+    'cat-education':     '#0984e3',
+    'cat-gifts':         '#e84393',
+    'cat-fees':          '#b2bec3',
+    'cat-transfer':      '#636e72'
   };
   function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#9b59b6'; }
-  var compareSelectedCats = ['cat-bills', 'cat-dine'];
+  var compareSelectedCats = ['cat-housing', 'cat-dining'];
   var compareChartType = 'line';
 
   // ---- Heads Up financial nudges ----
@@ -1451,7 +1570,7 @@
     "Your electricity bill is due in 8 days. Based on your balance, you're well covered.",
     "You haven't made a savings deposit in 18 days — even $50 helps keep momentum.",
     "Transport costs dropped 15% this month vs. your 6-month average. Nice work.",
-    "Subscriptions renew automatically — tap the Subscriptions category to review them all.",
+    "Streaming subscriptions renew automatically — tap Entertainment to review them all.",
     "You still have 3 uncategorised transactions this month. Sorting them keeps your budget accurate."
   ];
   var currentNudgeIdx = 0;
@@ -3584,16 +3703,15 @@
       var subs = SUBCATEGORIES[c.id] || [];
       var kwLists = KEYWORDS[c.id] || [];
       var catKws = CAT_KW[c.id] || [];
-      html += '<div class="manage-card">' +
-        '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">';
-
-      // icon picker — compact button, full grid opens in popup
       var activeIconObj = ICON_LIBRARY.filter(function(ic){ return (c.iconSvg || '') === ic.svg; })[0];
       var currentIconSvg = activeIconObj ? activeIconObj.svg : (c.iconSvg || ICON_LIBRARY[0].svg);
-      html += '<div class="manage-icon-label">Category icon</div>' +
+      html += '<div class="manage-card">' +
+        '<div class="manage-card-header">' +
         '<button type="button" class="manage-icon-current-btn" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
         '<svg viewBox="0 0 24 24">' + currentIconSvg + '</svg>' +
-        '<span>Change icon ›</span></button>';
+        '</button>' +
+        '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">' +
+        '</div>';
 
       // category-level keywords (collapsible, no subcategory required)
       html += '<details class="keyword-section">' +
