@@ -326,6 +326,15 @@
   .keyword-add-row input { flex: 1; border: 1px solid #e3e3e6; border-radius: 8px; padding: 6px 8px; font-size: 12px; }
   .keyword-add-row button { border: none; background: #6c5ce7; color: #fff; border-radius: 8px; padding: 6px 11px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .manage-add-category { width: 100%; border: 1.5px dashed #d9d3ff; background: none; color: #6c5ce7; font-weight: 700; font-size: 13px; border-radius: 14px; padding: 12px; cursor: pointer; }
+  .manage-footer { flex-shrink: 0; padding: 12px 16px; background: #fff; border-top: 1px solid #e0e4f0; }
+  .manage-footer .manage-add-category { border-style: solid; background: #6c5ce7; color: #fff; border-color: #6c5ce7; }
+  .keyword-section { border: none; background: transparent; margin: 6px 0 2px; }
+  .keyword-section summary { cursor: pointer; font-size: 11.5px; color: #6c5ce7; font-weight: 700; display: flex; align-items: center; gap: 6px; list-style: none; user-select: none; padding: 3px 0; }
+  .keyword-section summary::-webkit-details-marker { display: none; }
+  .keyword-section summary::before { content: '▸'; font-size: 9px; }
+  .keyword-section[open] summary::before { content: '▾'; }
+  .keyword-section-body { padding: 6px 0 2px; }
+  .kw-count-badge { background: #e0dcff; color: #6c5ce7; font-size: 10px; font-weight: 700; border-radius: 8px; padding: 1px 6px; margin-left: auto; }
 
   /* ---------- Goals / chat / nav (unchanged) ---------- */
   .goal-card { background: #fff; border-radius: 14px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 10px; }
@@ -539,6 +548,7 @@
   .phone.theme-ocean .manage-icon-btn.active svg { stroke: #00b894; }
   .phone.theme-ocean .manage-add-sub, .phone.theme-ocean .manage-add-category { color: #00b894; }
   .phone.theme-ocean .manage-add-category { border-color: #b3f0e6; }
+  .phone.theme-ocean .manage-footer .manage-add-category { background: #00b894; border-color: #00b894; color: #fff; }
   .phone.theme-ocean .date-group-header { background: #e0fff9; color: #00b894; border-top-color: #b3f0e6; }
   .phone.theme-ocean .txn-search-box:focus-within { border-color: #00b894; }
   .phone.theme-ocean .txn-chip { background: #e0fff9; color: #00b894; }
@@ -574,6 +584,7 @@
   .phone.theme-sunset .manage-icon-btn.active svg { stroke: #e17055; }
   .phone.theme-sunset .manage-add-sub, .phone.theme-sunset .manage-add-category { color: #e17055; }
   .phone.theme-sunset .manage-add-category { border-color: #fbd2c4; }
+  .phone.theme-sunset .manage-footer .manage-add-category { background: #e17055; border-color: #e17055; color: #fff; }
   .phone.theme-sunset .date-group-header { background: #fff0ea; color: #e17055; border-top-color: #fbd2c4; }
   .phone.theme-sunset .txn-search-box:focus-within { border-color: #e17055; }
   .phone.theme-sunset .txn-chip { background: #fff0ea; color: #e17055; }
@@ -640,6 +651,8 @@
   .phone.theme-dark .manage-page, .phone.theme-dark .subpage { background: #12121e; }
   .phone.theme-dark .manage-header, .phone.theme-dark .subpage-header { background: linear-gradient(135deg,#1f1d3a,#2d2b55); }
   .phone.theme-dark .manage-body, .phone.theme-dark .subpage-body { background: #12121e; }
+  .phone.theme-dark .manage-footer { background: #1e1d30; border-top-color: #2d2b55; }
+  .phone.theme-dark .manage-footer .manage-add-category { background: #4a3bb5; border-color: #4a3bb5; color: #fff; }
   .phone.theme-dark .manage-card { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
   .phone.theme-dark .manage-cat-name { color: #e8e6ff; border-bottom-color: #2a2838; }
   .phone.theme-dark .manage-sub-block { border-color: #252340; }
@@ -1016,6 +1029,9 @@
         <h2>Manage categories</h2>
       </div>
       <div class="manage-body" id="manage-body"></div>
+      <div class="manage-footer">
+        <button type="button" class="manage-add-category" data-action="manage-add-category">+ New category</button>
+      </div>
     </div>
 
     <div class="subpage" id="insights-page" hidden>
@@ -1269,7 +1285,26 @@
     { id: 'icon-shop',     svg: '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>' },
     { id: 'icon-shield',   svg: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
     { id: 'icon-dollar',   svg: '<circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/>' },
-    { id: 'icon-star',     svg: '<path d="M12 2l3 6.5 7 .9-5 5 1.2 7L12 18l-6.2 3.4L7 14.4l-5-5 7-.9z"/>' }
+    { id: 'icon-star',     svg: '<path d="M12 2l3 6.5 7 .9-5 5 1.2 7L12 18l-6.2 3.4L7 14.4l-5-5 7-.9z"/>' },
+    { id: 'icon-trending', svg: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>' },
+    { id: 'icon-card',     svg: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>' },
+    { id: 'icon-bank',     svg: '<path d="M3 21h18M3 10h18M5 10V21M19 10V21M12 3L3 10h18L12 3z"/>' },
+    { id: 'icon-receipt',  svg: '<path d="M4 2v20l3-2 2 2 3-2 3 2 2-2 3 2V2l-3 2-2-2-3 2-3-2-2 2-3-2z"/><path d="M9 10h6M9 14h6"/>' },
+    { id: 'icon-briefcase',svg: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="12"/><path d="M2 12h20"/>' },
+    { id: 'icon-cart',     svg: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>' },
+    { id: 'icon-food',     svg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/>' },
+    { id: 'icon-film',     svg: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>' },
+    { id: 'icon-dumbbell', svg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
+    { id: 'icon-gift',     svg: '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>' },
+    { id: 'icon-scissors', svg: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>' },
+    { id: 'icon-paw',      svg: '<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 015 5v3.5a3.5 3.5 0 01-6.84 1.045Q6.52 17.48 4 17a3.5 3.5 0 013.466-5z"/>' },
+    { id: 'icon-fuel',     svg: '<path d="M3 22V3a1 1 0 011-1h9a1 1 0 011 1v11h1a2 2 0 012 2v3a1 1 0 001 1 1 1 0 001-1V9.83l-2-2"/><path d="M18 8h1a2 2 0 012 2v1"/><line x1="3" y1="11" x2="13" y2="11"/>' },
+    { id: 'icon-piggy',    svg: '<path d="M19 5c-1.5 0-2.8.56-3.8 1.5A10.4 10.4 0 008 5C2.5 5 2 11 2 11s-.02 2.5 1.22 4L4 22h5v-2h6v2h5l.78-7C22 13.5 22 11 22 11a5 5 0 00-3-6zM15 9h-2V7h2v2z"/>' },
+    { id: 'icon-umbrella', svg: '<path d="M23 12a11.05 11.05 0 00-22 0zm-5 7a3 3 0 01-6 0v-7"/>' },
+    { id: 'icon-baby',     svg: '<path d="M9 12h.01M15 12h.01M10 16s1 1 2 1 2-1 2-1"/><path d="M19.29 14.77A5 5 0 0019 13c0-2.76-3.13-5-7-5s-7 2.24-7 5a5 5 0 00.29 1.77A2.5 2.5 0 0012 17.5a2.5 2.5 0 007.29-2.73z"/><path d="M7.5 10A2.5 2.5 0 015 12.5V11"/>' },
+    { id: 'icon-gamepad',  svg: '<rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15" y2="11"/><line x1="18" y1="13" x2="18" y2="13"/>' },
+    { id: 'icon-grad',     svg: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>' },
+    { id: 'icon-suitcase', svg: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>' }
   ];
 
   // Transfers is a movement of money, not spending — excluded from budgets,
@@ -1328,6 +1363,9 @@
     'cat-dine': [['UberEats', 'Menulog', 'DoorDash'], ['Espresso', 'Cafe', 'Coffee'], ['Restaurant', 'Bistro', 'Max Brenner'], ['Woolworths', 'Coles', 'ALDI', 'IGA', 'Costco', 'Harris Farm']],
     'cat-transport': [['Opal', 'Transit', 'TFNSW', 'Transport NSW', 'Bus', 'Train'], ['Uber Trip', 'Taxi', 'Ola', 'DiDi'], ['ETOLL', 'Etoll', 'Linkt', 'Roam', 'Toll']]
   };
+
+  // category-level keywords — matched without assigning a subcategory
+  var CAT_KW = {};
 
   // monthly budget per category, editable from the Budget page
   var BUDGETS = {};
@@ -1917,19 +1955,18 @@
   // Adds keyword to the given cat/sub's keyword list (no duplicates).
   function addKeywordToCategory(catId, subName, kw) {
     if (!kw) return;
-    if (!KEYWORDS[catId]) KEYWORDS[catId] = [];
     var subIdx = subName ? (SUBCATEGORIES[catId] || []).indexOf(subName) : -1;
     if (subIdx >= 0) {
+      if (!KEYWORDS[catId]) KEYWORDS[catId] = [];
       if (!KEYWORDS[catId][subIdx]) KEYWORDS[catId][subIdx] = [];
       var arr = KEYWORDS[catId][subIdx];
       if (arr.map(function(k){return k.toLowerCase();}).indexOf(kw.toLowerCase()) === -1) arr.push(kw);
     } else {
-      // category-level: add to all subcategory lists that have at least one keyword, or first slot
-      var added = false;
-      (KEYWORDS[catId] || []).forEach(function(kwList) {
-        if (!added && Array.isArray(kwList)) { kwList.push(kw); added = true; }
-      });
-      if (!added) KEYWORDS[catId].push([kw]);
+      // category-level keyword — stored in CAT_KW
+      if (!CAT_KW[catId]) CAT_KW[catId] = [];
+      if (CAT_KW[catId].map(function(k){return k.toLowerCase();}).indexOf(kw.toLowerCase()) === -1) {
+        CAT_KW[catId].push(kw);
+      }
     }
   }
 
@@ -2019,8 +2056,8 @@
         '<div class="modal-review-desc">' + escapeHtml(desc) + '</div>' +
         '<div class="modal-review-meta">' + (dateEl ? escapeHtml(dateEl.textContent) + ' · ' : '') + (amtEl ? escapeHtml(amtEl.textContent) : '') + '</div>' +
         '<div class="modal-review-target">→ ' + escapeHtml(destination) + '</div>' +
-        '<div id="modal-review-cat-list">' + modalCategoryListHTML(learnKwCatId, learnKwSubName) + '</div>' +
-        '<div class="modal-action-row" style="margin-top:10px;">' +
+        '<div id="modal-review-cat-list" style="max-height:28vh;overflow-y:auto;border:1px solid #eee;border-radius:10px;margin-top:8px;">' + modalCategoryListHTML(learnKwCatId, learnKwSubName) + '</div>' +
+        '<div class="modal-action-row" style="margin-top:10px;position:sticky;bottom:0;background:#fff;padding-top:6px;">' +
           '<button class="modal-primary-btn" data-action="rescan-review-confirm">Confirm</button>' +
           '<button class="modal-secondary-btn" data-action="rescan-review-skip">Skip</button>' +
         '</div>' +
@@ -2834,9 +2871,14 @@
       if (!kwVal) return;
       var kwCatId = addKwBtn.dataset.catId;
       var kwSubIdx = parseInt(addKwBtn.dataset.subIndex, 10);
-      if (!KEYWORDS[kwCatId]) KEYWORDS[kwCatId] = [];
-      if (!KEYWORDS[kwCatId][kwSubIdx]) KEYWORDS[kwCatId][kwSubIdx] = [];
-      KEYWORDS[kwCatId][kwSubIdx].push(kwVal);
+      if (kwSubIdx === -1) {
+        if (!CAT_KW[kwCatId]) CAT_KW[kwCatId] = [];
+        if (CAT_KW[kwCatId].map(function(k){return k.toLowerCase();}).indexOf(kwVal.toLowerCase()) === -1) CAT_KW[kwCatId].push(kwVal);
+      } else {
+        if (!KEYWORDS[kwCatId]) KEYWORDS[kwCatId] = [];
+        if (!KEYWORDS[kwCatId][kwSubIdx]) KEYWORDS[kwCatId][kwSubIdx] = [];
+        if (KEYWORDS[kwCatId][kwSubIdx].map(function(k){return k.toLowerCase();}).indexOf(kwVal.toLowerCase()) === -1) KEYWORDS[kwCatId][kwSubIdx].push(kwVal);
+      }
       renderManagePage();
       return;
     }
@@ -2845,7 +2887,11 @@
     if (removeKwBtn) {
       var rkCatId = removeKwBtn.dataset.catId;
       var rkSubIdx = parseInt(removeKwBtn.dataset.subIndex, 10);
-      KEYWORDS[rkCatId][rkSubIdx].splice(parseInt(removeKwBtn.dataset.kwIndex, 10), 1);
+      if (rkSubIdx === -1) {
+        if (CAT_KW[rkCatId]) CAT_KW[rkCatId].splice(parseInt(removeKwBtn.dataset.kwIndex, 10), 1);
+      } else {
+        KEYWORDS[rkCatId][rkSubIdx].splice(parseInt(removeKwBtn.dataset.kwIndex, 10), 1);
+      }
       renderManagePage();
       return;
     }
@@ -3208,32 +3254,32 @@
     {
       name: 'Commonwealth Bank (CBA)',
       score: function (h) { return (has(h,'Date') + has(h,'Amount') + has(h,'Description') + has(h,'Balance')); },
-      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1, balance: idx(h,'Balance') }; }
     },
     {
       name: 'ANZ',
       score: function (h) { return (has(h,'Transaction Date') + has(h,'Amount') * 2 + has(h,'Description')); },
-      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
+      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1, balance: -1 }; }
     },
     {
       name: 'Westpac',
       score: function (h) { return (has(h,'Transaction Date') + has(h,'Debit Amount') + has(h,'Credit Amount') + has(h,'Transaction Details')); },
-      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Transaction Details'), amount: -1, debit: idx(h,'Debit Amount'), credit: idx(h,'Credit Amount') }; }
+      map: function (h) { return { date: idx(h,'Transaction Date'), desc: idx(h,'Transaction Details'), amount: -1, debit: idx(h,'Debit Amount'), credit: idx(h,'Credit Amount'), balance: idx(h,'Balance') }; }
     },
     {
       name: 'NAB',
       score: function (h) { return (has(h,'Date') + has(h,'Narrative') + has(h,'Debit') + has(h,'Credit')); },
-      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Narrative'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit') }; }
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Narrative'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit'), balance: idx(h,'Balance') }; }
     },
     {
       name: 'ING',
       score: function (h) { return (has(h,'Date') + has(h,'Description') + has(h,'Credit') + has(h,'Debit')); },
-      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit') }; }
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: -1, debit: idx(h,'Debit'), credit: idx(h,'Credit'), balance: idx(h,'Balance') }; }
     },
     {
       name: 'Bankwest',
       score: function (h) { return (has(h,'Date') + has(h,'Description') + has(h,'Amount') + has(h,'Balance')); },
-      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1 }; }
+      map: function (h) { return { date: idx(h,'Date'), desc: idx(h,'Description'), amount: idx(h,'Amount'), debit: -1, credit: -1, balance: idx(h,'Balance') }; }
     }
   ];
 
@@ -3275,11 +3321,18 @@
     return { date: dateStr, desc: cleanBankDesc(desc), amount: amount };
   }
 
-  // Tries to auto-categorise a transaction description using KEYWORDS (per-subcategory).
+  // Tries to auto-categorise a transaction description using CAT_KW (category-level) then KEYWORDS (per-subcategory).
   function autoCategory(desc) {
     var lower = desc.toLowerCase();
     for (var ci = 0; ci < CATEGORIES.length; ci++) {
       var cat = CATEGORIES[ci];
+      // Check category-level keywords first (no subcategory assigned)
+      var catKws = CAT_KW[cat.id] || [];
+      for (var cki = 0; cki < catKws.length; cki++) {
+        if (lower.indexOf(catKws[cki].toLowerCase()) !== -1) {
+          return { catId: cat.id, subName: null };
+        }
+      }
       var kwLists = KEYWORDS[cat.id] || [];
       for (var si = 0; si < kwLists.length; si++) {
         var kws = kwLists[si] || [];
@@ -3361,7 +3414,7 @@
       importColMap = detected.map(importHeaders);
       renderImportPreview(detected.name, true);
     } else {
-      importColMap = { date: 0, desc: 1, amount: 2, debit: -1, credit: -1 };
+      importColMap = { date: 0, desc: 1, amount: 2, debit: -1, credit: -1, balance: -1 };
       renderImportManualMap();
     }
   }
@@ -3437,7 +3490,8 @@
         desc: parseInt(document.getElementById('map-desc').value, 10),
         amount: parseInt(document.getElementById('map-amount').value, 10),
         debit: parseInt(document.getElementById('map-debit').value, 10),
-        credit: parseInt(document.getElementById('map-credit').value, 10)
+        credit: parseInt(document.getElementById('map-credit').value, 10),
+        balance: -1
       };
       renderImportPreview('Custom mapping', false);
     });
@@ -3487,7 +3541,24 @@
       addedCount++;
     });
 
+    // Update account balance from the Balance column if available
+    var balColIdx = (importColMap.balance !== undefined) ? importColMap.balance : -1;
+    if (balColIdx >= 0 && importRows.length > 0) {
+      for (var bi = 0; bi < importRows.length; bi++) {
+        var rawBal = (importRows[bi][balColIdx] || '').trim();
+        if (rawBal) {
+          var parsedBal = parseFloat(rawBal.replace(/[^0-9.-]/g, ''));
+          if (!isNaN(parsedBal) && parsedBal !== 0) {
+            var balEl = document.querySelector('.balance');
+            if (balEl) balEl.textContent = formatMoney(Math.abs(parsedBal));
+            break;
+          }
+        }
+      }
+    }
+
     refreshAllDateGroupHeaders();
+    refreshAllCategoryTotals();
 
     // show success screen
     var result = document.getElementById('import-result');
@@ -3512,6 +3583,7 @@
     CATEGORIES.forEach(function (c) {
       var subs = SUBCATEGORIES[c.id] || [];
       var kwLists = KEYWORDS[c.id] || [];
+      var catKws = CAT_KW[c.id] || [];
       html += '<div class="manage-card">' +
         '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">';
 
@@ -3523,11 +3595,28 @@
         '<svg viewBox="0 0 24 24">' + currentIconSvg + '</svg>' +
         '<span>Change icon ›</span></button>';
 
+      // category-level keywords (collapsible, no subcategory required)
+      html += '<details class="keyword-section">' +
+        '<summary>Category keywords <span class="kw-count-badge">' + catKws.length + '</span></summary>' +
+        '<div class="keyword-section-body">' +
+        '<div class="manage-keywords-label">Match this category without a subcategory</div>' +
+        '<div class="keyword-tags">';
+      catKws.forEach(function(k, ki) {
+        html += '<span class="keyword-tag">' + k + '<button type="button" data-action="remove-keyword" data-cat-id="' + c.id + '" data-sub-index="-1" data-kw-index="' + ki + '">&times;</button></span>';
+      });
+      html += '</div><div class="keyword-add-row">' +
+        '<input type="text" placeholder="e.g. Salary" class="keyword-input">' +
+        '<button type="button" data-action="add-keyword" data-cat-id="' + c.id + '" data-sub-index="-1">Add</button>' +
+        '</div></div></details>';
+
       subs.forEach(function (s, i) {
         var keywords = kwLists[i] || [];
         html += '<div class="manage-sub-block"><div class="manage-sub-row">' +
           '<input type="text" class="manage-sub-input" data-cat-id="' + c.id + '" data-sub-index="' + i + '" value="' + s + '">' +
           '<button type="button" class="manage-sub-remove" data-action="manage-remove-sub" data-cat-id="' + c.id + '" data-sub-index="' + i + '">&times;</button></div>' +
+          '<details class="keyword-section">' +
+          '<summary>Keywords <span class="kw-count-badge">' + keywords.length + '</span></summary>' +
+          '<div class="keyword-section-body">' +
           '<div class="manage-keywords-label">Matching keywords (for auto-categorization)</div><div class="keyword-tags">';
         keywords.forEach(function (k, ki) {
           html += '<span class="keyword-tag">' + k + '<button type="button" data-action="remove-keyword" data-cat-id="' + c.id + '" data-sub-index="' + i + '" data-kw-index="' + ki + '">&times;</button></span>';
@@ -3535,12 +3624,12 @@
         html += '</div><div class="keyword-add-row">' +
           '<input type="text" placeholder="e.g. Woolworths" class="keyword-input">' +
           '<button type="button" data-action="add-keyword" data-cat-id="' + c.id + '" data-sub-index="' + i + '">Add</button></div>' +
+          '</div></details>' +
           '</div>';
       });
       html += '<button type="button" class="manage-add-sub" data-action="manage-add-sub" data-cat-id="' + c.id + '">+ Add subcategory</button>';
       html += '</div>';
     });
-    html += '<button type="button" class="manage-add-category" data-action="manage-add-category">+ New category</button>';
     document.getElementById('manage-body').innerHTML = html;
   }
 
