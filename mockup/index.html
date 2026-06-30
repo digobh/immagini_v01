@@ -127,23 +127,26 @@
   .split-summary { grid-column: 1 / 3; font-size: 11px; color: #6c5ce7; font-weight: 600; }
   .split-summary:empty { display: none; }
 
-  /* ---------- Per-category transaction row tinting ---------- */
-  #cat-housing .bill-row      { background: #fdf9f2; }
-  #cat-utilities .bill-row    { background: #ffffee; }
-  #cat-groceries .bill-row    { background: #f2fbf5; }
-  #cat-dining .bill-row       { background: #fff5f5; }
-  #cat-transport .bill-row    { background: #f2faff; }
-  #cat-health .bill-row       { background: #fff2f7; }
-  #cat-insurance .bill-row    { background: #f2fefd; }
-  #cat-fitness .bill-row      { background: #fff4f8; }
-  #cat-shopping .bill-row     { background: #f8f6ff; }
-  #cat-entertainment .bill-row{ background: #f2f5ff; }
-  #cat-travel .bill-row       { background: #f2f8ff; }
-  #cat-education .bill-row    { background: #f5fde8; }
-  #cat-gifts .bill-row        { background: #fff8f2; }
-  #cat-fees .bill-row         { background: #f8f8fb; }
-  #cat-transport .bill-row { background: #f3fdf7; }
-  #cat-uncategorized .bill-row { background: #fffaf2; }
+  /* ---------- Per-category transaction row tinting ----------
+     Background tint + left accent bar both derive from the same hue as
+     CATEGORY_COLORS / colorForCategory(), so a row's color always matches
+     its slice in the pie chart and legend. */
+  #cat-housing .bill-row       { background: #f3effc; border-left: 3px solid #6e31d8; }
+  #cat-utilities .bill-row     { background: #faf1fc; border-left: 3px solid #bb4bdd; }
+  #cat-groceries .bill-row     { background: #fceffa; border-left: 3px solid #d831bc; }
+  #cat-dining .bill-row        { background: #fcf1f6; border-left: 3px solid #dd4b8a; }
+  #cat-transport .bill-row     { background: #fcefef; border-left: 3px solid #d83137; }
+  #cat-health .bill-row        { background: #fcf5f1; border-left: 3px solid #dd804b; }
+  #cat-insurance .bill-row     { background: #fcf9ef; border-left: 3px solid #d8b131; }
+  #cat-fitness .bill-row       { background: #fafcf1; border-left: 3px solid #c4dd4b; }
+  #cat-shopping .bill-row      { background: #f4fcef; border-left: 3px solid #7ad831; }
+  #cat-entertainment .bill-row { background: #f1fcf1; border-left: 3px solid #50dd4b; }
+  #cat-travel .bill-row        { background: #effcf3; border-left: 3px solid #31d86e; }
+  #cat-education .bill-row     { background: #f1fcfa; border-left: 3px solid #4bddbb; }
+  #cat-gifts .bill-row         { background: #effafc; border-left: 3px solid #31bcd8; }
+  #cat-fees .bill-row          { background: #f1f6fc; border-left: 3px solid #4b8add; }
+  #cat-transfer .bill-row      { background: #efeffc; border-left: 3px solid #3137d8; }
+  #cat-uncategorized .bill-row { background: #fffaf2; border-left: 3px solid #b2bec3; }
 
   /* ---------- Transaction search / filter bar ---------- */
   .txn-filter-wrap { padding: 0 0 10px; }
@@ -1492,22 +1495,24 @@
   var activeTransferRowId = null;
 
   // ---- insights "compare categories" chart state ----
+  // evenly spaced around the hue wheel (24deg apart) so every category is
+  // visually distinct in the pie chart, legend, and transaction list tinting
   var CATEGORY_COLORS = {
-    'cat-housing':       '#6c5ce7',
-    'cat-utilities':     '#00b894',
-    'cat-groceries':     '#00cec9',
-    'cat-dining':        '#ff6b6b',
-    'cat-transport':     '#2ecc71',
-    'cat-health':        '#fd79a8',
-    'cat-insurance':     '#74b9ff',
-    'cat-fitness':       '#a29bfe',
-    'cat-shopping':      '#fdcb6e',
-    'cat-entertainment': '#e17055',
-    'cat-travel':        '#55efc4',
-    'cat-education':     '#0984e3',
-    'cat-gifts':         '#e84393',
-    'cat-fees':          '#b2bec3',
-    'cat-transfer':      '#636e72'
+    'cat-housing':       '#6e31d8',
+    'cat-utilities':     '#bb4bdd',
+    'cat-groceries':     '#d831bc',
+    'cat-dining':        '#dd4b8a',
+    'cat-transport':     '#d83137',
+    'cat-health':        '#dd804b',
+    'cat-insurance':     '#d8b131',
+    'cat-fitness':       '#c4dd4b',
+    'cat-shopping':      '#7ad831',
+    'cat-entertainment': '#50dd4b',
+    'cat-travel':        '#31d86e',
+    'cat-education':     '#4bddbb',
+    'cat-gifts':         '#31bcd8',
+    'cat-fees':          '#4b8add',
+    'cat-transfer':      '#3137d8'
   };
   function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#9b59b6'; }
   var compareSelectedCats = ['cat-housing', 'cat-dining'];
@@ -1972,14 +1977,36 @@
 
       if (catEl.id === 'cat-uncategorized') {
         catEl.hidden = visibleRows.length === 0;
+        var uncatTotal = 0;
+        visibleRows.forEach(function(row) {
+          var amtEl = row.querySelector('.bill-amount');
+          if (amtEl) uncatTotal += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
+        });
+        var uncatMetaEl = catEl.querySelector(':scope > summary .cat-meta');
+        var uncatAmtEl = catEl.querySelector(':scope > summary .cat-amount');
+        if (uncatMetaEl) uncatMetaEl.textContent = visibleRows.length + (visibleRows.length === 1 ? ' transaction' : ' transactions') + ' to sort';
+        if (uncatAmtEl) uncatAmtEl.textContent = formatMoney(uncatTotal);
         return;
       }
 
-      // Hide/show each subcategory based on whether it has any visible bill-rows
+      // Hide/show each subcategory based on whether it has any visible bill-rows,
+      // and sum its own total from those same visible rows
       catEl.querySelectorAll('details.subcategory').forEach(function(subEl) {
         var subVisible = 0;
-        subEl.querySelectorAll('.bill-row').forEach(function(r) { if (isRealBillRow(r) && !r.hidden) subVisible++; });
+        var subTotal = 0;
+        subEl.querySelectorAll('.bill-row').forEach(function(r) {
+          if (!isRealBillRow(r) || r.hidden) return;
+          subVisible++;
+          var amtEl = r.querySelector('.bill-amount');
+          if (amtEl) subTotal += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
+        });
         subEl.hidden = subVisible === 0;
+        var subAmountEl = subEl.querySelector(':scope > summary .subcategory-row > span:last-child');
+        if (subAmountEl) {
+          var chevron = subAmountEl.querySelector('.chevron');
+          subAmountEl.textContent = formatMoney(subTotal);
+          if (chevron) subAmountEl.appendChild(chevron);
+        }
       });
 
       // Sum total for this category from currently visible rows only
