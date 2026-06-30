@@ -900,7 +900,7 @@
 
         <details class="category" id="cat-dining">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/></svg></div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></div>
             <div class="cat-info"><div class="cat-name">Dining Out</div><div class="cat-meta">5 subcategories</div></div>
             <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-dining"></div></div><div class="chevron">▾</div>
           </div></summary>
@@ -918,7 +918,7 @@
 
         <details class="category" id="cat-health">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
             <div class="cat-info"><div class="cat-name">Health &amp; Medical</div><div class="cat-meta">5 subcategories</div></div>
             <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-health"></div></div><div class="chevron">▾</div>
           </div></summary>
@@ -1010,12 +1010,6 @@
       </div>
       </div>
 
-      <div id="hist-month-sections" hidden></div>
-
-      <div class="month-empty-state" id="month-empty-state" hidden>
-        <strong>No transaction history for this month.</strong><br>
-        Switch back to April, May, or June to browse transactions.
-      </div>
 
     </div>
 
@@ -1278,9 +1272,9 @@
     { id: 'cat-housing',       label: 'Housing',           iconSvg: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>' },
     { id: 'cat-utilities',     label: 'Utilities',         iconSvg: '<path d="M13 2L4.5 14H11L9 22L19 10H12L13 2Z"/>' },
     { id: 'cat-groceries',     label: 'Groceries',         iconSvg: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>' },
-    { id: 'cat-dining',        label: 'Dining & Takeout',  iconSvg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/>' },
+    { id: 'cat-dining',        label: 'Dining & Takeout',  iconSvg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>' },
     { id: 'cat-transport',     label: 'Transport',         iconSvg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
-    { id: 'cat-health',        label: 'Health & Medical',  iconSvg: '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' },
+    { id: 'cat-health',        label: 'Health & Medical',  iconSvg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
     { id: 'cat-insurance',     label: 'Insurance',         iconSvg: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
     { id: 'cat-fitness',       label: 'Fitness & Wellness',iconSvg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
     { id: 'cat-shopping',      label: 'Shopping',          iconSvg: '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>' },
@@ -1316,7 +1310,8 @@
     { id: 'icon-receipt',  svg: '<path d="M4 2v20l3-2 2 2 3-2 3 2 2-2 3 2V2l-3 2-2-2-3 2-3-2-2 2-3-2z"/><path d="M9 10h6M9 14h6"/>' },
     { id: 'icon-briefcase',svg: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="12"/><path d="M2 12h20"/>' },
     { id: 'icon-cart',     svg: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>' },
-    { id: 'icon-food',     svg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2s-5 2-5 7c0 3 2 4 3 4h2z"/><path d="M3 22v-3M21 22v-3"/>' },
+    { id: 'icon-food',     svg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>' },
+    { id: 'icon-pulse',    svg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
     { id: 'icon-film',     svg: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>' },
     { id: 'icon-dumbbell', svg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
     { id: 'icon-gift',     svg: '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>' },
@@ -1478,51 +1473,6 @@
   // monthly budget per category, editable from the Budget page
   var BUDGETS = {};
 
-  // full transaction data for historical months (April & May 2026)
-  // each entry: { date, merchant, amount, catId, sub, recurring? }
-  var MONTH_TXN_DATA = {
-    'Apr': [ /* no mock data — import your own CSV */ ],
-    'May': [ /* no mock data — import your own CSV */ ],
-    'DISABLED_Apr': [
-      { date: '29 Apr', merchant: 'AGL Electricity', amount: 145.50, catId: 'cat-bills', sub: 'Electricity', recurring: true },
-      { date: '27 Apr', merchant: 'Coles', amount: 142.30, catId: 'cat-dine', sub: 'Grocery' },
-      { date: '25 Apr', merchant: 'Netflix', amount: 24.99, catId: 'cat-subs', sub: 'Streaming', recurring: true },
-      { date: '24 Apr', merchant: 'Spotify', amount: 12.99, catId: 'cat-subs', sub: 'Music', recurring: true },
-      { date: '22 Apr', merchant: 'UberEats', amount: 47.90, catId: 'cat-dine', sub: 'Takeout Delivery' },
-      { date: '20 Apr', merchant: 'Aussie Broadband', amount: 79.00, catId: 'cat-bills', sub: 'Internet', recurring: true },
-      { date: '18 Apr', merchant: 'Opal Card Top Up', amount: 45.00, catId: 'cat-transport', sub: 'Public Transit' },
-      { date: '16 Apr', merchant: 'Telstra Mobile', amount: 65.00, catId: 'cat-bills', sub: 'Mobile', recurring: true },
-      { date: '14 Apr', merchant: 'DoorDash', amount: 35.60, catId: 'cat-dine', sub: 'Takeout Delivery' },
-      { date: '12 Apr', merchant: 'Woolworths', amount: 81.50, catId: 'cat-dine', sub: 'Grocery' },
-      { date: '10 Apr', merchant: 'iCloud Storage', amount: 2.99, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
-      { date: '8 Apr', merchant: 'NRMA Insurance', amount: 65.00, catId: 'cat-bills', sub: 'Insurance' },
-      { date: '7 Apr', merchant: 'Espresso Machine Cafe', amount: 12.50, catId: 'cat-dine', sub: 'Coffee' },
-      { date: '5 Apr', merchant: 'Amazon Prime', amount: 9.00, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
-      { date: '3 Apr', merchant: 'Uber Trip', amount: 22.90, catId: 'cat-transport', sub: 'Rideshare' },
-      { date: '2 Apr', merchant: 'Koi Dessert Bar', amount: 38.40, catId: 'cat-dine', sub: 'Restaurants' },
-      { date: '1 Apr', merchant: 'Sydney Water', amount: 34.80, catId: 'cat-bills', sub: 'Water' }
-    ],
-    'DISABLED_May': [
-      { date: '29 May', merchant: 'AGL Electricity', amount: 130.00, catId: 'cat-bills', sub: 'Electricity', recurring: true },
-      { date: '26 May', merchant: 'Coles', amount: 156.40, catId: 'cat-dine', sub: 'Grocery' },
-      { date: '24 May', merchant: 'Netflix', amount: 24.99, catId: 'cat-subs', sub: 'Streaming', recurring: true },
-      { date: '23 May', merchant: 'Spotify', amount: 12.99, catId: 'cat-subs', sub: 'Music', recurring: true },
-      { date: '22 May', merchant: 'Menulog', amount: 38.50, catId: 'cat-dine', sub: 'Takeout Delivery' },
-      { date: '20 May', merchant: 'Aussie Broadband', amount: 79.00, catId: 'cat-bills', sub: 'Internet', recurring: true },
-      { date: '18 May', merchant: 'Opal Card Top Up', amount: 40.00, catId: 'cat-transport', sub: 'Public Transit' },
-      { date: '16 May', merchant: 'Telstra Mobile', amount: 65.00, catId: 'cat-bills', sub: 'Mobile', recurring: true },
-      { date: '14 May', merchant: 'Uber Trip', amount: 18.60, catId: 'cat-transport', sub: 'Rideshare' },
-      { date: '12 May', merchant: 'Woolworths', amount: 98.20, catId: 'cat-dine', sub: 'Grocery' },
-      { date: '10 May', merchant: 'iCloud Storage', amount: 2.99, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
-      { date: '8 May', merchant: 'Olive & Vine Restaurant', amount: 74.50, catId: 'cat-dine', sub: 'Restaurants' },
-      { date: '7 May', merchant: 'Gloria Jeans', amount: 8.50, catId: 'cat-dine', sub: 'Coffee' },
-      { date: '5 May', merchant: 'Linkt Toll', amount: 36.00, catId: 'cat-transport', sub: 'Tolls' },
-      { date: '3 May', merchant: 'Sydney Water', amount: 34.80, catId: 'cat-bills', sub: 'Water' },
-      { date: '2 May', merchant: 'Amazon Prime', amount: 9.00, catId: 'cat-subs', sub: 'Cloud & other', recurring: true },
-      { date: '1 May', merchant: 'Bunnings Warehouse', amount: 67.30, catId: 'cat-dine', sub: 'Grocery' }
-    ]
-  };
-
   // illustrative last-6-months spend per category, used for the Budget page's
   // "yearly trend" view — this prototype has full transaction data for June
   // only, so earlier months are simulated for demonstration purposes
@@ -1564,20 +1514,85 @@
   var compareChartType = 'line';
 
   // ---- Heads Up financial nudges ----
-  var AI_NUDGES = [
-    "You've spent $42 more on takeout this month than usual. Netflix renews in 3 days for $24.99.",
-    "Dining & Takeout is tracking 32% higher than last month. Consider a home-cook day this week.",
-    "Your electricity bill is due in 8 days. Based on your balance, you're well covered.",
-    "You haven't made a savings deposit in 18 days — even $50 helps keep momentum.",
-    "Transport costs dropped 15% this month vs. your 6-month average. Nice work.",
-    "Streaming subscriptions renew automatically — tap Entertainment to review them all.",
-    "You still have 3 uncategorised transactions this month. Sorting them keeps your budget accurate."
-  ];
+  // Generated from real imported transactions + budgets for the active month —
+  // no nudges are shown until there is real data to base them on.
+  var AI_NUDGES = [];
   var currentNudgeIdx = 0;
+
+  function buildNudges() {
+    var nudges = [];
+
+    var uncatEl = document.getElementById('cat-uncategorized');
+    var uncatCount = 0;
+    if (uncatEl) uncatEl.querySelectorAll('.bill-row').forEach(function(r) { if (isRealBillRow(r) && !r.hidden) uncatCount++; });
+    if (uncatCount > 0) {
+      nudges.push('You have ' + uncatCount + ' uncategorised transaction' + (uncatCount === 1 ? '' : 's') + ' this month — sorting ' + (uncatCount === 1 ? 'it' : 'them') + ' keeps your budget accurate.');
+    }
+
+    var overBudget = [], nearBudget = [];
+    CATEGORIES.forEach(function(c) {
+      var budget = BUDGETS[c.id];
+      if (!budget) return;
+      var spent = getCategorySpent(c.id);
+      if (spent <= 0) return;
+      var pct = spent / budget;
+      if (pct > 1) overBudget.push({ label: c.label, over: spent - budget, budget: budget });
+      else if (pct >= 0.8) nearBudget.push({ label: c.label, left: budget - spent, pct: pct });
+    });
+    overBudget.sort(function(a, b) { return b.over - a.over; }).forEach(function(o) {
+      nudges.push(o.label + ' is ' + formatMoney(o.over) + ' over your ' + formatMoney(o.budget) + ' budget this month.');
+    });
+    nearBudget.sort(function(a, b) { return b.pct - a.pct; }).forEach(function(n) {
+      nudges.push("You've used " + Math.round(n.pct * 100) + '% of your ' + n.label + ' budget — ' + formatMoney(n.left) + ' left this month.');
+    });
+
+    var spendTotals = CATEGORIES.filter(function(c) { return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1; })
+      .map(function(c) { return { label: c.label, spent: getCategorySpent(c.id) }; })
+      .filter(function(t) { return t.spent > 0; })
+      .sort(function(a, b) { return b.spent - a.spent; });
+    if (spendTotals.length) {
+      var top = spendTotals[0];
+      var grandTotal = spendTotals.reduce(function(s, t) { return s + t.spent; }, 0);
+      var pct = grandTotal ? Math.round((top.spent / grandTotal) * 100) : 0;
+      nudges.push(top.label + ' is your biggest spend this month at ' + formatMoney(top.spent) + (pct ? ' (' + pct + '% of your spending)' : '') + '.');
+    }
+
+    var taxTotal = 0, taxCount = 0;
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (!isRealBillRow(row) || row.hidden || !TXN_TAX[rowKey(row)]) return;
+      var amtEl = row.querySelector('.bill-amount');
+      if (amtEl) { taxTotal += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0; taxCount++; }
+    });
+    if (taxCount > 0) {
+      nudges.push("You've tagged " + formatMoney(taxTotal) + ' in tax-deductible spending this month — export your ATO report any time.');
+    }
+
+    var biggest = null;
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (!isRealBillRow(row) || row.hidden || row.closest('#cat-transfer')) return;
+      var amtEl = row.querySelector('.bill-amount');
+      if (!amtEl) return;
+      var amt = parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
+      if (!biggest || amt > biggest.amount) {
+        var merchantEl = row.querySelector('.bill-merchant');
+        biggest = { amount: amt, name: merchantEl ? (merchantEl.childNodes[0] ? merchantEl.childNodes[0].textContent.trim() : merchantEl.textContent.trim()) : '' };
+      }
+    });
+    if (biggest && biggest.amount > 0) {
+      nudges.push('Your largest transaction this month was ' + formatMoney(biggest.amount) + ' at ' + biggest.name + '.');
+    }
+
+    return nudges;
+  }
+
   function renderNudge() {
+    var bubble = document.querySelector('.ai-bubble');
     var msgEl = document.getElementById('ai-bubble-msg');
     var dotsEl = document.getElementById('ai-nudge-dots');
-    if (!msgEl || !dotsEl) return;
+    if (!bubble || !msgEl || !dotsEl) return;
+    if (!AI_NUDGES.length) { bubble.hidden = true; return; }
+    bubble.hidden = false;
+    if (currentNudgeIdx >= AI_NUDGES.length) currentNudgeIdx = 0;
     msgEl.textContent = AI_NUDGES[currentNudgeIdx];
     var dotsHtml = '';
     for (var i = 0; i < AI_NUDGES.length; i++) {
@@ -1585,7 +1600,16 @@
     }
     dotsEl.innerHTML = dotsHtml;
   }
+
+  // recomputes the nudge list from current transaction/budget data — call
+  // whenever totals change (import, categorising, filtering, budgets)
+  function refreshNudges() {
+    AI_NUDGES = buildNudges();
+    renderNudge();
+  }
+
   setInterval(function() {
+    if (!AI_NUDGES.length) return;
     currentNudgeIdx = (currentNudgeIdx + 1) % AI_NUDGES.length;
     renderNudge();
   }, 7000);
@@ -1687,7 +1711,7 @@
       } else if (txnFilter.query || txnFilter.catIds.length) {
         titleEl.textContent = 'Filtered results, by category';
       } else {
-        titleEl.textContent = 'This month, by category';
+        titleEl.textContent = (monthIndex === CURRENT_DATA_MONTH_INDEX ? 'This month' : MONTHS[monthIndex]) + ', by category';
       }
     }
     var totals = [];
@@ -1738,15 +1762,33 @@
   }
   var txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false, amtMin: '', amtMax: '' };
 
+  // calendar bounds of the month currently selected in the top month switcher
+  function activeMonthRange() {
+    var monNum = TXN_MONTH_NUMS[MONTH_TAGS[monthIndex]];
+    var yearMatch = MONTHS[monthIndex].match(/\d{4}/);
+    var year = yearMatch ? parseInt(yearMatch[0], 10) : 2026;
+    return { from: new Date(year, monNum - 1, 1), to: new Date(year, monNum, 0, 23, 59, 59) };
+  }
+
   function applyTxnFilter() {
     var q = txnFilter.query.toLowerCase().trim();
     var cats = txnFilter.catIds;
-    var df = txnFilter.dateFrom ? new Date(txnFilter.dateFrom) : null;
-    var dt = txnFilter.dateTo ? new Date(txnFilter.dateTo + 'T23:59:59') : null;
+    var hasExplicitDate = !!(txnFilter.dateFrom || txnFilter.dateTo);
+    var df, dt;
+    if (hasExplicitDate) {
+      df = txnFilter.dateFrom ? new Date(txnFilter.dateFrom) : null;
+      dt = txnFilter.dateTo ? new Date(txnFilter.dateTo + 'T23:59:59') : null;
+    } else {
+      // no explicit date range chosen in the filter panel — default to the
+      // calendar month currently selected in the top month switcher
+      var monthRange = activeMonthRange();
+      df = monthRange.from;
+      dt = monthRange.to;
+    }
     var taxOnly = txnFilter.filterTax;
     var amtMin = txnFilter.amtMin !== '' ? parseFloat(txnFilter.amtMin) : null;
     var amtMax = txnFilter.amtMax !== '' ? parseFloat(txnFilter.amtMax) : null;
-    var hasFilter = q || cats.length || df || dt || taxOnly || amtMin !== null || amtMax !== null;
+    var hasOtherFilter = !!(q || cats.length || taxOnly || amtMin !== null || amtMax !== null || hasExplicitDate);
 
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
       if (!isRealBillRow(row)) { row.hidden = false; return; }
@@ -1777,22 +1819,22 @@
       row.hidden = false;
     });
 
-    // show/hide whole category blocks
-    var totalVisible = 0;
-    document.querySelectorAll('#month-data-sections details.category').forEach(function(catEl) {
-      if (hasFilter) {
-        var vis = 0;
-        catEl.querySelectorAll('.bill-row').forEach(function(r) { if (isRealBillRow(r) && !r.hidden) vis++; });
-        catEl.hidden = (vis === 0);
-        totalVisible += vis;
-      } else {
-        catEl.hidden = false;
-        totalVisible++;
-      }
-    });
+    var totals = refreshAllCategoryTotals();
 
     var noResults = document.getElementById('txn-no-results');
-    if (noResults) noResults.hidden = (totalVisible > 0 || !hasFilter);
+    if (noResults) {
+      if (totals.visible > 0) {
+        noResults.hidden = true;
+      } else if (hasOtherFilter) {
+        noResults.hidden = false;
+        noResults.textContent = 'No transactions match your filters.';
+      } else if (totals.ever > 0) {
+        noResults.hidden = false;
+        noResults.textContent = 'No transactions in ' + MONTHS[monthIndex] + '.';
+      } else {
+        noResults.hidden = true;
+      }
+    }
 
     refreshAllDateGroupHeaders();
     renderPieChart();
@@ -1915,7 +1957,8 @@
   // Recalculates totals, hides empty categories and subcategories,
   // and shows the import prompt when no transactions exist.
   function refreshAllCategoryTotals() {
-    var totalRowCount = 0;
+    var totalRowCountEver = 0;  // any real row ever imported, regardless of active filter/month
+    var totalVisibleCount = 0;  // real rows currently visible (not hidden by the active filter/month)
 
     document.querySelectorAll('details.category').forEach(function(catEl) {
       // Count real bill-rows in this category (excludes "more transactions" placeholders)
@@ -1923,39 +1966,43 @@
       catEl.querySelectorAll('.bill-row').forEach(function(r) {
         if (isRealBillRow(r)) realRows.push(r);
       });
+      var visibleRows = realRows.filter(function(r) { return !r.hidden; });
+      totalRowCountEver += realRows.length;
+      totalVisibleCount += visibleRows.length;
 
       if (catEl.id === 'cat-uncategorized') {
-        catEl.hidden = realRows.length === 0;
-        if (realRows.length > 0) totalRowCount += realRows.length;
+        catEl.hidden = visibleRows.length === 0;
         return;
       }
 
-      // Hide/show each subcategory based on whether it has any bill-rows
+      // Hide/show each subcategory based on whether it has any visible bill-rows
       catEl.querySelectorAll('details.subcategory').forEach(function(subEl) {
-        var subRows = subEl.querySelectorAll('.bill-row').length;
-        subEl.hidden = subRows === 0;
+        var subVisible = 0;
+        subEl.querySelectorAll('.bill-row').forEach(function(r) { if (isRealBillRow(r) && !r.hidden) subVisible++; });
+        subEl.hidden = subVisible === 0;
       });
 
-      // Sum total for this category
+      // Sum total for this category from currently visible rows only
       var total = 0;
-      realRows.forEach(function(row) {
+      visibleRows.forEach(function(row) {
         var amtEl = row.querySelector('.bill-amount');
         if (!amtEl) return;
         total += parseFloat(amtEl.textContent.replace(/[^\d.]/g, '')) || 0;
       });
 
-      catEl.hidden = realRows.length === 0;
-      if (realRows.length > 0) totalRowCount += realRows.length;
+      catEl.hidden = visibleRows.length === 0;
 
       var display = catEl.querySelector(':scope > summary .cat-amount');
       if (display) display.textContent = formatMoney(total);
     });
 
-    // Show import prompt when there are no transactions at all
+    // Show import prompt only when nothing has ever been imported
     var noTxnEl = document.getElementById('no-transactions-state');
-    if (noTxnEl) noTxnEl.hidden = totalRowCount > 0;
+    if (noTxnEl) noTxnEl.hidden = totalRowCountEver > 0;
 
     renderSafeSpendBar();
+    refreshNudges();
+    return { visible: totalVisibleCount, ever: totalRowCountEver };
   }
 
   function refreshAllRowBadges() {
@@ -2346,107 +2393,6 @@
     } else {
       row.classList.remove('is-split');
     }
-  }
-
-  // ---- Historical month rendering ----
-  function buildHistPieSvg(pieData, total) {
-    if (!total) return '<svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="50" fill="#f0f0f0"/></svg>';
-    var cx = 60, cy = 60, r = 50, ri = 28;
-    var svg = '<svg viewBox="0 0 120 120" width="120" height="120">';
-    var angle = -Math.PI / 2;
-    pieData.forEach(function(p) {
-      var slice = (p.amount / total) * 2 * Math.PI;
-      var x1 = cx + r * Math.cos(angle);
-      var y1 = cy + r * Math.sin(angle);
-      angle += slice;
-      var x2 = cx + r * Math.cos(angle);
-      var y2 = cy + r * Math.sin(angle);
-      var largeArc = slice > Math.PI ? 1 : 0;
-      svg += '<path d="M' + cx + ' ' + cy + ' L' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' A' + r + ' ' + r + ' 0 ' + largeArc + ' 1 ' + x2.toFixed(2) + ' ' + y2.toFixed(2) + ' Z" fill="' + p.color + '"/>';
-    });
-    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + ri + '" fill="#fff"/>';
-    svg += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-size="8" fill="#999">Total</text>';
-    svg += '<text x="' + cx + '" y="' + (cy + 9) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1a1a">' + formatMoney(total) + '</text>';
-    svg += '</svg>';
-    return svg;
-  }
-
-  function renderHistoricalMonth(tag) {
-    var data = MONTH_TXN_DATA[tag] || [];
-    var histEl = document.getElementById('hist-month-sections');
-    var emptyEl = document.getElementById('month-empty-state');
-    if (!data.length) {
-      histEl.hidden = true;
-      emptyEl.hidden = false;
-      return;
-    }
-    histEl.hidden = false;
-    emptyEl.hidden = true;
-
-    // group by catId then sub
-    var catGroups = {};
-    data.forEach(function(t) {
-      if (!catGroups[t.catId]) catGroups[t.catId] = { total: 0, subs: {} };
-      catGroups[t.catId].total += t.amount;
-      if (!catGroups[t.catId].subs[t.sub]) catGroups[t.catId].subs[t.sub] = [];
-      catGroups[t.catId].subs[t.sub].push(t);
-    });
-    var grandTotal = data.reduce(function(s, t) { return s + t.amount; }, 0);
-
-    // pie data (exclude transfers)
-    var pieData = [];
-    CATEGORIES.forEach(function(c) {
-      if (catGroups[c.id] && EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1) {
-        pieData.push({ label: c.label, amount: catGroups[c.id].total, color: colorForCategory(c.id) });
-      }
-    });
-
-    var html = '<div class="section"><h2 style="margin-bottom:10px;">Spending by category</h2><div class="pie-card">';
-    html += buildHistPieSvg(pieData, grandTotal);
-    html += '<div class="legend">';
-    pieData.forEach(function(p) {
-      html += '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#333;padding:3px 0;">' +
-        '<span style="width:9px;height:9px;border-radius:50%;background:' + p.color + ';flex-shrink:0;display:inline-block;"></span>' +
-        escapeHtml(p.label) +
-        '<span style="margin-left:auto;font-weight:700;">' + formatMoney(p.amount) + '</span></div>';
-    });
-    html += '</div></div></div>';
-
-    html += '<div class="section" style="padding-top:4px;"><h2>Transactions</h2>';
-    CATEGORIES.forEach(function(c) {
-      var group = catGroups[c.id];
-      if (!group) return;
-      var catObj = CATEGORIES.filter(function(x) { return x.id === c.id; })[0];
-      if (!catObj) return;
-      var subCount = Object.keys(group.subs).length;
-      html += '<details class="category" style="margin-bottom:8px;">' +
-        '<summary><div class="category-row">' +
-        '<div class="icon-box icon-bold"><svg viewBox="0 0 24 24">' + catObj.iconSvg + '</svg></div>' +
-        '<div class="cat-info"><div class="cat-name">' + escapeHtml(catObj.label) + '</div><div class="cat-meta">' + subCount + ' subcategor' + (subCount === 1 ? 'y' : 'ies') + '</div></div>' +
-        '<div class="cat-amount-wrap"><div class="cat-amount">' + formatMoney(group.total) + '</div></div>' +
-        '<div class="chevron">▾</div></div></summary>' +
-        '<div class="category-content">';
-      Object.keys(group.subs).forEach(function(subName) {
-        var txns = group.subs[subName];
-        var subTotal = txns.reduce(function(s, t) { return s + t.amount; }, 0);
-        html += '<details class="subcategory"><summary><div class="subcategory-row">' +
-          '<span>' + escapeHtml(subName) + '</span>' +
-          '<span>' + formatMoney(subTotal) + '<span class="chevron">▾</span></span>' +
-          '</div></summary><div class="sub-content">';
-        txns.forEach(function(t) {
-          html += '<div class="bill-row">' +
-            '<div class="bill-date">' + escapeHtml(t.date) + '</div>' +
-            '<div class="bill-merchant">' + escapeHtml(t.merchant) + (t.recurring ? ' <span class="bill-recurring">recurring</span>' : '') + '</div>' +
-            '<div class="bill-amount">' + formatMoney(t.amount) + '</div>' +
-            '</div>';
-        });
-        html += '</div></details>';
-      });
-      html += '</div></details>';
-    });
-    html += '</div>';
-
-    histEl.innerHTML = html;
   }
 
   // ---- ATO tax PDF export ----
@@ -3095,7 +3041,7 @@
     }
 
     if (e.target.closest('[data-action="advance-nudge"]')) {
-      currentNudgeIdx = (currentNudgeIdx + 1) % AI_NUDGES.length;
+      if (AI_NUDGES.length) currentNudgeIdx = (currentNudgeIdx + 1) % AI_NUDGES.length;
       renderNudge();
       return;
     }
@@ -3245,6 +3191,7 @@
       BUDGETS[bCatId] = parseFloat(budgetInput.value) || 0;
       updateBudgetCardUI(bCatId);
       renderCategoryBudgetLines();
+      refreshNudges();
       return;
     }
 
@@ -3676,8 +3623,7 @@
       }
     }
 
-    refreshAllDateGroupHeaders();
-    refreshAllCategoryTotals();
+    applyTxnFilter();
 
     // show success screen
     var result = document.getElementById('import-result');
@@ -3949,7 +3895,7 @@
 
     var merchantTotals = {};
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function (row) {
-      if (!isRealBillRow(row)) return;
+      if (!isRealBillRow(row) || row.hidden) return;
       if (row.closest('#cat-transfer')) return;
       var merchantEl = row.querySelector('.bill-merchant');
       var amountEl = row.querySelector('.bill-amount');
@@ -3989,7 +3935,7 @@
 
     var taxRows = [];
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
-      if (!isRealBillRow(row) || row.closest('#cat-transfer')) return;
+      if (!isRealBillRow(row) || row.hidden || row.closest('#cat-transfer')) return;
       if (TXN_TAX[rowKey(row)]) {
         var merchantEl = row.querySelector('.bill-merchant');
         var amtEl = row.querySelector('.bill-amount');
@@ -4187,14 +4133,7 @@
     document.querySelector('.breakdown-row.total span:last-child').textContent = formatMoney(safeAmount);
     renderSafeSpendBar();
 
-    var isCurrent = monthIndex === CURRENT_DATA_MONTH_INDEX;
-    document.getElementById('month-data-sections').hidden = !isCurrent;
-    if (isCurrent) {
-      document.getElementById('hist-month-sections').hidden = true;
-      document.getElementById('month-empty-state').hidden = true;
-    } else {
-      renderHistoricalMonth(MONTH_TAGS[monthIndex]);
-    }
+    applyTxnFilter();
   }
 
   // Remove all mock transaction rows so the app starts clean for real CSV import
@@ -4211,7 +4150,6 @@
   renderCategoryBudgetLines();
   renderSafeSpendBar();
   renderPieChart();
-  renderNudge();
   renderTip();
   refreshTransferRowBadge('transfer-1');
   wireImportFileInput();
