@@ -128,25 +128,9 @@
   .split-summary:empty { display: none; }
 
   /* ---------- Per-category transaction row tinting ----------
-     Background tint + left accent bar both derive from the same hue as
-     CATEGORY_COLORS / colorForCategory(), so a row's color always matches
-     its slice in the pie chart and legend. */
-  #cat-housing .bill-row       { background: #f3effc; border-left: 3px solid #6e31d8; }
-  #cat-utilities .bill-row     { background: #faf1fc; border-left: 3px solid #bb4bdd; }
-  #cat-groceries .bill-row     { background: #fceffa; border-left: 3px solid #d831bc; }
-  #cat-dining .bill-row        { background: #fcf1f6; border-left: 3px solid #dd4b8a; }
-  #cat-transport .bill-row     { background: #fcefef; border-left: 3px solid #d83137; }
-  #cat-health .bill-row        { background: #fcf5f1; border-left: 3px solid #dd804b; }
-  #cat-insurance .bill-row     { background: #fcf9ef; border-left: 3px solid #d8b131; }
-  #cat-fitness .bill-row       { background: #fafcf1; border-left: 3px solid #c4dd4b; }
-  #cat-shopping .bill-row      { background: #f4fcef; border-left: 3px solid #7ad831; }
-  #cat-entertainment .bill-row { background: #f1fcf1; border-left: 3px solid #50dd4b; }
-  #cat-travel .bill-row        { background: #effcf3; border-left: 3px solid #31d86e; }
-  #cat-education .bill-row     { background: #f1fcfa; border-left: 3px solid #4bddbb; }
-  #cat-gifts .bill-row         { background: #effafc; border-left: 3px solid #31bcd8; }
-  #cat-fees .bill-row          { background: #f1f6fc; border-left: 3px solid #4b8add; }
-  #cat-transfer .bill-row      { background: #efeffc; border-left: 3px solid #3137d8; }
-  #cat-uncategorized .bill-row { background: #fffaf2; border-left: 3px solid #b2bec3; }
+     Rows are plain white; category identity is shown on the .cat-chip tag
+     (colored by refreshRowBadge via inline style from CATEGORY_COLORS). */
+  #cat-uncategorized .bill-row { background: #fffaf2; }
 
   /* ---------- Transaction search / filter bar ---------- */
   .txn-filter-wrap { padding: 0 0 10px; }
@@ -939,7 +923,7 @@
 
         <details class="category" id="cat-fitness">
           <summary><div class="category-row">
-            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/></svg></div>
+            <div class="icon-box icon-bold"><svg viewBox="0 0 24 24"><rect x="2" y="9" width="4" height="6" rx="1.5"/><rect x="6" y="10.5" width="2" height="3" rx=".5"/><line x1="8" y1="12" x2="16" y2="12"/><rect x="16" y="10.5" width="2" height="3" rx=".5"/><rect x="18" y="9" width="4" height="6" rx="1.5"/></svg></div>
             <div class="cat-info"><div class="cat-name">Fitness &amp; Wellness</div><div class="cat-meta">4 subcategories</div></div>
             <div class="cat-amount-wrap"><div class="cat-amount">$0.00</div><div class="cat-budget-line" data-cat-id="cat-fitness"></div></div><div class="chevron">▾</div>
           </div></summary>
@@ -1279,7 +1263,7 @@
     { id: 'cat-transport',     label: 'Transport',         iconSvg: '<rect x="4" y="8" width="16" height="9" rx="3"/><circle cx="8" cy="19" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="19" r="1.4" fill="currentColor" stroke="none"/>' },
     { id: 'cat-health',        label: 'Health & Medical',  iconSvg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
     { id: 'cat-insurance',     label: 'Insurance',         iconSvg: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>' },
-    { id: 'cat-fitness',       label: 'Fitness & Wellness',iconSvg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
+    { id: 'cat-fitness',       label: 'Fitness & Wellness',iconSvg: '<rect x="2" y="9" width="4" height="6" rx="1.5"/><rect x="6" y="10.5" width="2" height="3" rx=".5"/><line x1="8" y1="12" x2="16" y2="12"/><rect x="16" y="10.5" width="2" height="3" rx=".5"/><rect x="18" y="9" width="4" height="6" rx="1.5"/>' },
     { id: 'cat-shopping',      label: 'Shopping',          iconSvg: '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>' },
     { id: 'cat-entertainment', label: 'Entertainment',     iconSvg: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>' },
     { id: 'cat-travel',        label: 'Travel',            iconSvg: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>' },
@@ -1316,7 +1300,7 @@
     { id: 'icon-food',     svg: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>' },
     { id: 'icon-pulse',    svg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
     { id: 'icon-film',     svg: '<rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>' },
-    { id: 'icon-dumbbell', svg: '<line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><path d="M8 8l-4.5-4.5a1.41 1.41 0 000 2L8 10M16 16l4.5 4.5a1.41 1.41 0 000-2L16 14M20 8l-1.5-1.5L20 5l-1 1M4 16l1.5 1.5L4 19l1-1"/>' },
+    { id: 'icon-dumbbell', svg: '<rect x="2" y="9" width="4" height="6" rx="1.5"/><rect x="6" y="10.5" width="2" height="3" rx=".5"/><line x1="8" y1="12" x2="16" y2="12"/><rect x="16" y="10.5" width="2" height="3" rx=".5"/><rect x="18" y="9" width="4" height="6" rx="1.5"/>' },
     { id: 'icon-gift',     svg: '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>' },
     { id: 'icon-scissors', svg: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>' },
     { id: 'icon-paw',      svg: '<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 015 5v3.5a3.5 3.5 0 01-6.84 1.045Q6.52 17.48 4 17a3.5 3.5 0 013.466-5z"/>' },
@@ -1495,24 +1479,25 @@
   var activeTransferRowId = null;
 
   // ---- insights "compare categories" chart state ----
-  // evenly spaced around the hue wheel (24deg apart) so every category is
-  // visually distinct in the pie chart, legend, and transaction list tinting
+  // Distinct hues spread across the full spectrum — each category gets its own
+  // recognizable color family (blue, orange, green, red, teal, emerald, violet,
+  // olive, rose, amber, sky-blue, rust, fuchsia, slate, charcoal)
   var CATEGORY_COLORS = {
-    'cat-housing':       '#6e31d8',
-    'cat-utilities':     '#bb4bdd',
-    'cat-groceries':     '#d831bc',
-    'cat-dining':        '#dd4b8a',
-    'cat-transport':     '#d83137',
-    'cat-health':        '#dd804b',
-    'cat-insurance':     '#d8b131',
-    'cat-fitness':       '#c4dd4b',
-    'cat-shopping':      '#7ad831',
-    'cat-entertainment': '#50dd4b',
-    'cat-travel':        '#31d86e',
-    'cat-education':     '#4bddbb',
-    'cat-gifts':         '#31bcd8',
-    'cat-fees':          '#4b8add',
-    'cat-transfer':      '#3137d8'
+    'cat-housing':       '#1d4ed8',
+    'cat-utilities':     '#ea580c',
+    'cat-groceries':     '#15803d',
+    'cat-dining':        '#dc2626',
+    'cat-transport':     '#0e7490',
+    'cat-health':        '#059669',
+    'cat-insurance':     '#7c3aed',
+    'cat-fitness':       '#4d7c0f',
+    'cat-shopping':      '#be185d',
+    'cat-entertainment': '#a16207',
+    'cat-travel':        '#0284c7',
+    'cat-education':     '#92400e',
+    'cat-gifts':         '#a21caf',
+    'cat-fees':          '#64748b',
+    'cat-transfer':      '#374151'
   };
   function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#9b59b6'; }
   var compareSelectedCats = ['cat-housing', 'cat-dining'];
@@ -1954,7 +1939,11 @@
     var rSplit = TXN_SPLITS[rKey];
     var chipClass = rSplit ? 'cat-chip cat-chip-split' : ('cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : ''));
     var chipText = rSplit ? ('Split \xd7' + rSplit.parts.length) : shortLabelFor(parentCategory);
-    row.insertAdjacentHTML('beforeend', '<span class="' + chipClass + '">' + chipText + '</span>');
+    var catId = parentCategory ? parentCategory.id : null;
+    var chipStyle = (!rSplit && catId && catId !== 'cat-uncategorized')
+      ? ' style="background:' + colorForCategory(catId) + ';color:#fff;"'
+      : '';
+    row.insertAdjacentHTML('beforeend', '<span class="' + chipClass + '"' + chipStyle + '>' + chipText + '</span>');
     refreshAllCategoryTotals();
     refreshAllDateGroupHeaders();
   }
