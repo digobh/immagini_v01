@@ -95,6 +95,38 @@
   details.category[open] > summary .category-row { background: #faf9ff; }
   .category-content { border-top: 1px solid #f0f0f0; padding: 6px 0; }
 
+  /* Per-category pastel hue hierarchy: category header = 93% white blend, subcategory header = 85% white blend */
+  #cat-housing > summary .category-row { background: #eff3fc; }
+  #cat-housing details.subcategory > summary .subcategory-row { background: #dde4f9; }
+  #cat-utilities > summary .category-row { background: #fef3ee; }
+  #cat-utilities details.subcategory > summary .subcategory-row { background: #fce6db; }
+  #cat-groceries > summary .category-row { background: #eff6f1; }
+  #cat-groceries details.subcategory > summary .subcategory-row { background: #dcece2; }
+  #cat-dining > summary .category-row { background: #fdf0f0; }
+  #cat-dining details.subcategory > summary .subcategory-row { background: #fadede; }
+  #cat-transport > summary .category-row { background: #eef5f7; }
+  #cat-transport details.subcategory > summary .subcategory-row { background: #dbeaee; }
+  #cat-health > summary .category-row { background: #eef8f5; }
+  #cat-health details.subcategory > summary .subcategory-row { background: #daefe9; }
+  #cat-insurance > summary .category-row { background: #f6f1fe; }
+  #cat-insurance details.subcategory > summary .subcategory-row { background: #ebe1fc; }
+  #cat-fitness > summary .category-row { background: #f3f6ee; }
+  #cat-fitness details.subcategory > summary .subcategory-row { background: #e4ebdb; }
+  #cat-shopping > summary .category-row { background: #faeff4; }
+  #cat-shopping details.subcategory > summary .subcategory-row { background: #f5dce7; }
+  #cat-entertainment > summary .category-row { background: #f8f4ee; }
+  #cat-entertainment details.subcategory > summary .subcategory-row { background: #f1e7da; }
+  #cat-travel > summary .category-row { background: #edf6fb; }
+  #cat-travel details.subcategory > summary .subcategory-row { background: #d9edf7; }
+  #cat-education > summary .category-row { background: #f7f2ee; }
+  #cat-education details.subcategory > summary .subcategory-row { background: #efe2db; }
+  #cat-gifts > summary .category-row { background: #f8eff9; }
+  #cat-gifts details.subcategory > summary .subcategory-row { background: #f1ddf3; }
+  #cat-fees > summary .category-row { background: #f4f5f7; }
+  #cat-fees details.subcategory > summary .subcategory-row { background: #e8eaee; }
+  #cat-transfer > summary .category-row { background: #f1f2f3; }
+  #cat-transfer details.subcategory > summary .subcategory-row { background: #e1e3e5; }
+
   details.subcategory { border-top: 1px solid #f5f5f7; }
   details.subcategory:first-child { border-top: none; }
   details.category[hidden] { display: none; }
@@ -1938,7 +1970,16 @@
     var rKey = rowKey(row);
     var rSplit = TXN_SPLITS[rKey];
     var chipClass = rSplit ? 'cat-chip cat-chip-split' : ('cat-chip' + (uncategorized ? ' cat-chip-uncategorized' : ''));
-    var chipText = rSplit ? ('Split \xd7' + rSplit.parts.length) : shortLabelFor(parentCategory);
+    var chipText;
+    if (rSplit) {
+      chipText = 'Split \xd7' + rSplit.parts.length;
+    } else if (!uncategorized) {
+      var parentSub = row.closest('details.subcategory');
+      var subNameEl = parentSub ? parentSub.querySelector(':scope > summary .subcategory-row > span:first-child') : null;
+      chipText = subNameEl ? subNameEl.textContent : shortLabelFor(parentCategory);
+    } else {
+      chipText = shortLabelFor(parentCategory);
+    }
     var catId = parentCategory ? parentCategory.id : null;
     var chipStyle = (!rSplit && catId && catId !== 'cat-uncategorized')
       ? ' style="background:' + colorForCategory(catId) + ';color:#fff;"'
