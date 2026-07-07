@@ -95,37 +95,85 @@
   details.category[open] > summary .category-row { background: #faf9ff; }
   .category-content { border-top: 1px solid #f0f0f0; padding: 6px 0; }
 
-  /* Per-category pastel hue hierarchy: category header = 93% white blend, subcategory header = 85% white blend */
-  #cat-housing > summary .category-row { background: #eff3fc; }
-  #cat-housing details.subcategory > summary .subcategory-row { background: #dde4f9; }
-  #cat-utilities > summary .category-row { background: #fef3ee; }
-  #cat-utilities details.subcategory > summary .subcategory-row { background: #fce6db; }
-  #cat-groceries > summary .category-row { background: #eff6f1; }
-  #cat-groceries details.subcategory > summary .subcategory-row { background: #dcece2; }
-  #cat-dining > summary .category-row { background: #fdf0f0; }
-  #cat-dining details.subcategory > summary .subcategory-row { background: #fadede; }
-  #cat-transport > summary .category-row { background: #eef5f7; }
-  #cat-transport details.subcategory > summary .subcategory-row { background: #dbeaee; }
-  #cat-health > summary .category-row { background: #eef8f5; }
-  #cat-health details.subcategory > summary .subcategory-row { background: #daefe9; }
-  #cat-insurance > summary .category-row { background: #f6f1fe; }
-  #cat-insurance details.subcategory > summary .subcategory-row { background: #ebe1fc; }
-  #cat-fitness > summary .category-row { background: #f3f6ee; }
-  #cat-fitness details.subcategory > summary .subcategory-row { background: #e4ebdb; }
-  #cat-shopping > summary .category-row { background: #faeff4; }
-  #cat-shopping details.subcategory > summary .subcategory-row { background: #f5dce7; }
-  #cat-entertainment > summary .category-row { background: #f8f4ee; }
-  #cat-entertainment details.subcategory > summary .subcategory-row { background: #f1e7da; }
-  #cat-travel > summary .category-row { background: #edf6fb; }
-  #cat-travel details.subcategory > summary .subcategory-row { background: #d9edf7; }
-  #cat-education > summary .category-row { background: #f7f2ee; }
-  #cat-education details.subcategory > summary .subcategory-row { background: #efe2db; }
-  #cat-gifts > summary .category-row { background: #f8eff9; }
-  #cat-gifts details.subcategory > summary .subcategory-row { background: #f1ddf3; }
-  #cat-fees > summary .category-row { background: #f4f5f7; }
-  #cat-fees details.subcategory > summary .subcategory-row { background: #e8eaee; }
-  #cat-transfer > summary .category-row { background: #f1f2f3; }
-  #cat-transfer details.subcategory > summary .subcategory-row { background: #e1e3e5; }
+  /* Per-category pastel colour hierarchy:
+     category header  = base pastel
+     subcategory row  = +10% lighter
+     date group       = +20% lighter
+     transaction row  = +30% lighter */
+  #cat-housing > summary .category-row { background: #B8CBFF; }
+  #cat-housing .subcategory-row        { background: #bfd0ff; }
+  #cat-housing .date-group-header      { background: #c6d5ff; border-top-color: #bfd0ff; color: #4d556b; }
+  #cat-housing .bill-row               { background: #cddbff; }
+
+  #cat-utilities > summary .category-row { background: #FFCBA8; }
+  #cat-utilities .subcategory-row        { background: #ffd0b1; }
+  #cat-utilities .date-group-header      { background: #ffd5b9; border-top-color: #ffd0b1; color: #6b5547; }
+  #cat-utilities .bill-row               { background: #ffdbc2; }
+
+  #cat-groceries > summary .category-row { background: #B8EFCC; }
+  #cat-groceries .subcategory-row        { background: #bff1d1; }
+  #cat-groceries .date-group-header      { background: #c6f2d6; border-top-color: #bff1d1; color: #4d6456; }
+  #cat-groceries .bill-row               { background: #cdf4db; }
+
+  #cat-dining > summary .category-row { background: #FFB8B8; }
+  #cat-dining .subcategory-row        { background: #ffbfbf; }
+  #cat-dining .date-group-header      { background: #ffc6c6; border-top-color: #ffbfbf; color: #6b4d4d; }
+  #cat-dining .bill-row               { background: #ffcdcd; }
+
+  #cat-transport > summary .category-row { background: #A8DEF0; }
+  #cat-transport .subcategory-row        { background: #b1e1f2; }
+  #cat-transport .date-group-header      { background: #b9e5f3; border-top-color: #b1e1f2; color: #475d65; }
+  #cat-transport .bill-row               { background: #c2e8f5; }
+
+  #cat-health > summary .category-row { background: #A8F0DC; }
+  #cat-health .subcategory-row        { background: #b1f2e0; }
+  #cat-health .date-group-header      { background: #b9f3e3; border-top-color: #b1f2e0; color: #47655c; }
+  #cat-health .bill-row               { background: #c2f5e7; }
+
+  #cat-insurance > summary .category-row { background: #D4B8FF; }
+  #cat-insurance .subcategory-row        { background: #d8bfff; }
+  #cat-insurance .date-group-header      { background: #ddc6ff; border-top-color: #d8bfff; color: #594d6b; }
+  #cat-insurance .bill-row               { background: #e1cdff; }
+
+  #cat-fitness > summary .category-row { background: #C8F0A8; }
+  #cat-fitness .subcategory-row        { background: #cef2b1; }
+  #cat-fitness .date-group-header      { background: #d3f3b9; border-top-color: #cef2b1; color: #546547; }
+  #cat-fitness .bill-row               { background: #d9f5c2; }
+
+  #cat-shopping > summary .category-row { background: #FFB8D8; }
+  #cat-shopping .subcategory-row        { background: #ffbfdc; }
+  #cat-shopping .date-group-header      { background: #ffc6e0; border-top-color: #ffbfdc; color: #6b4d5b; }
+  #cat-shopping .bill-row               { background: #ffcde4; }
+
+  #cat-entertainment > summary .category-row { background: #FFE8A8; }
+  #cat-entertainment .subcategory-row        { background: #ffeab1; }
+  #cat-entertainment .date-group-header      { background: #ffedb9; border-top-color: #ffeab1; color: #6b6147; }
+  #cat-entertainment .bill-row               { background: #ffefc2; }
+
+  #cat-travel > summary .category-row { background: #A8CCFF; }
+  #cat-travel .subcategory-row        { background: #b1d1ff; }
+  #cat-travel .date-group-header      { background: #b9d6ff; border-top-color: #b1d1ff; color: #47566b; }
+  #cat-travel .bill-row               { background: #c2dbff; }
+
+  #cat-education > summary .category-row { background: #F0D4A8; }
+  #cat-education .subcategory-row        { background: #f2d8b1; }
+  #cat-education .date-group-header      { background: #f3ddb9; border-top-color: #f2d8b1; color: #655947; }
+  #cat-education .bill-row               { background: #f5e1c2; }
+
+  #cat-gifts > summary .category-row { background: #F0A8EC; }
+  #cat-gifts .subcategory-row        { background: #f2b1ee; }
+  #cat-gifts .date-group-header      { background: #f3b9f0; border-top-color: #f2b1ee; color: #654763; }
+  #cat-gifts .bill-row               { background: #f5c2f2; }
+
+  #cat-fees > summary .category-row { background: #C4CCDC; }
+  #cat-fees .subcategory-row        { background: #cad1e0; }
+  #cat-fees .date-group-header      { background: #d0d6e3; border-top-color: #cad1e0; color: #52565c; }
+  #cat-fees .bill-row               { background: #d6dbe7; }
+
+  #cat-transfer > summary .category-row { background: #C8CBCB; }
+  #cat-transfer .subcategory-row        { background: #ced0d0; }
+  #cat-transfer .date-group-header      { background: #d3d5d5; border-top-color: #ced0d0; color: #545555; }
+  #cat-transfer .bill-row               { background: #d9dbdb; }
 
   details.subcategory { border-top: 1px solid #f5f5f7; }
   details.subcategory:first-child { border-top: none; }
@@ -147,7 +195,7 @@
 
   .bill-row { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 2px; padding: 10px 16px; font-size: 12.5px; border-top: 1px solid #f7f7f9; cursor: pointer; }
   .bill-row:first-child { border-top: none; }
-  .date-group-header { font-size: 10.5px; font-weight: 700; color: #6c5ce7; padding: 8px 16px 6px; letter-spacing: .05em; background: #efecff; border-top: 1.5px solid #e6e1ff; text-transform: uppercase; }
+  .date-group-header { font-size: 10.5px; font-weight: 700; color: #555; padding: 8px 16px 6px; letter-spacing: .05em; background: #f0f0f0; border-top: 1.5px solid #e8e8e8; text-transform: uppercase; }
   .date-group-header:first-child { border-top: none; }
   .date-group-header + .bill-row { border-top: none; }
   .bill-date { display: none; }
@@ -1515,23 +1563,41 @@
   // recognizable color family (blue, orange, green, red, teal, emerald, violet,
   // olive, rose, amber, sky-blue, rust, fuchsia, slate, charcoal)
   var CATEGORY_COLORS = {
-    'cat-housing':       '#1d4ed8',
-    'cat-utilities':     '#ea580c',
-    'cat-groceries':     '#15803d',
-    'cat-dining':        '#dc2626',
-    'cat-transport':     '#0e7490',
-    'cat-health':        '#059669',
-    'cat-insurance':     '#7c3aed',
-    'cat-fitness':       '#4d7c0f',
-    'cat-shopping':      '#be185d',
-    'cat-entertainment': '#a16207',
-    'cat-travel':        '#0284c7',
-    'cat-education':     '#92400e',
-    'cat-gifts':         '#a21caf',
-    'cat-fees':          '#64748b',
-    'cat-transfer':      '#374151'
+    'cat-housing':       '#B8CBFF',
+    'cat-utilities':     '#FFCBA8',
+    'cat-groceries':     '#B8EFCC',
+    'cat-dining':        '#FFB8B8',
+    'cat-transport':     '#A8DEF0',
+    'cat-health':        '#A8F0DC',
+    'cat-insurance':     '#D4B8FF',
+    'cat-fitness':       '#C8F0A8',
+    'cat-shopping':      '#FFB8D8',
+    'cat-entertainment': '#FFE8A8',
+    'cat-travel':        '#A8CCFF',
+    'cat-education':     '#F0D4A8',
+    'cat-gifts':         '#F0A8EC',
+    'cat-fees':          '#C4CCDC',
+    'cat-transfer':      '#C8CBCB'
   };
-  function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#9b59b6'; }
+  var CATEGORY_DARK_COLORS = {
+    'cat-housing':       '#4d556b',
+    'cat-utilities':     '#6b5547',
+    'cat-groceries':     '#4d6456',
+    'cat-dining':        '#6b4d4d',
+    'cat-transport':     '#475d65',
+    'cat-health':        '#47655c',
+    'cat-insurance':     '#594d6b',
+    'cat-fitness':       '#546547',
+    'cat-shopping':      '#6b4d5b',
+    'cat-entertainment': '#6b6147',
+    'cat-travel':        '#47566b',
+    'cat-education':     '#655947',
+    'cat-gifts':         '#654763',
+    'cat-fees':          '#52565c',
+    'cat-transfer':      '#545555'
+  };
+  function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#C8CBCB'; }
+  function darkColorForCategory(catId) { return CATEGORY_DARK_COLORS[catId] || '#444'; }
   var compareSelectedCats = ['cat-housing', 'cat-dining'];
   var compareChartType = 'line';
 
@@ -1982,7 +2048,7 @@
     }
     var catId = parentCategory ? parentCategory.id : null;
     var chipStyle = (!rSplit && catId && catId !== 'cat-uncategorized')
-      ? ' style="background:' + colorForCategory(catId) + ';color:#fff;"'
+      ? ' style="background:' + colorForCategory(catId) + ';color:' + darkColorForCategory(catId) + ';"'
       : '';
     row.insertAdjacentHTML('beforeend', '<span class="' + chipClass + '"' + chipStyle + '>' + chipText + '</span>');
     refreshAllCategoryTotals();
@@ -3973,7 +4039,9 @@
       html += '</div>';
     }
 
-    var compareCatOptions = CATEGORIES.filter(function (c) { return !!BUDGET_HISTORY[c.id]; });
+    var compareCatOptions = CATEGORIES.filter(function (c) {
+      return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1 && getCategorySpent(c.id) > 0;
+    });
     var chipsHtml = compareCatOptions.map(function (c) {
       var active = compareSelectedCats.indexOf(c.id) !== -1;
       var color = colorForCategory(c.id);
@@ -4033,71 +4101,107 @@
   // draws the interactive line/bar chart comparing the user's selected
   // categories over the last 6 illustrative months (BUDGET_HISTORY)
   function renderCompareChart() {
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     var w = 300, h = 175, padL = 48, padR = 10, padT = 16, padB = 20;
-
-    var maxVal = 0;
-    compareSelectedCats.forEach(function (catId) {
-      (BUDGET_HISTORY[catId] || []).forEach(function (pt) { if (pt.spent > maxVal) maxVal = pt.spent; });
-    });
-    maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
-
-    function xFor(i) { return padL + (i / (months.length - 1)) * (w - padL - padR); }
-    function yFor(val) { return h - padB - (val / maxVal) * (h - padB - padT); }
     function fmtAmt(v) { return '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v)); }
 
-    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
-    // Y-axis gridlines + labels (4 levels: 0%, 33%, 67%, 100%)
-    for (var g = 0; g <= 3; g++) {
-      var gy = padT + (g / 3) * (h - padB - padT);
-      var gVal = Math.round(maxVal * (1 - g / 3));
-      svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
-      svg += '<text x="' + (padL - 5) + '" y="' + (gy + 3) + '" font-size="8" fill="#aaa" text-anchor="end">' + fmtAmt(gVal) + '</text>';
-    }
-    months.forEach(function (m, i) {
-      svg += '<text x="' + xFor(i) + '" y="' + (h - 4) + '" font-size="8" fill="#aaa" text-anchor="middle">' + m + '</text>';
-    });
+    // Decide data source: use BUDGET_HISTORY when available, otherwise fall back
+    // to real DOM spending for a single-month bar chart.
+    var hasHistory = compareSelectedCats.some(function(id) { return (BUDGET_HISTORY[id] || []).length > 1; });
 
-    if (compareChartType === 'bar') {
-      var groupW = (w - padL - padR) / months.length;
-      var barW = Math.max(3, (groupW * 0.7) / Math.max(1, compareSelectedCats.length));
-      months.forEach(function (m, i) {
-        var groupStart = xFor(i) - (barW * compareSelectedCats.length) / 2;
-        compareSelectedCats.forEach(function (catId, ci) {
-          var pt = (BUDGET_HISTORY[catId] || [])[i];
-          if (!pt) return;
-          var bx = groupStart + ci * barW;
-          var by = yFor(pt.spent);
-          svg += '<rect x="' + bx + '" y="' + by + '" width="' + (barW - 1) + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(catId) + '" rx="1.5"/>';
-          // value label above bar (only if bar is wide enough, i.e. single category)
-          if (compareSelectedCats.length === 1 && pt.spent > 0) {
-            svg += '<text x="' + (bx + (barW - 1) / 2) + '" y="' + (by - 3) + '" font-size="7.5" fill="' + colorForCategory(catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
-          }
-        });
+    if (hasHistory) {
+      // Multi-month line / bar chart using BUDGET_HISTORY
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      var maxVal = 0;
+      compareSelectedCats.forEach(function(catId) {
+        (BUDGET_HISTORY[catId] || []).forEach(function(pt) { if (pt.spent > maxVal) maxVal = pt.spent; });
       });
+      maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
+      function xFor(i) { return padL + (i / (months.length - 1)) * (w - padL - padR); }
+      function yFor(val) { return h - padB - (val / maxVal) * (h - padB - padT); }
+
+      var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
+      for (var g = 0; g <= 3; g++) {
+        var gy = padT + (g / 3) * (h - padB - padT);
+        svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
+        svg += '<text x="' + (padL - 5) + '" y="' + (gy + 3) + '" font-size="8" fill="#aaa" text-anchor="end">' + fmtAmt(Math.round(maxVal * (1 - g / 3))) + '</text>';
+      }
+      months.forEach(function(m, i) {
+        svg += '<text x="' + xFor(i) + '" y="' + (h - 4) + '" font-size="8" fill="#aaa" text-anchor="middle">' + m + '</text>';
+      });
+
+      if (compareChartType === 'bar') {
+        var groupW = (w - padL - padR) / months.length;
+        var barW = Math.max(3, (groupW * 0.7) / Math.max(1, compareSelectedCats.length));
+        months.forEach(function(m, i) {
+          var groupStart = xFor(i) - (barW * compareSelectedCats.length) / 2;
+          compareSelectedCats.forEach(function(catId, ci) {
+            var pt = (BUDGET_HISTORY[catId] || [])[i];
+            if (!pt) return;
+            var bx = groupStart + ci * barW;
+            var by = yFor(pt.spent);
+            svg += '<rect x="' + bx + '" y="' + by + '" width="' + (barW - 1) + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(catId) + '" rx="1.5"/>';
+            if (compareSelectedCats.length === 1 && pt.spent > 0)
+              svg += '<text x="' + (bx + (barW - 1) / 2) + '" y="' + (by - 3) + '" font-size="7.5" fill="' + darkColorForCategory(catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
+          });
+        });
+      } else {
+        compareSelectedCats.forEach(function(catId) {
+          var hist = BUDGET_HISTORY[catId] || [];
+          var color = colorForCategory(catId);
+          var dcolor = darkColorForCategory(catId);
+          var points = hist.map(function(pt, i) { return xFor(i) + ',' + yFor(pt.spent); }).join(' ');
+          svg += '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+          hist.forEach(function(pt, i) {
+            var cx = xFor(i), cy = yFor(pt.spent);
+            svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="' + color + '"/>';
+            if (pt.spent > 0) {
+              var labelY = cy > padT + 14 ? cy - 6 : cy + 13;
+              svg += '<text x="' + cx + '" y="' + labelY + '" font-size="7.5" fill="' + dcolor + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
+            }
+          });
+        });
+      }
+      svg += '</svg>';
+      document.getElementById('compare-chart-wrap').innerHTML = svg;
+
     } else {
-      compareSelectedCats.forEach(function (catId) {
-        var hist = BUDGET_HISTORY[catId] || [];
-        var color = colorForCategory(catId);
-        var points = hist.map(function (pt, i) { return xFor(i) + ',' + yFor(pt.spent); }).join(' ');
-        svg += '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
-        hist.forEach(function (pt, i) {
-          var cx = xFor(i);
-          var cy = yFor(pt.spent);
-          svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="' + color + '"/>';
-          if (pt.spent > 0) {
-            // place label above the dot; if too close to top edge shift it below
-            var labelY = cy > padT + 14 ? cy - 6 : cy + 13;
-            svg += '<text x="' + cx + '" y="' + labelY + '" font-size="7.5" fill="' + color + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
-          }
-        });
-      });
-    }
-    svg += '</svg>';
-    document.getElementById('compare-chart-wrap').innerHTML = svg;
+      // Real CSV data: show current-month spending as a bar chart
+      var cats = compareSelectedCats.length ? compareSelectedCats
+        : CATEGORIES.filter(function(c) { return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1 && getCategorySpent(c.id) > 0; }).map(function(c) { return c.id; });
 
-    document.getElementById('compare-legend').innerHTML = compareSelectedCats.map(function (catId) {
-      var cat = CATEGORIES.filter(function (c) { return c.id === catId; })[0];
+      var data = cats.map(function(catId) {
+        var cat = CATEGORIES.filter(function(c) { return c.id === catId; })[0];
+        return { catId: catId, label: cat ? cat.label.split(' ')[0] : catId, spent: getCategorySpent(catId) };
+      }).filter(function(d) { return d.spent > 0; });
+
+      var maxVal = data.reduce(function(m, d) { return Math.max(m, d.spent); }, 0);
+      maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
+
+      var n = data.length || 1;
+      var barW = Math.max(8, Math.min(32, (w - padL - padR) / n * 0.65));
+      var gap = (w - padL - padR - barW * n) / (n + 1);
+
+      function yFor(val) { return h - padB - (val / maxVal) * (h - padB - padT); }
+
+      var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
+      for (var g = 0; g <= 3; g++) {
+        var gy = padT + (g / 3) * (h - padB - padT);
+        svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
+        svg += '<text x="' + (padL - 5) + '" y="' + (gy + 3) + '" font-size="8" fill="#aaa" text-anchor="end">' + fmtAmt(Math.round(maxVal * (1 - g / 3))) + '</text>';
+      }
+      data.forEach(function(d, i) {
+        var bx = padL + gap + i * (barW + gap);
+        var by = yFor(d.spent);
+        svg += '<rect x="' + bx + '" y="' + by + '" width="' + barW + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(d.catId) + '" rx="2"/>';
+        svg += '<text x="' + (bx + barW / 2) + '" y="' + (by - 4) + '" font-size="7.5" fill="' + darkColorForCategory(d.catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(d.spent) + '</text>';
+        svg += '<text x="' + (bx + barW / 2) + '" y="' + (h - 4) + '" font-size="7.5" fill="#888" text-anchor="middle">' + escapeHtml(d.label) + '</text>';
+      });
+      svg += '</svg>';
+      document.getElementById('compare-chart-wrap').innerHTML = svg;
+    }
+
+    document.getElementById('compare-legend').innerHTML = compareSelectedCats.map(function(catId) {
+      var cat = CATEGORIES.filter(function(c) { return c.id === catId; })[0];
       return '<div class="compare-legend-item"><span class="dot" style="background:' + colorForCategory(catId) + ';"></span>' + escapeHtml(cat ? cat.label : catId) + '</div>';
     }).join('');
   }
