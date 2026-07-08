@@ -175,6 +175,29 @@
   #cat-transfer .date-group-header      { background: #dee0e0; border-top-color: #d3d5d5; color: #545555; }
   #cat-transfer .bill-row               { background: #e9eaea; }
 
+  /* Per-category icon colors on home screen */
+  #cat-housing .category-row .icon-bold        { background: rgba(255,255,255,.6); } #cat-housing .category-row .icon-bold svg        { stroke: #4d556b; }
+  #cat-utilities .category-row .icon-bold      { background: rgba(255,255,255,.6); } #cat-utilities .category-row .icon-bold svg      { stroke: #6b5547; }
+  #cat-groceries .category-row .icon-bold      { background: rgba(255,255,255,.6); } #cat-groceries .category-row .icon-bold svg      { stroke: #4d6456; }
+  #cat-dining .category-row .icon-bold         { background: rgba(255,255,255,.6); } #cat-dining .category-row .icon-bold svg         { stroke: #6b4d4d; }
+  #cat-transport .category-row .icon-bold      { background: rgba(255,255,255,.6); } #cat-transport .category-row .icon-bold svg      { stroke: #475d65; }
+  #cat-health .category-row .icon-bold         { background: rgba(255,255,255,.6); } #cat-health .category-row .icon-bold svg         { stroke: #47655c; }
+  #cat-insurance .category-row .icon-bold      { background: rgba(255,255,255,.6); } #cat-insurance .category-row .icon-bold svg      { stroke: #594d6b; }
+  #cat-fitness .category-row .icon-bold        { background: rgba(255,255,255,.6); } #cat-fitness .category-row .icon-bold svg        { stroke: #546547; }
+  #cat-shopping .category-row .icon-bold       { background: rgba(255,255,255,.6); } #cat-shopping .category-row .icon-bold svg       { stroke: #6b4d5b; }
+  #cat-entertainment .category-row .icon-bold  { background: rgba(255,255,255,.6); } #cat-entertainment .category-row .icon-bold svg  { stroke: #6b6147; }
+  #cat-travel .category-row .icon-bold         { background: rgba(255,255,255,.6); } #cat-travel .category-row .icon-bold svg         { stroke: #47566b; }
+  #cat-education .category-row .icon-bold      { background: rgba(255,255,255,.6); } #cat-education .category-row .icon-bold svg      { stroke: #655947; }
+  #cat-gifts .category-row .icon-bold          { background: rgba(255,255,255,.6); } #cat-gifts .category-row .icon-bold svg          { stroke: #654763; }
+  #cat-fees .category-row .icon-bold           { background: rgba(255,255,255,.6); } #cat-fees .category-row .icon-bold svg           { stroke: #52565c; }
+  #cat-transfer .category-row .icon-bold       { background: rgba(255,255,255,.6); } #cat-transfer .category-row .icon-bold svg       { stroke: #545555; }
+
+  /* Category color picker */
+  .cat-color-picker { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 12px; }
+  .cat-color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; flex-shrink: 0; transition: transform .12s; }
+  .cat-color-swatch:hover { transform: scale(1.18); }
+  .cat-color-swatch.active { border-color: rgba(0,0,0,0.35); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.75); }
+
   details.subcategory { border-top: 1px solid #f5f5f7; }
   details.subcategory:first-child { border-top: none; }
   details.category[hidden] { display: none; }
@@ -387,7 +410,7 @@
   .manage-header .back-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 30px; height: 30px; border-radius: 9px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .manage-header h2 { font-size: 16px; }
   .manage-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 14px 16px 24px; }
-  .manage-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .manage-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; border: 1px solid #f0f0f3; }
   .manage-cat-name { width: 100%; border: none; font-size: 14.5px; font-weight: 700; color: #1a1a1a; padding: 4px 0; border-bottom: 1px solid #eee; margin-bottom: 8px; background: none; }
   .manage-cat-name:focus { outline: none; border-bottom-color: #6c5ce7; }
   .manage-sub-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; }
@@ -496,7 +519,7 @@
   .chat-input-row button { border: none; background: #6c5ce7; color: #fff; border-radius: 12px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
 
   /* ---------- Budget page ---------- */
-  .budget-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .budget-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; border: 1px solid #f0f0f3; }
   .budget-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .budget-card-top .cat-name { flex: 1; font-size: 14px; font-weight: 700; color: #1a1a1a; }
   .budget-input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -533,7 +556,7 @@
 
   .budget-annual-row { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f0f3; }
   .budget-annual-row span:last-child { font-weight: 600; }
-  .budget-totals-footer { background: #f8f8fb; border-radius: 14px; padding: 14px; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .budget-totals-footer { background: #f8f8fb; border-radius: 14px; padding: 14px; margin-top: 4px; border: 1px solid #f0f0f3; }
   .budget-totals-footer .budget-total-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-top: 1px solid #ebebef; }
   .budget-totals-footer .budget-total-row:first-child { border-top: none; }
   .budget-totals-footer .budget-total-row span:first-child { color: #555; }
@@ -1607,6 +1630,61 @@
   };
   function colorForCategory(catId) { return CATEGORY_COLORS[catId] || '#C8CBCB'; }
   function darkColorForCategory(catId) { return CATEGORY_DARK_COLORS[catId] || '#444'; }
+
+  var PASTEL_PALETTE = [
+    '#B8CBFF','#A8CCFF','#A8DEF0','#B8E8FF',
+    '#B8EFCC','#A8F0DC','#C8F0A8','#B8F0D0',
+    '#FFB8D8','#FFB8B8','#F0A8EC','#F8C8FF',
+    '#FFCBA8','#FFE8A8','#F0D4A8','#FFD8C0',
+    '#D4B8FF','#E0D0FF','#C8C0FF','#E8D8FF',
+    '#C4CCDC','#C8CBCB','#D4D8E0','#C0C8D4'
+  ];
+
+  function hexToRgb(hex) {
+    var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:200, g:200, b:200 };
+  }
+  function _toHex(c) { var h = Math.max(0,Math.min(255,Math.round(c))).toString(16); return h.length===1?'0'+h:h; }
+  function rgbToHex(r,g,b) { return '#'+_toHex(r)+_toHex(g)+_toHex(b); }
+  function blendWithWhite(rgb, t) { return rgbToHex(rgb.r*(1-t)+255*t, rgb.g*(1-t)+255*t, rgb.b*(1-t)+255*t); }
+  function computeDarkColor(rgb) { return rgbToHex(rgb.r*0.35+12, rgb.g*0.35+12, rgb.b*0.35+12); }
+
+  function applyCategoryColor(catId, hex) {
+    CATEGORY_COLORS[catId] = hex;
+    var rgb = hexToRgb(hex);
+    var dark = computeDarkColor(rgb);
+    CATEGORY_DARK_COLORS[catId] = dark;
+    var sub  = blendWithWhite(rgb, 0.2);
+    var date = blendWithWhite(rgb, 0.4);
+    var txn  = blendWithWhite(rgb, 0.6);
+    var css =
+      '#' + catId + ' > summary .category-row { background:' + hex + '; }\n' +
+      '#' + catId + ' .subcategory-row { background:' + sub + '; }\n' +
+      '#' + catId + ' .date-group-header { background:' + date + '; border-top-color:' + sub + '; color:' + dark + '; }\n' +
+      '#' + catId + ' .bill-row { background:' + txn + '; }\n' +
+      '#' + catId + ' .category-row .icon-bold { background:rgba(255,255,255,.6); }\n' +
+      '#' + catId + ' .category-row .icon-bold svg { stroke:' + dark + '; }\n';
+    var dynStyle = document.getElementById('cat-dynamic-colors');
+    if (!dynStyle) { dynStyle = document.createElement('style'); dynStyle.id = 'cat-dynamic-colors'; document.head.appendChild(dynStyle); }
+    var start = '/* ' + catId + '-start */', end = '/* ' + catId + '-end */';
+    var src = dynStyle.textContent;
+    var si = src.indexOf(start), ei = src.indexOf(end);
+    if (si !== -1 && ei !== -1) {
+      dynStyle.textContent = src.slice(0, si) + start + '\n' + css + end + src.slice(ei + end.length);
+    } else {
+      dynStyle.textContent += start + '\n' + css + end + '\n';
+    }
+    // refresh home screen icon badge inline styles
+    var catEl = document.getElementById(catId);
+    if (catEl) {
+      var iconSvg = catEl.querySelector(':scope > summary .icon-box svg');
+      if (iconSvg) iconSvg.style.stroke = dark;
+    }
+    // refresh any chip badges that belong to this category
+    refreshAllRowBadges();
+    refreshAllCategoryTotals();
+  }
+
   var compareSelectedCats = ['cat-housing', 'cat-dining'];
   var compareChartType = 'line';
 
@@ -3135,6 +3213,13 @@
       return;
     }
 
+    var pickColorBtn = e.target.closest('[data-action="pick-cat-color"]');
+    if (pickColorBtn) {
+      applyCategoryColor(pickColorBtn.dataset.catId, pickColorBtn.dataset.color);
+      renderManagePage();
+      return;
+    }
+
     var pickIconBtn = e.target.closest('[data-action="pick-cat-icon"]');
     if (pickIconBtn) {
       var piCatId = pickIconBtn.dataset.catId;
@@ -3784,13 +3869,19 @@
       var activeIconObj = ICON_LIBRARY.filter(function(ic){ return (c.iconSvg || '') === ic.svg; })[0];
       var currentIconSvg = activeIconObj ? activeIconObj.svg : (c.iconSvg || ICON_LIBRARY[0].svg);
       var catColor = colorForCategory(c.id);
+      var catDark  = darkColorForCategory(c.id);
+      var swatchesHtml = PASTEL_PALETTE.map(function(p) {
+        var active = p.toLowerCase() === catColor.toLowerCase();
+        return '<button type="button" class="cat-color-swatch' + (active ? ' active' : '') + '" style="background:' + p + ';" data-action="pick-cat-color" data-cat-id="' + c.id + '" data-color="' + p + '"></button>';
+      }).join('');
       html += '<div class="manage-card" style="border-left:4px solid ' + catColor + ';">' +
-        '<div class="manage-card-header" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin-bottom:10px;">' +
-        '<button type="button" class="manage-icon-current-btn" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
-        '<svg viewBox="0 0 24 24">' + currentIconSvg + '</svg>' +
+        '<div class="manage-card-header" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin-bottom:6px;">' +
+        '<button type="button" class="manage-icon-current-btn" style="background:rgba(255,255,255,.55);border-color:' + catDark + ';" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
+        '<svg viewBox="0 0 24 24" style="fill:none;stroke:' + catDark + ';stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;">' + currentIconSvg + '</svg>' +
         '</button>' +
-        '<input type="text" class="manage-cat-name" data-cat-id="' + c.id + '" value="' + c.label + '">' +
-        '</div>';
+        '<input type="text" class="manage-cat-name" style="border-bottom:none;margin-bottom:0;background:transparent;" data-cat-id="' + c.id + '" value="' + c.label + '">' +
+        '</div>' +
+        '<div class="cat-color-picker">' + swatchesHtml + '</div>';
 
       // category-level keywords (collapsible, no subcategory required)
       html += '<details class="keyword-section">' +
@@ -3836,11 +3927,15 @@
   function openIconPickerModal(catId) {
     iconPickerCatId = catId;
     var cat = CATEGORIES.filter(function(c){ return c.id === catId; })[0];
+    var catColor = colorForCategory(catId);
+    var catDark  = darkColorForCategory(catId);
     var html = '';
     ICON_LIBRARY.forEach(function(ic) {
       var active = cat && (cat.iconSvg || '') === ic.svg;
-      html += '<button type="button" class="icon-picker-btn' + (active ? ' active' : '') + '" data-action="pick-cat-icon" data-cat-id="' + catId + '" data-icon-id="' + ic.id + '">' +
-        '<svg viewBox="0 0 24 24">' + ic.svg + '</svg>' +
+      var activeStyle = active ? ' style="border-color:' + catColor + ';background:' + catColor + ';"' : '';
+      var svgStyle = active ? ' style="fill:none;stroke:' + catDark + ';stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;"' : '';
+      html += '<button type="button" class="icon-picker-btn' + (active ? ' active' : '') + '"' + activeStyle + ' data-action="pick-cat-icon" data-cat-id="' + catId + '" data-icon-id="' + ic.id + '">' +
+        '<svg viewBox="0 0 24 24"' + svgStyle + '>' + ic.svg + '</svg>' +
         '<span>' + ic.id.replace('icon-','') + '</span></button>';
     });
     document.getElementById('icon-picker-grid').innerHTML = html;
