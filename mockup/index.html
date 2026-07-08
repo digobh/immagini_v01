@@ -81,7 +81,7 @@
   .legend .pct { margin-left: auto; color: #999; font-weight: 600; }
 
   /* ---------- Categories via native <details> (no JS required to open) ---------- */
-  details.category { background: #fff; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+  details.category { background: #fff; border-radius: 14px; margin-bottom: 10px; border: 1px solid #f0f0f3; overflow: hidden; }
   summary { list-style: none; cursor: pointer; }
   summary::-webkit-details-marker { display: none; }
   .category-row { display: flex; align-items: center; padding: 14px 14px; user-select: none; }
@@ -193,7 +193,10 @@
   #cat-transfer .category-row .icon-bold       { background: rgba(255,255,255,.6); } #cat-transfer .category-row .icon-bold svg       { stroke: #545555; }
 
   /* Category color picker */
-  .cat-color-picker { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 12px; }
+  .cat-color-trigger { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.7); cursor: pointer; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.18); transition: transform .15s; padding: 0; }
+  .cat-color-trigger:hover { transform: scale(1.15); }
+  .cat-color-picker { display: none; flex-wrap: wrap; gap: 6px; padding: 10px 2px 4px; }
+  .cat-color-picker.open { display: flex; }
   .cat-color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; flex-shrink: 0; transition: transform .12s; }
   .cat-color-swatch:hover { transform: scale(1.18); }
   .cat-color-swatch.active { border-color: rgba(0,0,0,0.35); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.75); }
@@ -727,7 +730,7 @@
   .phone.theme-dark .breakdown-row.total { color: #e8e6ff; border-top-color: #2a2838; }
   .phone.theme-dark .section h2 { color: #e8e6ff; }
   .phone.theme-dark .pie-center-amount { fill: #e8e6ff; }
-  .phone.theme-dark details.category { background: #1e1d30; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .phone.theme-dark details.category { background: #1e1d30; border-color: #2e2d45; }
   .phone.theme-dark .cat-name { color: #e8e6ff; }
   .phone.theme-dark .cat-meta { color: #666; }
   .phone.theme-dark .cat-amount { color: #e8e6ff; }
@@ -1687,6 +1690,38 @@
 
   var compareSelectedCats = ['cat-housing', 'cat-dining'];
   var compareChartType = 'line';
+  var compareDrillCatId = null; // when set, show subcategory breakdown for this cat
+
+  function getSubcategorySpent(catId) {
+    var result = [];
+    var catEl = document.getElementById(catId);
+    if (!catEl) return result;
+    catEl.querySelectorAll('details.subcategory').forEach(function(subEl) {
+      if (subEl.hidden) return;
+      var nameEl = subEl.querySelector(':scope > summary .subcategory-row > span:first-child');
+      var name = nameEl ? nameEl.textContent.trim() : 'Other';
+      var total = 0;
+      subEl.querySelectorAll('.bill-row').forEach(function(row) {
+        if (!isRealBillRow(row) || row.hidden) return;
+        var amtEl = row.querySelector('.bill-amount');
+        if (amtEl) total += parseFloat(amtEl.textContent.replace(/[^0-9.]/g, '')) || 0;
+      });
+      if (total > 0) result.push({ name: name, spent: total });
+    });
+    // Direct transactions (not inside any subcategory)
+    var catContent = catEl.querySelector('.category-content');
+    if (catContent) {
+      var directTotal = 0;
+      Array.prototype.forEach.call(catContent.childNodes, function(node) {
+        if (!node.classList || !node.classList.contains('bill-row') || node.hidden) return;
+        if (!isRealBillRow(node)) return;
+        var amtEl = node.querySelector('.bill-amount');
+        if (amtEl) directTotal += parseFloat(amtEl.textContent.replace(/[^0-9.]/g, '')) || 0;
+      });
+      if (directTotal > 0) result.push({ name: 'Other', spent: directTotal });
+    }
+    return result.sort(function(a, b) { return b.spent - a.spent; });
+  }
 
   // ---- Heads Up financial nudges ----
   // Generated from real imported transactions + budgets for the active month —
@@ -3020,13 +3055,26 @@
       var tcCatId = toggleCompareBtn.dataset.catId;
       var tcIdx = compareSelectedCats.indexOf(tcCatId);
       if (tcIdx === -1) compareSelectedCats.push(tcCatId); else compareSelectedCats.splice(tcIdx, 1);
+      compareDrillCatId = null;
       renderInsightsPage();
       return;
     }
     var setTypeBtn = e.target.closest('[data-action="set-compare-type"]');
     if (setTypeBtn) {
       compareChartType = setTypeBtn.dataset.type;
+      compareDrillCatId = null;
       renderInsightsPage();
+      return;
+    }
+    var drillBtn = e.target.closest('[data-action="drill-compare-cat"]');
+    if (drillBtn) {
+      compareDrillCatId = drillBtn.dataset.catId;
+      renderCompareChart();
+      return;
+    }
+    if (e.target.closest('[data-action="compare-drill-back"]')) {
+      compareDrillCatId = null;
+      renderCompareChart();
       return;
     }
 
@@ -3210,6 +3258,13 @@
     }
     if (e.target.closest('[data-action="close-icon-picker"]')) {
       closeIconPickerModal();
+      return;
+    }
+
+    var toggleColorBtn = e.target.closest('[data-action="toggle-color-picker"]');
+    if (toggleColorBtn) {
+      var picker = toggleColorBtn.closest('.manage-card').querySelector('.cat-color-picker');
+      if (picker) picker.classList.toggle('open');
       return;
     }
 
@@ -3875,13 +3930,14 @@
         return '<button type="button" class="cat-color-swatch' + (active ? ' active' : '') + '" style="background:' + p + ';" data-action="pick-cat-color" data-cat-id="' + c.id + '" data-color="' + p + '"></button>';
       }).join('');
       html += '<div class="manage-card" style="border-left:4px solid ' + catColor + ';">' +
-        '<div class="manage-card-header" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin-bottom:6px;">' +
-        '<button type="button" class="manage-icon-current-btn" style="background:rgba(255,255,255,.55);border-color:' + catDark + ';" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
+        '<div class="manage-card-header" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">' +
+        '<button type="button" class="manage-icon-current-btn" style="background:rgba(255,255,255,.55);border-color:' + catDark + ';flex-shrink:0;" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
         '<svg viewBox="0 0 24 24" style="fill:none;stroke:' + catDark + ';stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;">' + currentIconSvg + '</svg>' +
         '</button>' +
-        '<input type="text" class="manage-cat-name" style="border-bottom:none;margin-bottom:0;background:transparent;" data-cat-id="' + c.id + '" value="' + c.label + '">' +
+        '<input type="text" class="manage-cat-name" style="border-bottom:none;margin-bottom:0;background:transparent;flex:1;min-width:0;" data-cat-id="' + c.id + '" value="' + c.label + '">' +
+        '<button type="button" class="cat-color-trigger" style="background:' + catColor + ';flex-shrink:0;" data-action="toggle-color-picker" data-cat-id="' + c.id + '" title="Change color"></button>' +
         '</div>' +
-        '<div class="cat-color-picker">' + swatchesHtml + '</div>';
+        '<div class="cat-color-picker" data-cat-id="' + c.id + '">' + swatchesHtml + '</div>';
 
       // category-level keywords (collapsible, no subcategory required)
       html += '<details class="keyword-section">' +
@@ -4206,15 +4262,15 @@
   // draws the interactive line/bar chart comparing the user's selected
   // categories over the last 6 illustrative months (BUDGET_HISTORY)
   function renderCompareChart() {
+    if (compareDrillCatId) { renderSubcategoryDrillChart(compareDrillCatId); return; }
+
     var w = 300, h = 175, padL = 48, padR = 10, padT = 16, padB = 20;
     function fmtAmt(v) { return '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v)); }
+    function drillG(catId) { return '<g data-action="drill-compare-cat" data-cat-id="' + catId + '" style="cursor:pointer;">'; }
 
-    // Decide data source: use BUDGET_HISTORY when available, otherwise fall back
-    // to real DOM spending for a single-month bar chart.
     var hasHistory = compareSelectedCats.some(function(id) { return (BUDGET_HISTORY[id] || []).length > 1; });
 
     if (hasHistory) {
-      // Multi-month line / bar chart using BUDGET_HISTORY
       var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
       var maxVal = 0;
       compareSelectedCats.forEach(function(catId) {
@@ -4244,9 +4300,12 @@
             if (!pt) return;
             var bx = groupStart + ci * barW;
             var by = yFor(pt.spent);
+            svg += drillG(catId);
             svg += '<rect x="' + bx + '" y="' + by + '" width="' + (barW - 1) + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(catId) + '" rx="1.5"/>';
+            svg += '<rect x="' + bx + '" y="' + padT + '" width="' + (barW - 1) + '" height="' + (h - padT) + '" fill="transparent"/>';
             if (compareSelectedCats.length === 1 && pt.spent > 0)
               svg += '<text x="' + (bx + (barW - 1) / 2) + '" y="' + (by - 3) + '" font-size="7.5" fill="' + darkColorForCategory(catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
+            svg += '</g>';
           });
         });
       } else {
@@ -4258,11 +4317,14 @@
           svg += '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
           hist.forEach(function(pt, i) {
             var cx = xFor(i), cy = yFor(pt.spent);
+            svg += drillG(catId);
+            svg += '<circle cx="' + cx + '" cy="' + cy + '" r="10" fill="transparent"/>';
             svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="' + color + '"/>';
             if (pt.spent > 0) {
               var labelY = cy > padT + 14 ? cy - 6 : cy + 13;
               svg += '<text x="' + cx + '" y="' + labelY + '" font-size="7.5" fill="' + dcolor + '" text-anchor="middle" font-weight="600">' + fmtAmt(pt.spent) + '</text>';
             }
+            svg += '</g>';
           });
         });
       }
@@ -4270,7 +4332,6 @@
       document.getElementById('compare-chart-wrap').innerHTML = svg;
 
     } else {
-      // Real CSV data: show current-month spending
       var cats = compareSelectedCats.length ? compareSelectedCats
         : CATEGORIES.filter(function(c) { return EXCLUDE_FROM_SPENDING.indexOf(c.id) === -1 && getCategorySpent(c.id) > 0; }).map(function(c) { return c.id; });
 
@@ -4280,7 +4341,6 @@
       }).filter(function(d) { return d.spent > 0; });
 
       if (compareChartType === 'line') {
-        // Build daily spending per category from DOM transactions
         var catDayData = {};
         var allDayNums = {};
         cats.forEach(function(catId) {
@@ -4331,24 +4391,25 @@
               var val = catDayData[catId][day] || 0;
               if (val > 0) {
                 var cx = xForDay(i), cy = yForLine(val);
+                svg += drillG(catId);
+                svg += '<circle cx="' + cx + '" cy="' + cy + '" r="10" fill="transparent"/>';
                 svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="' + color + '"/>';
                 if (cats.length === 1) {
                   var labelY = cy > padT + 14 ? cy - 6 : cy + 13;
                   svg += '<text x="' + cx + '" y="' + labelY + '" font-size="7.5" fill="' + dcolor + '" text-anchor="middle" font-weight="600">' + fmtAmt(val) + '</text>';
                 }
+                svg += '</g>';
               }
             });
           });
           svg += '</svg>';
           document.getElementById('compare-chart-wrap').innerHTML = svg;
         } else {
-          // Not enough days of data — fall through to bar
           compareChartType = 'bar';
           renderCompareChart();
           return;
         }
       } else {
-        // Bar chart
         var maxVal = data.reduce(function(m, d) { return Math.max(m, d.spent); }, 0);
         maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
 
@@ -4367,9 +4428,12 @@
         data.forEach(function(d, i) {
           var bx = padL + gap + i * (barW + gap);
           var by = yFor(d.spent);
+          svg += drillG(d.catId);
           svg += '<rect x="' + bx + '" y="' + by + '" width="' + barW + '" height="' + (h - padB - by) + '" fill="' + colorForCategory(d.catId) + '" rx="2"/>';
           svg += '<text x="' + (bx + barW / 2) + '" y="' + (by - 4) + '" font-size="7.5" fill="' + darkColorForCategory(d.catId) + '" text-anchor="middle" font-weight="600">' + fmtAmt(d.spent) + '</text>';
           svg += '<text x="' + (bx + barW / 2) + '" y="' + (h - 4) + '" font-size="7.5" fill="#888" text-anchor="middle">' + escapeHtml(d.label) + '</text>';
+          svg += '<rect x="' + bx + '" y="' + padT + '" width="' + barW + '" height="' + (h - padT) + '" fill="transparent"/>';
+          svg += '</g>';
         });
         svg += '</svg>';
         document.getElementById('compare-chart-wrap').innerHTML = svg;
@@ -4378,8 +4442,65 @@
 
     document.getElementById('compare-legend').innerHTML = compareSelectedCats.map(function(catId) {
       var cat = CATEGORIES.filter(function(c) { return c.id === catId; })[0];
-      return '<div class="compare-legend-item"><span class="dot" style="background:' + colorForCategory(catId) + ';"></span>' + escapeHtml(cat ? cat.label : catId) + '</div>';
+      return '<div class="compare-legend-item"><span class="dot" style="background:' + colorForCategory(catId) + ';"></span>' + escapeHtml(cat ? cat.label : catId) + ' <span style="font-size:10px;color:#bbb;">tap to expand</span></div>';
     }).join('');
+  }
+
+  function renderSubcategoryDrillChart(catId) {
+    var wrap = document.getElementById('compare-chart-wrap');
+    var legendEl = document.getElementById('compare-legend');
+    var cat = CATEGORIES.filter(function(c){ return c.id === catId; })[0];
+    var catLabel = cat ? cat.label : catId;
+    var catColor = colorForCategory(catId);
+    var catDark  = darkColorForCategory(catId);
+    var subs     = getSubcategorySpent(catId);
+    var baseRgb  = hexToRgb(catColor);
+
+    function fmtAmt(v) { return '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v)); }
+
+    var backBtn = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">' +
+      '<button type="button" data-action="compare-drill-back" style="display:inline-flex;align-items:center;gap:3px;background:' + catColor + ';border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;color:' + catDark + ';cursor:pointer;">&#8592; Back</button>' +
+      '<span style="font-size:12px;font-weight:700;color:#333;">' + escapeHtml(catLabel) + ' breakdown</span>' +
+      '</div>';
+
+    if (!subs.length) {
+      wrap.innerHTML = backBtn + '<div style="text-align:center;padding:20px 0;font-size:12px;color:#aaa;">No subcategory data yet</div>';
+      if (legendEl) legendEl.innerHTML = '';
+      return;
+    }
+
+    var w = 300, h = 160, padL = 48, padR = 10, padT = 12, padB = 28;
+    var maxVal = subs.reduce(function(m,s){ return Math.max(m,s.spent); }, 0);
+    maxVal = maxVal > 0 ? Math.ceil(maxVal / 50) * 50 : 100;
+    var n = subs.length;
+    var barW = Math.max(8, Math.min(36, (w - padL - padR) / n * 0.7));
+    var gap  = (w - padL - padR - barW * n) / (n + 1);
+    function yFor(v) { return h - padB - (v / maxVal) * (h - padB - padT); }
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '">';
+    for (var g = 0; g <= 3; g++) {
+      var gy = padT + (g / 3) * (h - padB - padT);
+      svg += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (w - padR) + '" y2="' + gy + '" stroke="#f0f0f0" stroke-width="1"/>';
+      svg += '<text x="' + (padL - 5) + '" y="' + (gy + 3) + '" font-size="8" fill="#aaa" text-anchor="end">' + fmtAmt(Math.round(maxVal * (1 - g / 3))) + '</text>';
+    }
+    subs.forEach(function(s, i) {
+      var bx = padL + gap + i * (barW + gap);
+      var by = yFor(s.spent);
+      var shade = blendWithWhite(baseRgb, i * 0.1);
+      var label = s.name.length > 9 ? s.name.slice(0, 8) + '…' : s.name;
+      svg += '<rect x="' + bx + '" y="' + by + '" width="' + barW + '" height="' + (h - padB - by) + '" fill="' + shade + '" rx="2"/>';
+      svg += '<text x="' + (bx + barW / 2) + '" y="' + (by - 4) + '" font-size="7" fill="' + catDark + '" text-anchor="middle" font-weight="600">' + fmtAmt(s.spent) + '</text>';
+      svg += '<text x="' + (bx + barW / 2) + '" y="' + (h - 10) + '" font-size="6.5" fill="#888" text-anchor="middle">' + escapeHtml(label) + '</text>';
+    });
+    svg += '</svg>';
+
+    wrap.innerHTML = backBtn + svg;
+    if (legendEl) {
+      legendEl.innerHTML = subs.map(function(s, i) {
+        var shade = blendWithWhite(baseRgb, i * 0.1);
+        return '<div class="compare-legend-item"><span class="dot" style="background:' + shade + ';border:1px solid ' + catColor + ';"></span>' + escapeHtml(s.name) + '<span style="color:#aaa;font-size:10.5px;margin-left:4px;">' + fmtAmt(s.spent) + '</span></div>';
+      }).join('');
+    }
   }
 
   // ---- budget page ----
