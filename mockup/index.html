@@ -580,6 +580,8 @@
   .import-drop-zone .drop-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
   .import-drop-zone .drop-sub { font-size: 12px; color: #999; }
   .import-file-btn { display: inline-block; margin-top: 12px; background: #6c5ce7; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .sample-csv-btn { display: block; margin: 10px auto 0; background: none; color: #6c5ce7; border: 1.5px solid #6c5ce7; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .sample-csv-btn:hover { background: #f3f0ff; }
   .import-bank-badge { display: inline-flex; align-items: center; gap: 6px; background: #e8f8ee; color: #229954; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 5px 10px; margin-bottom: 14px; }
   .import-bank-badge.unknown { background: #fff3e8; color: #e07b1a; }
   .import-map-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -1210,6 +1212,7 @@
           <label class="import-file-btn">Choose CSV file
             <input type="file" accept=".csv,.CSV" id="import-file-input" style="display:none;">
           </label>
+          <button type="button" class="sample-csv-btn" data-action="load-sample-csv">Use sample CSV</button>
         </div>
         <div id="import-result" hidden></div>
       </div>
@@ -1642,6 +1645,70 @@
     '#D4B8FF','#E0D0FF','#C8C0FF','#E8D8FF',
     '#C4CCDC','#C8CBCB','#D4D8E0','#C0C8D4'
   ];
+
+  var SAMPLE_CSV = `"Account History for Account:","SAMPLE - EVERYDAY ACCOUNT - 000000000"
+"61 items"
+"22/06/2026","VISA PURCHASE   WOOLWORTHS/5 EMERALD H LEPPINGTON 21/06 AU AUD","-$85.00","$11,341.00"
+"22/06/2026","DIRECT DEBIT    Best For Pet 3WTBASZ","-$50.00","$11,426.00"
+"21/06/2026","VISA PURCHASE   COLES 0839 BROADWAY 20/06 AU AUD","-$55.00","$11,476.00"
+"21/06/2026","EFTPOS WDL ALDI STORES LEPPINGTON AU","-$65.00","$11,531.00"
+"20/06/2026","VISA PURCHASE   TPG INTERNET PTY LTD NORTH RYDE 18/06 AU AUD","-$80.00","$11,596.00"
+"20/06/2026","TRANSFER DEBIT  TO 012395 656677137 AlexSavings","-$175.00","$11,676.00"
+"20/06/2026","TRANSFER DEBIT  TO 012395 656677145 BellaSavings","-$175.00","$11,851.00"
+"20/06/2026","TRANSFER DEBIT  TO 611376144 04_MojoTransfer","-$1,000.00","$12,026.00"
+"19/06/2026","VISA PURCHASE   DBS*Explorers Learning Caringbah 18/06 AU AUD","-$250.00","$13,026.00"
+"18/06/2026","VISA PURCHASE   WOOLWORTHS/1975 CAMDEN PRESTONS 17/06 AU AUD","-$100.00","$13,276.00"
+"18/06/2026","DIRECT DEBIT    QP SCECS Preston DT.5khdrg QKP_QP S","-$25.00","$13,376.00"
+"17/06/2026","VISA PURCHASE   MEDIBANK PHI DEBIT MELBOURNE 16/06 AU AUD","-$560.00","$13,401.00"
+"17/06/2026","VISA PURCHASE   TFNSW OPAL MACHINE SYDNEY 15/06 AU AUD","-$60.00","$13,961.00"
+"17/06/2026","EFTPOS WDL Camplify Premium Membership","-$200.00","$14,021.00"
+"16/06/2026","DIRECT CREDIT   Camplify Co (Aus Camplify","$400.00","$14,221.00"
+"16/06/2026","VISA PURCHASE   QANTAS AIR WWW.QANTAS.C 14/06 AU AUD","-$500.00","$13,821.00"
+"16/06/2026","VISA PURCHASE   BP DENHAM COURT 5720 DENHAM COURT 12/06 AU AUD","-$70.00","$14,321.00"
+"16/06/2026","VISA PURCHASE   TFNSW OPAL MACHINE SYDNEY 13/06 AU AUD","-$20.00","$14,391.00"
+"16/06/2026","DIRECT DEBIT    BUDGET DIRECT 122628274157738559","-$1,170.00","$14,411.00"
+"15/06/2026","VISA PURCHASE   WOOLWORTHS/5 EMERALD H LEPPINGTON 14/06 AU AUD","-$100.00","$15,581.00"
+"14/06/2026","EFTPOS WDL ALDI STORES LEPPINGTON AU","-$170.00","$15,681.00"
+"13/06/2026","VISA PURCHASE   COLES 7823 EDMONDSON PK 12/06 AU AUD","-$35.00","$15,851.00"
+"13/06/2026","VISA PURCHASE   TPG INTERNET PTY LTD MACQUARIE PA 12/06 AU AUD","-$30.00","$15,886.00"
+"13/06/2026","INTERNET TRANSFER DEBIT TO 611376144 REFERENCE NO 89534902","-$9,000.00","$15,916.00"
+"13/06/2026","NPP PAYMENT FROM Pimentel Borges F NandaSalary REF NO 98555901","$6,000.00","$24,916.00"
+"12/06/2026","VISA PURCHASE   DBS*Explorers Learning Caringbah 11/06 AU AUD","-$320.00","$18,916.00"
+"12/06/2026","VISA PURCHASE   AMAZON MARKETPLACE AU SYDNEY 10/06 AU AUD","-$12.00","$19,236.00"
+"12/06/2026","DIRECT CREDIT   INDUSTRIAL LIGHT ILM WAGES","$9,000.00","$19,248.00"
+"11/06/2026","VISA PURCHASE   MARTIANE BERSANO KOGARAH 10/06 AU AUD","-$85.00","$10,248.00"
+"10/06/2026","DIRECT CREDIT   MCARE BENEFITS 345182875 AYWQ","$44.00","$10,333.00"
+"10/06/2026","EFTPOS WDL Chemistworks Edmondson AU","-$57.00","$10,289.00"
+"10/06/2026","EFTPOS WDL SNOWTOPIA - LIVERPOOL AU","-$105.00","$10,346.00"
+"09/06/2026","VISA PURCHASE   PAYPAL *SNSW 0137788 07/06 AU AUD","-$400.00","$10,451.00"
+"09/06/2026","VISA PURCHASE   KOALA LIVING CASULA 07/06 AU AUD","-$200.00","$10,851.00"
+"09/06/2026","DIRECT CREDIT   Camplify Co (Aus Camplify","$405.00","$11,051.00"
+"08/06/2026","VISA PURCHASE   KOALA LIVING CASULA 06/06 AU AUD","-$1,200.00","$10,646.00"
+"08/06/2026","VISA PURCHASE   WOOLWORTHS/5 EMERALD H LEPPINGTON 07/06 AU AUD","-$90.00","$11,846.00"
+"08/06/2026","VISA PURCHASE   BWS LIQUOR/5 EMERALD H LEPPINGTON 07/06 AU AUD","-$40.00","$11,936.00"
+"08/06/2026","DIRECT DEBIT    Loan Repayment 356220","-$840.00","$11,976.00"
+"07/06/2026","VISA PURCHASE   COLES 7823 EDMONDSON PK 06/06 AU AUD","-$35.00","$12,816.00"
+"07/06/2026","EFTPOS WDL ALDI STORES LEPPINGTON AU","-$250.00","$12,851.00"
+"06/06/2026","INTERNET TRANSFER CREDIT FROM 611376144 REF NO 83961652","$4,550.00","$13,101.00"
+"05/06/2026","VISA PURCHASE   DBS*Explorers Learning Caringbah 04/06 AU AUD","-$255.00","$8,551.00"
+"05/06/2026","VISA PURCHASE   BP DENHAM COURT 5720 DENHAM COURT 03/06 AU AUD","-$35.00","$8,806.00"
+"05/06/2026","EFTPOS WDL MAX BRENNER AUSTRALIA EDMONDSON AU","-$33.00","$8,841.00"
+"04/06/2026","DIRECT DEBIT    QP SCECS Preston DT.5igm3q QKP_QP S","-$30.00","$8,874.00"
+"03/06/2026","VISA PURCHASE   PAYPAL *RED ENERGY 0131806 01/06 AU AUD","-$325.00","$8,904.00"
+"02/06/2026","TRANSFER DEBIT  TO 121478559 MesadaDigo","-$500.00","$9,229.00"
+"01/06/2026","VISA PURCHASE   AMAZON RETA* AMAZON AU SYDNEY 30/05 AU AUD","-$10.00","$9,729.00"
+"31/05/2026","VISA PURCHASE   WOOLWORTHS/5 EMERALD H LEPPINGTON 30/05 AU AUD","-$90.00","$9,739.00"
+"30/05/2026","EFTPOS WDL ALDI STORES LEPPINGTON AU","-$225.00","$9,829.00"
+"29/05/2026","VISA PURCHASE   DBS*Explorers Learning Caringbah 28/05 AU AUD","-$255.00","$10,054.00"
+"28/05/2026","VISA PURCHASE   TPG INTERNET PTY LTD MACQUARIE PA 27/05 AU AUD","-$30.00","$10,309.00"
+"28/05/2026","INTERNET TRANSFER DEBIT TO 611376144 REFERENCE NO 95562721","-$2,550.00","$10,339.00"
+"28/05/2026","EFTPOS WDL Chemistworks Edmondson AU","-$46.00","$12,889.00"
+"27/05/2026","VISA PURCHASE   ALLIANZ AUSTRALIA INSU SYDNEY 25/05 AU AUD","-$880.00","$12,935.00"
+"27/05/2026","NPP PAYMENT FROM Pimentel Borges F BonusNanda REF NO 3969870","$2,550.00","$13,815.00"
+"26/05/2026","VISA PURCHASE   SERVICE NSW SYDNEY 25/05 AU AUD","-$660.00","$11,265.00"
+"26/05/2026","VISA PURCHASE   TRANSPORT NSW ETOLL PARRAMATTA 24/05 AU AUD","-$40.00","$11,925.00"
+"26/05/2026","VISA PURCHASE   COLES 7823 EDMONDSON PK 25/05 AU AUD","-$20.00","$11,965.00"
+"25/05/2026","EFTPOS WDL Chemistworks Edmondson AU","-$15.00","$11,985.00"`;
 
   function hexToRgb(hex) {
     var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -3157,6 +3224,10 @@
       setActiveNav('home');
       return;
     }
+    if (e.target.closest('[data-action="load-sample-csv"]')) {
+      processCSVText(SAMPLE_CSV, 'sample.csv');
+      return;
+    }
     if (e.target.closest('[data-action="confirm-import"]')) {
       commitImport();
       return;
@@ -3701,6 +3772,7 @@
         '<label class="import-file-btn">Choose CSV file' +
           '<input type="file" accept=".csv,.CSV" id="import-file-input" style="display:none;">' +
         '</label>' +
+        '<button type="button" class="sample-csv-btn" data-action="load-sample-csv">Use sample CSV</button>' +
       '</div>' +
       '<div id="import-result" hidden></div>';
     wireImportFileInput();
