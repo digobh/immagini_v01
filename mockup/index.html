@@ -3929,9 +3929,9 @@
         var active = p.toLowerCase() === catColor.toLowerCase();
         return '<button type="button" class="cat-color-swatch' + (active ? ' active' : '') + '" style="background:' + p + ';" data-action="pick-cat-color" data-cat-id="' + c.id + '" data-color="' + p + '"></button>';
       }).join('');
-      html += '<div class="manage-card" style="border-left:4px solid ' + catColor + ';">' +
-        '<div class="manage-card-header" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">' +
-        '<button type="button" class="manage-icon-current-btn" style="background:rgba(255,255,255,.55);border-color:' + catDark + ';flex-shrink:0;" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
+      html += '<div class="manage-card">' +
+        '<div class="manage-card-header" style="padding:4px 0 8px;display:flex;align-items:center;gap:10px;">' +
+        '<button type="button" class="manage-icon-current-btn" style="background:' + catColor + ';border-color:' + catDark + ';flex-shrink:0;" data-action="open-icon-picker" data-cat-id="' + c.id + '">' +
         '<svg viewBox="0 0 24 24" style="fill:none;stroke:' + catDark + ';stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;">' + currentIconSvg + '</svg>' +
         '</button>' +
         '<input type="text" class="manage-cat-name" style="border-bottom:none;margin-bottom:0;background:transparent;flex:1;min-width:0;" data-cat-id="' + c.id + '" value="' + c.label + '">' +
@@ -4517,9 +4517,10 @@
       var annualSpent = history.length ? history.reduce(function(s,h){ return s+h.spent; },0) : spent * 12;
       var catColor = colorForCategory(c.id);
 
-      html += '<div class="budget-card" style="border-left:4px solid ' + catColor + ';">' +
-        '<div class="budget-card-top" style="background:' + catColor + ';border-radius:8px;padding:8px 10px;margin:-4px -4px 10px -4px;">' +
-        '<div class="cat-name">' + c.label + '</div></div>' +
+      html += '<div class="budget-card">' +
+        '<div class="budget-card-top" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+        '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:' + catColor + ';flex-shrink:0;"></span>' +
+        '<div class="cat-name" style="margin:0;">' + c.label + '</div></div>' +
         '<div class="budget-input-row"><label>Monthly budget</label><input type="number" min="0" step="1" class="budget-input" data-cat-id="' + c.id + '" value="' + budget + '"></div>' +
         '<div class="budget-progress-label"><span>' + formatMoney(spent) + ' spent this month</span>' +
         '<span class="status ' + (over ? 'over' : 'under') + '">' + (budget > 0 ? (over ? 'Over by ' + formatMoney(spent - budget) : formatMoney(budget - spent) + ' left') : 'No budget set') + '</span></div>' +
