@@ -887,7 +887,8 @@
   .section.timeline-mode #timeline-view { display: block; }
 
   .timeline-date-hdr { font-size: 11px; font-weight: 700; color: #bbb; padding: 10px 14px 4px; letter-spacing: 0.6px; text-transform: uppercase; }
-  .timeline-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+  .timeline-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer; }
+  .timeline-row:hover { filter: brightness(0.96); }
   .timeline-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.2px; }
   .timeline-merchant { flex: 1; font-size: 13px; font-weight: 500; color: #333; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .timeline-amount { font-size: 13px; font-weight: 700; color: #e74c3c; flex-shrink: 0; }
@@ -991,6 +992,30 @@
     /* ---- Subpages + overlays: start after narrower sidebar ---- */
     .subpage, .manage-page { left: 180px; bottom: 0; }
     .filter-sheet-overlay, .modal-overlay, .icon-picker-overlay { left: 180px; }
+
+    /* ---- Overlays: centered dialogs, not full-width bottom sheets ---- */
+    .modal-overlay, .filter-sheet-overlay, .icon-picker-overlay {
+      align-items: center; justify-content: center;
+    }
+    /* Categorize modal */
+    .modal-sheet {
+      width: 420px; max-width: calc(100% - 48px);
+      border-radius: 20px; margin: 0;
+    }
+    .modal-handle { display: none; }
+    /* Filter sheet */
+    .filter-sheet {
+      width: 380px; max-width: calc(100% - 48px);
+      border-radius: 20px; overflow-y: auto; padding-bottom: 20px;
+    }
+    /* Icon picker */
+    .icon-picker-sheet {
+      width: 420px; max-width: calc(100% - 48px);
+      border-radius: 20px;
+    }
+    .icon-picker-sheet .modal-close { width: auto; }
+    /* Keep buttons from stretching to full dialog width */
+    .modal-close { align-self: stretch; }
 
     /* ---- Budget page: 2-col card grid ---- */
     #budget-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; padding: 16px 24px; }
@@ -2191,7 +2216,8 @@
         merchant: merchantEl ? ((merchantEl.childNodes[0] || {}).textContent || merchantEl.textContent || '').trim() : '',
         amount: amtEl ? amtEl.textContent.trim() : '',
         isPositive: amtEl ? !amtEl.classList.contains('negative') : false,
-        catFullId: catEl ? catEl.id : ''
+        catFullId: catEl ? catEl.id : '',
+        rk: rowKey(row)
       });
     });
     rows.sort(function(a, b) {
@@ -2212,7 +2238,7 @@
       var catColor = colorForCategory(r.catFullId);
       var darkColor = darkColorForCategory(r.catFullId);
       var lightBg = blendWithWhite(hexToRgb(catColor), 0.8);
-      html += '<div class="timeline-row" style="background:' + lightBg + ';">' +
+      html += '<div class="timeline-row" data-row-key="' + escapeHtml(r.rk) + '" style="background:' + lightBg + ';">' +
         '<span class="timeline-tag" style="background:' + catColor + ';color:' + darkColor + ';">' + escapeHtml(catLabel) + '</span>' +
         '<span class="timeline-merchant">' + escapeHtml(r.merchant) + '</span>' +
         '<span class="timeline-amount' + (r.isPositive ? ' pos' : '') + '">' + escapeHtml(r.amount) + '</span>' +
@@ -2780,6 +2806,7 @@
     activeRow = null;
     learnKwCatId = null; learnKwSubName = null;
     rescanMatches = []; rescanIdx = 0;
+    if (txnViewMode === 'timeline') renderTimelineView();
   }
 
   // ---- split transaction UI ----
@@ -3276,6 +3303,18 @@
       refreshTransferRowBadge(activeTransferRowId);
       renderGoalsPage();
       closeAllocateModal();
+      return;
+    }
+
+    // tapping a timeline row opens the categorize modal for the underlying bill-row
+    var clickedTimelineRow = e.target.closest('.timeline-row');
+    if (clickedTimelineRow && clickedTimelineRow.dataset.rowKey) {
+      var tlKey = clickedTimelineRow.dataset.rowKey;
+      var tlRow = null;
+      document.querySelectorAll('#month-data-sections .bill-row').forEach(function(br) {
+        if (!tlRow && rowKey(br) === tlKey) tlRow = br;
+      });
+      if (tlRow) openCategorizeModal(tlRow);
       return;
     }
 
