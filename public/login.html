@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Immagini — Sign In</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(108,92,231,.25), 0 4px 12px rgba(0,0,0,.08);
+    width: 100%; max-width: 380px;
+    overflow: hidden;
+  }
+  .card-head {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    padding: 32px 28px 24px;
+    text-align: center;
+  }
+  .logo { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+  .tagline { font-size: 13px; color: rgba(255,255,255,.8); margin-top: 4px; }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fff;
+  }
+  .tab {
+    flex: 1; padding: 14px 0; text-align: center;
+    font-size: 14px; font-weight: 600; color: #999;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .tab.active { color: #6c5ce7; border-bottom-color: #6c5ce7; }
+
+  .form-body { padding: 24px 28px 28px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: #666; margin-bottom: 6px; letter-spacing: .03em;
+  }
+  input[type="text"], input[type="password"], input[type="email"] {
+    display: block; width: 100%;
+    border: 1.5px solid #e8e8ef; border-radius: 10px;
+    padding: 11px 14px; font-size: 14px; color: #1a1a1a;
+    outline: none; transition: border-color .15s;
+    background: #fafafe;
+    margin-bottom: 16px;
+  }
+  input:focus { border-color: #6c5ce7; background: #fff; }
+  input::placeholder { color: #bbb; }
+
+  .btn {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 13px 0; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: opacity .15s, transform .1s;
+    margin-top: 4px;
+  }
+  .btn:hover  { opacity: .93; }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .error-msg {
+    display: none;
+    background: #fff5f5; border: 1px solid #f5c6cb;
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; color: #c0392b;
+    margin-bottom: 16px;
+  }
+  .error-msg.show { display: block; }
+
+  .switch-hint {
+    text-align: center; font-size: 13px; color: #999;
+    margin-top: 18px;
+  }
+  .switch-hint a { color: #6c5ce7; text-decoration: none; font-weight: 600; cursor: pointer; }
+  .switch-hint a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-head">
+    <div class="logo">Immagini</div>
+    <div class="tagline">Your personal finance tracker</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="login">Sign In</div>
+    <div class="tab" data-tab="register">Create Account</div>
+  </div>
+
+  <div class="form-body">
+
+    <!-- Login panel -->
+    <div class="panel active" id="panel-login">
+      <div class="error-msg" id="login-error"></div>
+      <label for="login-username">Username</label>
+      <input type="text" id="login-username" placeholder="your username" autocomplete="username" autocapitalize="none">
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn" id="login-btn">Sign In</button>
+      <div class="switch-hint">No account? <a data-tab="register">Create one →</a></div>
+    </div>
+
+    <!-- Register panel -->
+    <div class="panel" id="panel-register">
+      <div class="error-msg" id="reg-error"></div>
+      <label for="reg-username">Username</label>
+      <input type="text" id="reg-username" placeholder="choose a username" autocomplete="username" autocapitalize="none">
+      <label for="reg-email">Email <span style="font-weight:400;color:#bbb;">(optional)</span></label>
+      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+      <label for="reg-password">Password</label>
+      <input type="password" id="reg-password" placeholder="8+ characters" autocomplete="new-password">
+      <button class="btn" id="reg-btn">Create Account</button>
+      <div class="switch-hint">Already have an account? <a data-tab="login">Sign in →</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // If already logged in, go straight to the app
+  if (localStorage.getItem('immagini_token')) {
+    window.location.replace('/app');
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab, a[data-tab]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var target = el.dataset.tab;
+      document.querySelectorAll('.tab').forEach(function (t) {
+        t.classList.toggle('active', t.dataset.tab === target);
+      });
+      document.querySelectorAll('.panel').forEach(function (p) {
+        p.classList.toggle('active', p.id === 'panel-' + target);
+      });
+      document.querySelectorAll('.error-msg').forEach(function (e) { e.classList.remove('show'); });
+    });
+  });
+
+  function showError(id, msg) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearError(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
+  // Login
+  document.getElementById('login-btn').addEventListener('click', function () {
+    clearError('login-error');
+    var username = document.getElementById('login-username').value.trim();
+    var password = document.getElementById('login-password').value;
+    if (!username || !password) { showError('login-error', 'Please enter your username and password.'); return; }
+    var btn = document.getElementById('login-btn');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, password: password })
+    })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+    .then(function (res) {
+      if (!res.ok) { showError('login-error', res.data.error || 'Login failed.'); btn.disabled = false; btn.textContent = 'Sign In'; return; }
+      localStorage.setItem('immagini_token', res.data.token);
+      window.location.replace('/app');
+    })
+    .catch(function () { showError('login-error', 'Network error — please try again.'); btn.disabled = false; btn.textContent = 'Sign In'; });
+  });
+
+  // Allow Enter key in login form
+  ['login-username','login-password'].forEach(function (id) {
+    document.getElementById(id).addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('login-btn').click();
+    });
+  });
+
+  // Register
+  document.getElementById('reg-btn').addEventListener('click', function () {
+    clearError('reg-error');
+    var username = document.getElementById('reg-username').value.trim();
+    var email    = document.getElementById('reg-email').value.trim();
+    var password = document.getElementById('reg-password').value;
+    if (!username) { showError('reg-error', 'Please choose a username.'); return; }
+    if (username.length < 3) { showError('reg-error', 'Username must be at least 3 characters.'); return; }
+    if (!password) { showError('reg-error', 'Please choose a password.'); return; }
+    if (password.length < 8) { showError('reg-error', 'Password must be at least 8 characters.'); return; }
+    var btn = document.getElementById('reg-btn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, email: email || null, password: password })
+    })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+    .then(function (res) {
+      if (!res.ok) { showError('reg-error', res.data.error || 'Registration failed.'); btn.disabled = false; btn.textContent = 'Create Account'; return; }
+      localStorage.setItem('immagini_token', res.data.token);
+      window.location.replace('/app');
+    })
+    .catch(function () { showError('reg-error', 'Network error — please try again.'); btn.disabled = false; btn.textContent = 'Create Account'; });
+  });
+
+  ['reg-username','reg-email','reg-password'].forEach(function (id) {
+    document.getElementById(id).addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('reg-btn').click();
+    });
+  });
+</script>
+</body>
+</html>
