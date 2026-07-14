@@ -870,12 +870,44 @@
   .phone.theme-dark .allocate-goal-row input { background: #25234a; border-color: #2a2838; color: #e8e6ff; }
   .phone.theme-dark .allocate-remaining { color: #999; }
 
+  /* ---------- Timeline (chronological) view ---------- */
+  .txn-view-toggle-btn {
+    background: #fff; border: 1.5px solid #eee; border-radius: 12px;
+    width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; padding: 0;
+  }
+  .txn-view-toggle-btn svg { width: 16px; height: 16px; fill: none; stroke: #aaa; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .txn-view-toggle-btn.active { border-color: #6c5ce7; background: #f3f0ff; }
+  .txn-view-toggle-btn.active svg { stroke: #6c5ce7; }
+
+  #timeline-view { display: none; }
+  .section.timeline-mode details.category { display: none !important; }
+  .section.timeline-mode .no-txn-state,
+  .section.timeline-mode #txn-no-results { display: none !important; }
+  .section.timeline-mode #timeline-view { display: block; }
+
+  .timeline-date-hdr { font-size: 11px; font-weight: 700; color: #bbb; padding: 10px 14px 4px; letter-spacing: 0.6px; text-transform: uppercase; }
+  .timeline-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+  .timeline-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.2px; }
+  .timeline-merchant { flex: 1; font-size: 13px; font-weight: 500; color: #333; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .timeline-amount { font-size: 13px; font-weight: 700; color: #e74c3c; flex-shrink: 0; }
+  .timeline-amount.pos { color: #27ae60; }
+
+  .phone.theme-dark .txn-view-toggle-btn { background: #1e1d30; border-color: #2e2d45; }
+  .phone.theme-dark .txn-view-toggle-btn svg { stroke: #666; }
+  .phone.theme-dark .txn-view-toggle-btn.active { border-color: #a29bfe; background: #25234a; }
+  .phone.theme-dark .txn-view-toggle-btn.active svg { stroke: #a29bfe; }
+  .phone.theme-dark .timeline-merchant { color: #e8e6ff; }
+  .phone.theme-dark .timeline-date-hdr { color: #555; }
+
   /* ================================================================
      DESKTOP LAYOUT  (≥ 900px)
      - Removes phone chrome
-     - Left sidebar replaces bottom nav
-     - Home page: transactions left / pie chart right
-     - Budget + Categories: 2-column card grid
+     - Left sidebar (180px) replaces bottom nav
+     - Tips bubble hidden (avoids 3rd flex-column bug)
+     - Screen is a CSS grid: header full-width, left=content, right=panels
+     - Right column: Heads Up + Safe to spend
+     - Left column: pie chart stacked above transaction list
      ================================================================ */
   @media (min-width: 900px) {
     body { display: block; padding: 0; height: 100vh; overflow: hidden; background: #eef1f5; }
@@ -888,23 +920,26 @@
       flex-direction: row; background: #f5f5f8;
     }
 
+    /* ---- Tips bubble: hide on desktop (flex sibling of .screen, would create a 3rd column) ---- */
+    .tips-bubble { display: none !important; }
+
     /* ---- Sidebar (was bottom navbar) ---- */
     .navbar {
       order: -1;
-      width: 220px; flex-shrink: 0; height: 100vh;
+      width: 180px; flex-shrink: 0; height: 100vh;
       flex-direction: column; justify-content: flex-start; align-items: stretch;
       padding: 0; border-top: none; border-right: 1px solid #ebebef;
       background: #fff; overflow-y: auto; z-index: 45;
     }
     .navbar::before {
       content: 'Immagini';
-      display: block; padding: 26px 24px 20px;
-      font-size: 20px; font-weight: 800; color: #6c5ce7; letter-spacing: -0.5px;
+      display: block; padding: 22px 20px 16px;
+      font-size: 18px; font-weight: 800; color: #6c5ce7; letter-spacing: -0.5px;
       border-bottom: 1px solid #f0f0f3; margin-bottom: 8px; flex-shrink: 0;
     }
     .nav-item {
       flex-direction: row; justify-content: flex-start; align-items: center;
-      padding: 13px 24px; gap: 14px; font-size: 14px; font-weight: 500;
+      padding: 12px 20px; gap: 12px; font-size: 13px; font-weight: 500;
       color: #666; text-align: left; width: 100%; border-right: 3px solid transparent;
     }
     .nav-item.active { background: #f3f0ff; color: #6c5ce7; border-right-color: #6c5ce7; font-weight: 700; }
@@ -912,34 +947,42 @@
     .nav-icon { width: 20px; height: 20px; margin-bottom: 0; flex-shrink: 0; }
     .nav-icon svg { width: 20px; height: 20px; }
 
-    /* ---- Main scrollable content area ---- */
-    .screen { flex: 1; min-width: 0; height: 100vh; overflow-y: auto; background: #f5f5f8; border-radius: 0; }
+    /* ---- Screen: CSS grid — header full-width, left=content, right=panel cards ---- */
+    .screen {
+      flex: 1; min-width: 0; height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      grid-template-rows: auto auto auto 1fr;
+      overflow: hidden;
+      background: #f5f5f8; border-radius: 0;
+    }
 
-    /* ---- Header: sticky, wider padding ---- */
-    .header { border-radius: 0; padding: 24px 32px 18px; position: sticky; top: 0; z-index: 20; }
+    /* ---- Header: spans both columns ---- */
+    .header { grid-column: 1 / -1; grid-row: 1; border-radius: 0; padding: 20px 28px 14px; z-index: 20; }
     .header-top { margin-bottom: 4px; }
 
-    /* ---- AI bubble + safe-spend: desktop margins ---- */
-    .ai-bubble { margin: 16px 32px 0; }
-    .safe-spend-card { margin: 12px 32px 0; }
-    .tips-bubble { margin: 12px 32px 0; }
+    /* ---- Right panel: Heads Up (row 2) + Safe to spend (row 3) ---- */
+    .ai-bubble { grid-column: 2; grid-row: 2; margin: 16px 16px 0; align-self: start; }
+    .safe-spend-card { grid-column: 2; grid-row: 3; margin: 10px 16px 0; align-self: start; }
 
-    /* ---- Home page: side-by-side ---- */
+    /* ---- Left column: pie above transactions, full height below header ---- */
     #month-data-sections {
-      display: flex; flex-direction: row;
-      align-items: flex-start; gap: 24px;
-      padding: 20px 32px 32px;
+      grid-column: 1; grid-row: 2 / 5;
+      overflow-y: auto; min-height: 0;
+      display: flex; flex-direction: column;
+      padding: 16px 24px 32px; gap: 20px;
     }
-    /* Pie chart → right column, sticky */
+    /* Pie chart section: centered, not side-by-side */
     #month-data-sections .section:first-child {
-      order: 2; width: 300px; flex-shrink: 0; position: sticky; top: 20px;
+      order: unset; width: auto; flex-shrink: 0; position: static;
+      display: flex; flex-direction: column; align-items: center;
     }
-    /* Category list → left column */
-    #month-data-sections .section:last-child { order: 1; flex: 1; min-width: 0; }
+    /* Transaction/category section: fills remaining space */
+    #month-data-sections .section:last-child { order: unset; flex: 1; min-width: 0; }
 
-    /* ---- Subpages + overlays: start after sidebar ---- */
-    .subpage, .manage-page { left: 220px; bottom: 0; }
-    .filter-sheet-overlay, .modal-overlay, .icon-picker-overlay { left: 220px; }
+    /* ---- Subpages + overlays: start after narrower sidebar ---- */
+    .subpage, .manage-page { left: 180px; bottom: 0; }
+    .filter-sheet-overlay, .modal-overlay, .icon-picker-overlay { left: 180px; }
 
     /* ---- Budget page: 2-col card grid ---- */
     #budget-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; padding: 16px 24px; }
@@ -1014,7 +1057,7 @@
       </div>
 
       <div class="section">
-        <h2>Spending by category</h2>
+        <h2 id="txn-section-title">Spending by category</h2>
 
         <div class="txn-filter-wrap">
           <div class="txn-search-row">
@@ -1026,11 +1069,15 @@
             <button type="button" class="txn-filter-btn" id="txn-filter-btn" data-action="open-filter-panel" title="Filter">
               <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="8" cy="6" r="2" fill="white"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="white"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="white"/></svg>
             </button>
+            <button type="button" class="txn-view-toggle-btn" data-action="toggle-txn-view" title="Toggle chronological view">
+              <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </button>
           </div>
           <div id="txn-chips" class="txn-chips" hidden></div>
         </div>
 
         <div id="txn-no-results" class="txn-no-results" hidden>No transactions match your search.</div>
+        <div id="timeline-view"></div>
 
         <details class="category uncategorized-card" id="cat-uncategorized">
           <summary><div class="category-row">
@@ -2117,6 +2164,73 @@
     return null;
   }
   var txnFilter = { query: '', catIds: [], dateFrom: '', dateTo: '', filterTax: false, amtMin: '', amtMax: '' };
+  var txnViewMode = 'grouped';
+
+  function renderTimelineView() {
+    var el = document.getElementById('timeline-view');
+    if (!el) return;
+    var rows = [];
+    document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
+      if (row.hidden || !isRealBillRow(row)) return;
+      var catEl = row.closest('details.category');
+      var dateEl = row.querySelector('.bill-date');
+      var merchantEl = row.querySelector('.bill-merchant');
+      var amtEl = row.querySelector('.bill-amount');
+      var dateStr = dateEl ? dateEl.textContent.trim() : '';
+      rows.push({
+        dateStr: dateStr,
+        dateObj: parseBillDate(dateStr),
+        merchant: merchantEl ? ((merchantEl.childNodes[0] || {}).textContent || merchantEl.textContent || '').trim() : '',
+        amount: amtEl ? amtEl.textContent.trim() : '',
+        isPositive: amtEl ? !amtEl.classList.contains('negative') : false,
+        catFullId: catEl ? catEl.id : ''
+      });
+    });
+    rows.sort(function(a, b) {
+      if (!a.dateObj && !b.dateObj) return 0;
+      if (!a.dateObj) return 1;
+      if (!b.dateObj) return -1;
+      return b.dateObj - a.dateObj;
+    });
+    var html = '';
+    var lastDate = '';
+    rows.forEach(function(r) {
+      if (r.dateStr !== lastDate) {
+        html += '<div class="timeline-date-hdr">' + escapeHtml(r.dateStr) + '</div>';
+        lastDate = r.dateStr;
+      }
+      var cat = CATEGORIES.filter(function(c){ return c.id === r.catFullId; })[0];
+      var catLabel = cat ? cat.label : 'Other';
+      var catColor = colorForCategory(r.catFullId);
+      var darkColor = darkColorForCategory(r.catFullId);
+      var lightBg = blendWithWhite(hexToRgb(catColor), 0.8);
+      html += '<div class="timeline-row" style="background:' + lightBg + ';">' +
+        '<span class="timeline-tag" style="background:' + catColor + ';color:' + darkColor + ';">' + escapeHtml(catLabel) + '</span>' +
+        '<span class="timeline-merchant">' + escapeHtml(r.merchant) + '</span>' +
+        '<span class="timeline-amount' + (r.isPositive ? ' pos' : '') + '">' + escapeHtml(r.amount) + '</span>' +
+        '</div>';
+    });
+    if (!html) html = '<div class="timeline-date-hdr" style="text-align:center;padding:20px;">No transactions</div>';
+    el.innerHTML = html;
+  }
+
+  function setTxnView(mode) {
+    txnViewMode = mode;
+    var section = document.querySelector('#month-data-sections .section:last-child');
+    var toggleBtn = document.querySelector('[data-action="toggle-txn-view"]');
+    var titleEl = document.getElementById('txn-section-title');
+    if (mode === 'timeline') {
+      if (section) section.classList.add('timeline-mode');
+      if (toggleBtn) toggleBtn.classList.add('active');
+      if (titleEl) titleEl.textContent = 'All transactions';
+      renderTimelineView();
+    } else {
+      if (section) section.classList.remove('timeline-mode');
+      if (toggleBtn) toggleBtn.classList.remove('active');
+      if (titleEl) titleEl.textContent = 'Spending by category';
+      applyTxnFilter();
+    }
+  }
 
   // calendar bounds of the month currently selected in the top month switcher
   function activeMonthRange() {
@@ -2195,6 +2309,7 @@
     refreshAllDateGroupHeaders();
     renderPieChart();
     renderTxnChips();
+    if (txnViewMode === 'timeline') renderTimelineView();
     if (!document.getElementById('insights-page').hidden) renderInsightsPage();
   }
 
@@ -3492,6 +3607,11 @@
 
     if (e.target.closest('[data-action="open-filter-panel"]')) {
       openFilterPanel();
+      return;
+    }
+
+    if (e.target.closest('[data-action="toggle-txn-view"]')) {
+      setTxnView(txnViewMode === 'grouped' ? 'timeline' : 'grouped');
       return;
     }
     if (e.target.closest('[data-action="close-filter-panel"]')) {
