@@ -989,12 +989,13 @@
     /* Transaction/category section: fills remaining space */
     #month-data-sections .section:last-child { order: unset; flex: 1; min-width: 0; }
 
-    /* ---- Subpages + overlays: start after narrower sidebar ---- */
+    /* ---- Subpages: start after sidebar ---- */
     .subpage, .manage-page { left: 180px; bottom: 0; }
-    .filter-sheet-overlay, .modal-overlay, .icon-picker-overlay { left: 180px; }
 
-    /* ---- Overlays: centered dialogs, not full-width bottom sheets ---- */
-    .modal-overlay, .filter-sheet-overlay, .icon-picker-overlay {
+    /* ---- Overlays: fixed so viewport is always the containing block ---- */
+    .filter-sheet-overlay, .modal-overlay, .icon-picker-overlay {
+      position: fixed;
+      top: 0; left: 180px; right: 0; bottom: 0;
       align-items: center; justify-content: center;
     }
     /* Categorize modal */
