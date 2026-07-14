@@ -953,8 +953,12 @@
       display: grid;
       grid-template-columns: 1fr 300px;
       grid-template-rows: auto auto auto 1fr;
-      overflow: hidden;
-      background: #f5f5f8; border-radius: 0;
+      overflow: hidden; border-radius: 0;
+      /* Right 300px column gets same white bg as left sidebar, with a 1px separator */
+      background: linear-gradient(to right, #f5f5f8 calc(100% - 301px), #ebebef calc(100% - 301px), #ebebef calc(100% - 300px), #fff calc(100% - 300px));
+    }
+    .phone.theme-dark .screen {
+      background: linear-gradient(to right, #12111c calc(100% - 301px), #2e2d45 calc(100% - 301px), #2e2d45 calc(100% - 300px), #1e1d30 calc(100% - 300px));
     }
 
     /* ---- Header: spans both columns ---- */
@@ -962,8 +966,12 @@
     .header-top { margin-bottom: 4px; }
 
     /* ---- Right panel: Heads Up (row 2) + Safe to spend (row 3) ---- */
-    .ai-bubble { grid-column: 2; grid-row: 2; margin: 16px 16px 0; align-self: start; }
-    .safe-spend-card { grid-column: 2; grid-row: 3; margin: 10px 16px 0; align-self: start; }
+    .ai-bubble { grid-column: 2; grid-row: 2; margin: 20px 20px 0; align-self: start; }
+    .safe-spend-card {
+      grid-column: 2; grid-row: 3; margin: 14px 20px 0; align-self: start;
+      box-shadow: none; border: 1px solid #ebebef;
+    }
+    .phone.theme-dark .safe-spend-card { border-color: #2e2d45; }
 
     /* ---- Left column: pie above transactions, full height below header ---- */
     #month-data-sections {
