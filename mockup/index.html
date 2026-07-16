@@ -391,7 +391,7 @@
   .modal-done-btn { flex: 1; border: none; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   .modal-cancel-btn { border: 1.5px solid #ddd; background: #f7f8fc; color: #555; border-radius: 12px; padding: 12px 18px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
   /* Timeline sub-category tag */
-  .timeline-sub-tag { font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 8px; background: rgba(0,0,0,0.08); color: #555; white-space: nowrap; flex-shrink: 0; }
+  .timeline-sub-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; letter-spacing: 0.2px; background: rgba(0,0,0,0.08); color: #555; white-space: nowrap; flex-shrink: 0; }
 
   /* ---------- Keyword-learn & rescan steps (inside modal) ---------- */
   .modal-learn-step { padding: 6px 0 2px; }
@@ -4206,6 +4206,7 @@
       '<div class="import-map-row"><label>Amount</label><select id="map-amount">' + noneOpt + options + '</select></div>' +
       '<div class="import-map-row"><label>Debit</label><select id="map-debit">' + noneOpt + options + '</select></div>' +
       '<div class="import-map-row"><label>Credit</label><select id="map-credit">' + noneOpt + options + '</select></div>' +
+      '<div class="import-map-row"><label>Balance</label><select id="map-balance">' + noneOpt + options + '</select></div>' +
       '</div>' +
       '<button type="button" class="import-confirm-btn" data-action="apply-col-map">Preview with this mapping</button>' +
       '<button type="button" class="subpage-add-btn" style="margin-top:10px;" data-action="import-again">Choose a different file</button>';
@@ -4215,6 +4216,19 @@
     result.hidden = false;
     document.getElementById('import-drop-zone').hidden = true;
 
+    // Pre-select sensible defaults based on header names
+    function preselect(id, preferred, fallback) {
+      var sel = document.getElementById(id);
+      if (!sel) return;
+      var preferredIdx = idx(importHeaders, preferred);
+      if (preferredIdx >= 0) sel.value = preferredIdx;
+      else if (fallback >= 0 && fallback < importHeaders.length) sel.value = fallback;
+    }
+    preselect('map-date',    'Date',        0);
+    preselect('map-desc',    'Description', 1);
+    preselect('map-amount',  'Amount',      2);
+    preselect('map-balance', 'Balance',     importHeaders.length >= 4 ? 3 : -1);
+
     // wire the apply button
     result.querySelector('[data-action="apply-col-map"]').addEventListener('click', function () {
       importColMap = {
@@ -4223,7 +4237,7 @@
         amount: parseInt(document.getElementById('map-amount').value, 10),
         debit: parseInt(document.getElementById('map-debit').value, 10),
         credit: parseInt(document.getElementById('map-credit').value, 10),
-        balance: -1
+        balance: parseInt(document.getElementById('map-balance').value, 10)
       };
       renderImportPreview('Custom mapping', false);
     });
