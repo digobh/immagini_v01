@@ -384,6 +384,14 @@
   .modal-sub-btn.active { background: #e9e6ff; color: #6c5ce7; font-weight: 700; }
   .modal-sheet .inline-form { padding: 4px 0 8px; }
   .modal-close { margin-top: 14px; border: none; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  /* Category modal: search + sticky footer with Cancel/Done */
+  .modal-cat-search { width: 100%; border: 1.5px solid #e9ecef; border-radius: 10px; padding: 8px 12px; font-size: 13px; color: #333; background: #f7f8fc; outline: none; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
+  .modal-cat-search:focus { border-color: #a29bfe; background: #fff; }
+  .modal-footer { position: sticky; bottom: -20px; display: flex; gap: 8px; padding: 10px 0 20px; margin-top: 12px; background: #fff; border-top: 1px solid #f0f0f5; }
+  .modal-done-btn { flex: 1; border: none; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .modal-cancel-btn { border: 1.5px solid #ddd; background: #f7f8fc; color: #555; border-radius: 12px; padding: 12px 18px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  /* Timeline sub-category tag */
+  .timeline-sub-tag { font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 8px; background: rgba(0,0,0,0.08); color: #555; white-space: nowrap; flex-shrink: 0; }
 
   /* ---------- Keyword-learn & rescan steps (inside modal) ---------- */
   .modal-learn-step { padding: 6px 0 2px; }
@@ -762,6 +770,12 @@
   .phone.theme-dark .modal-sub-btn:hover { background: #2d2b55; color: #a29bfe; }
   .phone.theme-dark .modal-sub-btn.active { background: #2d2b55; color: #a29bfe; }
   .phone.theme-dark .modal-close { background: #e8e6ff; color: #1a1a2e; }
+  .phone.theme-dark .modal-cat-search { background: #25234a; border-color: #3a3850; color: #e8e6ff; }
+  .phone.theme-dark .modal-cat-search:focus { background: #2d2b55; border-color: #a29bfe; }
+  .phone.theme-dark .modal-footer { background: #1e1d30; border-top-color: #2d2b55; }
+  .phone.theme-dark .modal-done-btn { background: #e8e6ff; color: #1a1a2e; }
+  .phone.theme-dark .modal-cancel-btn { background: #25234a; border-color: #3a3850; color: #999; }
+  .phone.theme-dark .timeline-sub-tag { background: rgba(255,255,255,0.1); color: #aaa; }
   .phone.theme-dark .modal-backdrop { background: rgba(0,0,0,0.7); }
   .phone.theme-dark .chat-fab { background: #25234a; }
   .phone.theme-dark .manage-page, .phone.theme-dark .subpage { background: #12121e; }
@@ -886,7 +900,7 @@
   .section.timeline-mode #txn-no-results { display: none !important; }
   .section.timeline-mode #timeline-view { display: block; }
 
-  .timeline-date-hdr { font-size: 11px; font-weight: 700; color: #bbb; padding: 10px 14px 4px; letter-spacing: 0.6px; text-transform: uppercase; }
+  .timeline-date-hdr { font-size: 11px; font-weight: 700; color: #777; padding: 10px 14px 4px; letter-spacing: 0.6px; text-transform: uppercase; }
   .timeline-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer; }
   .timeline-row:hover { filter: brightness(0.96); }
   .timeline-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.2px; }
@@ -1017,6 +1031,8 @@
     .icon-picker-sheet .modal-close { width: auto; }
     /* Keep buttons from stretching to full dialog width */
     .modal-close { align-self: stretch; }
+    .modal-footer { position: sticky; bottom: -20px; }
+    .modal-done-btn, .modal-cancel-btn { padding: 12px 20px; }
 
     /* ---- Budget page: 2-col card grid ---- */
     #budget-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; padding: 16px 24px; }
@@ -1510,7 +1526,10 @@
           <div class="modal-section-label">Choose a category</div>
           <div id="modal-cat-list"></div>
         </div>
-        <button type="button" class="modal-close" data-action="close-modal">Done</button>
+        <div class="modal-footer">
+          <button type="button" class="modal-cancel-btn" data-action="cancel-modal">Cancel</button>
+          <button type="button" class="modal-done-btn" data-action="close-modal">Done</button>
+        </div>
       </div>
     </div>
 
@@ -2207,10 +2226,16 @@
     document.querySelectorAll('#month-data-sections .bill-row').forEach(function(row) {
       if (row.hidden || !isRealBillRow(row)) return;
       var catEl = row.closest('details.category');
+      var subEl = row.closest('details.subcategory');
       var dateEl = row.querySelector('.bill-date');
       var merchantEl = row.querySelector('.bill-merchant');
       var amtEl = row.querySelector('.bill-amount');
       var dateStr = dateEl ? dateEl.textContent.trim() : '';
+      var subName = '';
+      if (subEl) {
+        var subSpan = subEl.querySelector('.subcategory-row > span:first-child');
+        if (subSpan) subName = subSpan.textContent.trim();
+      }
       rows.push({
         dateStr: dateStr,
         dateObj: parseBillDate(dateStr),
@@ -2218,6 +2243,7 @@
         amount: amtEl ? amtEl.textContent.trim() : '',
         isPositive: amtEl ? !amtEl.classList.contains('negative') : false,
         catFullId: catEl ? catEl.id : '',
+        subName: subName,
         rk: rowKey(row)
       });
     });
@@ -2240,8 +2266,9 @@
       var darkColor = darkColorForCategory(r.catFullId);
       var lightBg = blendWithWhite(hexToRgb(catColor), 0.8);
       html += '<div class="timeline-row" data-row-key="' + escapeHtml(r.rk) + '" style="background:' + lightBg + ';">' +
-        '<span class="timeline-tag" style="background:' + catColor + ';color:' + darkColor + ';">' + escapeHtml(catLabel) + '</span>' +
         '<span class="timeline-merchant">' + escapeHtml(r.merchant) + '</span>' +
+        '<span class="timeline-tag" style="background:' + catColor + ';color:' + darkColor + ';">' + escapeHtml(catLabel) + '</span>' +
+        (r.subName ? '<span class="timeline-sub-tag">' + escapeHtml(r.subName) + '</span>' : '') +
         '<span class="timeline-amount' + (r.isPositive ? ' pos' : '') + '">' + escapeHtml(r.amount) + '</span>' +
         '</div>';
     });
@@ -2787,19 +2814,47 @@
       var subNameEl = parentSub.querySelector('.subcategory-row > span:first-child');
       if (subNameEl) currentSubName = subNameEl.textContent.trim();
     }
+    // Store original state for cancel
+    window._modalOrigCatEl = parentCategory;
+    window._modalOrigSubEl = parentSub;
+    var key = rowKey(row);
+    window._modalOrigNotes = TXN_NOTES[key];
+    window._modalOrigTax   = TXN_TAX[key];
+
     document.getElementById('modal-merchant').textContent = merchantName;
     document.getElementById('modal-meta').textContent = (dateEl ? dateEl.textContent + ' · ' : '') + (amountEl ? amountEl.textContent : '');
     // Populate tags
-    var key = rowKey(row);
     document.getElementById('modal-tax-btn').classList.toggle('active', !!TXN_TAX[key]);
     document.getElementById('modal-note-input').value = TXN_NOTES[key] || '';
     // Populate split section
     renderModalSplitSection(row);
-    // Reset to category-picker step
+    // Reset to category-picker step with search
     document.getElementById('modal-step-wrap').innerHTML =
       '<div class="modal-section-label">Choose a category</div>' +
+      '<input type="text" id="modal-cat-search" class="modal-cat-search" placeholder="Search categories…">' +
       '<div id="modal-cat-list">' + modalCategoryListHTML(currentCatId, currentSubName) + '</div>';
+    var searchEl = document.getElementById('modal-cat-search');
+    if (searchEl) searchEl.addEventListener('input', filterModalCategories);
     document.getElementById('categorize-modal').hidden = false;
+  }
+
+  function filterModalCategories() {
+    var q = (document.getElementById('modal-cat-search').value || '').trim().toLowerCase();
+    document.querySelectorAll('#modal-cat-list > .modal-cat-btn').forEach(function(btn) {
+      btn.hidden = !!(q && btn.textContent.trim().toLowerCase().indexOf(q) === -1);
+    });
+    document.querySelectorAll('#modal-cat-list details.modal-cat').forEach(function(det) {
+      var catName = ((det.querySelector('.modal-cat-name') || {}).textContent || '').toLowerCase();
+      var anySubMatch = false;
+      det.querySelectorAll('.modal-sub-btn').forEach(function(s) {
+        var m = !q || s.textContent.trim().toLowerCase().indexOf(q) !== -1;
+        s.hidden = !m;
+        if (m) anySubMatch = true;
+      });
+      var catMatch = !q || catName.indexOf(q) !== -1;
+      det.hidden = !catMatch && !anySubMatch;
+      if (q && anySubMatch) det.open = true;
+    });
   }
 
   function closeCategorizeModal() {
@@ -3053,6 +3108,26 @@
         target.setAttribute('open', '');
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+      return;
+    }
+
+    if (e.target.closest('[data-action="cancel-modal"]')) {
+      // Revert row to original position and restore original notes/tax, then close
+      if (activeRow) {
+        var cancelKey = rowKey(activeRow);
+        if (window._modalOrigNotes !== undefined) { if (window._modalOrigNotes) TXN_NOTES[cancelKey] = window._modalOrigNotes; else delete TXN_NOTES[cancelKey]; }
+        if (window._modalOrigTax !== undefined)   { if (window._modalOrigTax)   TXN_TAX[cancelKey]   = window._modalOrigTax;   else delete TXN_TAX[cancelKey];   }
+        if (window._modalOrigSubEl && window._modalOrigSubEl.querySelector('.sub-content')) {
+          window._modalOrigSubEl.querySelector('.sub-content').appendChild(activeRow);
+        } else if (window._modalOrigCatEl && window._modalOrigCatEl.querySelector('.category-content')) {
+          window._modalOrigCatEl.querySelector('.category-content').appendChild(activeRow);
+        } else {
+          var uncatContent = document.querySelector('#cat-uncategorized .category-content');
+          if (uncatContent) uncatContent.appendChild(activeRow);
+        }
+        refreshRowBadge(activeRow);
+      }
+      closeCategorizeModal();
       return;
     }
 

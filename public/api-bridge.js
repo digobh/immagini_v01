@@ -101,11 +101,18 @@
       .catch(function (e) { console.error('loadMonthTransactions:', e); });
   }
 
-  // ── Override processCSVText to capture the active filename ───────────────────
+  // ── Override processCSVText to capture filename and most-recent balance ──────
   var _origProcessCSV = processCSVText;
   processCSVText = function (text, filename) {
     window._lastImportFilename = filename || 'import.csv';
+    window._lastImportBalance  = null;
     _origProcessCSV(text, filename);
+    // After parsing, extract balance from the first row (bank CSVs are newest-first)
+    if (importColMap && importColMap.balance >= 0 && importRows && importRows.length > 0) {
+      var balRaw = (importRows[0][importColMap.balance] || '').replace(/[^0-9.]/g, '');
+      var bal = parseFloat(balRaw);
+      if (!isNaN(bal) && bal > 0) window._lastImportBalance = bal;
+    }
   };
 
   // ── Override commitImport: POST to server instead of creating DOM directly ────
@@ -114,6 +121,7 @@
 
     var payload = {
       filename: window._lastImportFilename || 'import.csv',
+      balance:  window._lastImportBalance != null ? window._lastImportBalance : undefined,
       transactions: importParsed.map(function (t) {
         return { date_str: t.date, merchant: t.desc, amount: t.amount };
       })
@@ -145,6 +153,7 @@
 
         applyTxnFilter();
         importParsed = [];
+        if (data.balance != null) applyBalanceToUI(data.balance);
 
         var skippedNote = data.skipped > 0
           ? ' <span style="font-size:13px;font-weight:400;color:#888;">('
@@ -325,6 +334,17 @@
     navbar.appendChild(btn);
   }
 
+  // ── Apply balance to header and Safe-to-Spend breakdown ──────────────────────
+  function applyBalanceToUI(bal) {
+    if (bal == null || isNaN(bal)) return;
+    var balEl = document.querySelector('.balance');
+    if (balEl) balEl.textContent = formatMoney(bal);
+    var balRow = document.querySelector('.breakdown-row:not(.minus):not(.total) span:last-child');
+    if (balRow) balRow.textContent = formatMoney(bal);
+    // Re-run renderMonth so Safe-to-Spend recalculates with real balance
+    renderMonth();
+  }
+
   // ── Bootstrap ─────────────────────────────────────────────────────────────────
   apiFetch('/api/auth/me')
     .then(function (r) {
@@ -333,7 +353,14 @@
     })
     .then(function () {
       addLogoutButton();
-      return loadMonthTransactions(ISO_MONTHS[monthIndex]);
+      // Load saved balance from settings before loading transactions
+      return apiFetch('/api/settings').then(function (r) { return r.json(); })
+        .then(function (s) {
+          if (s && s.settings && s.settings.balance) {
+            applyBalanceToUI(s.settings.balance);
+          }
+          return loadMonthTransactions(ISO_MONTHS[monthIndex]);
+        });
     })
     .catch(function () {
       localStorage.removeItem('immagini_token');

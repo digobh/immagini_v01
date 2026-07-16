@@ -172,7 +172,7 @@ function normaliseDate(s) {
 }
 
 app.post('/api/import', requireAuth, (req, res) => {
-  const { filename, transactions } = req.body || {};
+  const { filename, transactions, balance } = req.body || {};
   if (!Array.isArray(transactions) || transactions.length === 0)
     return res.status(400).json({ error: 'No transactions provided' });
 
@@ -215,7 +215,17 @@ app.post('/api/import', requireAuth, (req, res) => {
     return importId;
   })();
 
-  res.json({ import_id: Number(result), added, skipped, transactions: addedTxns });
+  // Save balance to user_settings only if CSV included one
+  const hasNewBalance = balance != null && !isNaN(Number(balance));
+  if (hasNewBalance) {
+    db.prepare(`INSERT INTO user_settings (user_id, balance) VALUES (?,?)
+      ON CONFLICT(user_id) DO UPDATE SET balance = excluded.balance`)
+      .run(req.user.id, Number(balance));
+  }
+
+  const resp = { import_id: Number(result), added, skipped, transactions: addedTxns };
+  if (hasNewBalance) resp.balance = Number(balance);
+  res.json(resp);
 });
 
 app.get('/api/imports', requireAuth, (req, res) => {
@@ -387,7 +397,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/app', (req, res) => {
   try {
     const mockup = fs.readFileSync(path.join(__dirname, 'mockup', 'index.html'), 'utf8');
-    const bridge = fs.readFileSync(path.join(__dirname, 'public', 'api-bridge.js'), 'utf8');
+    const bridgeRaw = fs.readFileSync(path.join(__dirname, 'public', 'api-bridge.js'), 'utf8');
+    // Escape $ so String.replace doesn't interpret $', $&, $1 etc. as special patterns
+    const bridge = bridgeRaw.replace(/\$/g, '$$$$');
 
     // Compute dynamic 15-month window server-side (12 back, current, 3 forward)
     const LONG  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
