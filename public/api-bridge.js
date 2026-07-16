@@ -305,6 +305,32 @@
     loadAndShowImportHistory();
   };
 
+  // ── Save-balance handler (settings page) ─────────────────────────────────────
+  document.addEventListener('click', function (ev) {
+    if (!ev.target.closest('[data-action="save-balance"]')) return;
+    var input = document.getElementById('settings-balance-input');
+    var val = parseFloat((input ? input.value : '') || '0');
+    if (isNaN(val) || val < 0) { alert('Please enter a valid balance.'); return; }
+    apiFetch('/api/settings', {
+      method: 'PUT',
+      body: JSON.stringify({ balance: val })
+    }).then(function () {
+      applyBalanceToUI(val);
+      if (input) { input.style.borderColor = '#27ae60'; setTimeout(function(){ input.style.borderColor = ''; }, 1200); }
+    }).catch(function () { alert('Could not save balance. Please try again.'); });
+  });
+
+  // ── Pre-fill balance input when settings page opens ──────────────────────────
+  var _origRenderSettingsPage = renderSettingsPage;
+  renderSettingsPage = function () {
+    _origRenderSettingsPage();
+    var input = document.getElementById('settings-balance-input');
+    if (!input) return;
+    var balEl = document.querySelector('.balance');
+    var current = balEl ? parseFloat(balEl.textContent.replace(/[^0-9.]/g, '')) : 0;
+    if (current > 0) input.value = current.toFixed(2);
+  };
+
   // ── Logout button ─────────────────────────────────────────────────────────────
   function addLogoutButton() {
     var navbar = document.querySelector('.navbar');
