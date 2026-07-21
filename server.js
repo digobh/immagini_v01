@@ -83,6 +83,12 @@ db.exec(`
     category_id TEXT    NOT NULL,
     keyword     TEXT    NOT NULL
   );
+`);
+
+// Migrate: add balance column to imports if not present
+try { db.exec('ALTER TABLE imports ADD COLUMN balance REAL'); } catch (_) {}
+
+db.exec(`
 
   CREATE TABLE IF NOT EXISTS goals (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -184,11 +190,12 @@ app.post('/api/import', requireAuth, (req, res) => {
     VALUES (?,?,?,?,?,?)
   `);
   const stmtUpdateImport = db.prepare(
-    'UPDATE imports SET row_count=?, skipped_count=? WHERE id=?'
+    'UPDATE imports SET row_count=?, skipped_count=?, balance=? WHERE id=?'
   );
 
   let added = 0, skipped = 0;
   const addedTxns = [];
+  const hasNewBalance = balance != null && !isNaN(Number(balance));
 
   const result = db.transaction(() => {
     const imp = stmtImport.run(req.user.id, filename || 'import.csv', 0, 0);
@@ -211,12 +218,11 @@ app.post('/api/import', requireAuth, (req, res) => {
       }
     }
 
-    stmtUpdateImport.run(added, skipped, importId);
+    stmtUpdateImport.run(added, skipped, hasNewBalance ? Number(balance) : null, importId);
     return importId;
   })();
 
   // Save balance to user_settings only if CSV included one
-  const hasNewBalance = balance != null && !isNaN(Number(balance));
   if (hasNewBalance) {
     db.prepare(`INSERT INTO user_settings (user_id, balance) VALUES (?,?)
       ON CONFLICT(user_id) DO UPDATE SET balance = excluded.balance`)
@@ -230,8 +236,13 @@ app.post('/api/import', requireAuth, (req, res) => {
 
 app.get('/api/imports', requireAuth, (req, res) => {
   const imports = db.prepare(`
-    SELECT id, filename, imported_at, row_count, skipped_count
-    FROM imports WHERE user_id=? ORDER BY imported_at DESC
+    SELECT i.id, i.filename, i.imported_at, i.row_count, i.skipped_count, i.balance,
+           MIN(t.date_str) as date_from, MAX(t.date_str) as date_to
+    FROM imports i
+    LEFT JOIN transactions t ON t.import_id = i.id AND t.user_id = i.user_id
+    WHERE i.user_id = ?
+    GROUP BY i.id
+    ORDER BY i.imported_at DESC
   `).all(req.user.id);
   res.json(imports);
 });

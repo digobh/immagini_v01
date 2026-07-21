@@ -262,11 +262,18 @@
           fname.style.cssText = 'font-size:13px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
           fname.textContent = imp.filename;
           var meta = document.createElement('div');
-          meta.style.cssText = 'font-size:11px;color:#999;margin-top:2px;';
+          meta.style.cssText = 'font-size:11px;color:#999;margin-top:2px;line-height:1.5;';
           var d = new Date(imp.imported_at + (imp.imported_at.endsWith('Z') ? '' : 'Z'));
-          meta.textContent = d.toLocaleDateString('en-AU') + ' · '
+          var dateRange = (imp.date_from && imp.date_to)
+            ? imp.date_from + ' → ' + imp.date_to
+            : null;
+          var balText = (imp.balance != null) ? ' · Balance: $' + Number(imp.balance).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+          meta.innerHTML =
+            d.toLocaleDateString('en-AU') + ' · '
             + imp.row_count + ' added'
-            + (imp.skipped_count > 0 ? ', ' + imp.skipped_count + ' skipped' : '');
+            + (imp.skipped_count > 0 ? ', ' + imp.skipped_count + ' duplicates skipped' : '')
+            + balText
+            + (dateRange ? '<br>' + dateRange : '');
           info.appendChild(fname);
           info.appendChild(meta);
 
@@ -304,6 +311,21 @@
     _origResetImportPage();
     loadAndShowImportHistory();
   };
+
+  // ── Persist new subcategory to server when created in categorize modal ──────────
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-action="modal-new-subcategory"]');
+    if (!btn) return;
+    var form = btn.closest('details.picker-new-form');
+    var input = form ? form.querySelector('.modal-new-sub-input') : null;
+    var name = input ? input.value.trim() : '';
+    var catId = btn.dataset.catId;
+    if (!name || !catId) return;
+    apiFetch('/api/subcategories', {
+      method: 'POST',
+      body: JSON.stringify({ category_id: catId, name: name, keywords: [] })
+    }).catch(function (e) { console.error('subcategory save failed:', e); });
+  });
 
   // ── Save-balance handler (settings page) ─────────────────────────────────────
   document.addEventListener('click', function (ev) {
@@ -384,6 +406,15 @@
         .then(function (s) {
           if (s && s.settings && s.settings.balance) {
             applyBalanceToUI(s.settings.balance);
+          }
+          // Merge server subcategories into the default SUBCATEGORIES object
+          if (s && s.subcategories && s.subcategories.length) {
+            s.subcategories.forEach(function (sub) {
+              if (!SUBCATEGORIES[sub.category_id]) SUBCATEGORIES[sub.category_id] = [];
+              if (SUBCATEGORIES[sub.category_id].indexOf(sub.name) < 0) {
+                SUBCATEGORIES[sub.category_id].push(sub.name);
+              }
+            });
           }
           return loadMonthTransactions(ISO_MONTHS[monthIndex]);
         });
