@@ -111,6 +111,9 @@ try {
 } catch (_) {}
 try { db.exec('ALTER TABLE users ADD COLUMN email_verify_token TEXT'); } catch (_) {}
 try { db.exec('ALTER TABLE users ADD COLUMN email_verify_expires TEXT'); } catch (_) {}
+try { db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0'); } catch (_) {}
+// First user is always admin
+try { db.exec('UPDATE users SET is_admin=1 WHERE id=1'); } catch (_) {}
 
 db.exec(`
 
@@ -148,15 +151,22 @@ function requireAuth(req, res, next) {
   }
 }
 
+function requireAdmin(req, res, next) {
+  requireAuth(req, res, function () {
+    const u = db.prepare('SELECT is_admin FROM users WHERE id=?').get(req.user.id);
+    if (!u || !u.is_admin) return res.status(403).json({ error: 'Admin access required' });
+    next();
+  });
+}
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
-  const { username, password, email, full_name } = req.body || {};
+  const { password, email, full_name } = req.body || {};
   if (!full_name || !full_name.trim()) return res.status(400).json({ error: 'Full name is required' });
   if (!email || !email.trim()) return res.status(400).json({ error: 'Email is required' });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).json({ error: 'Please enter a valid email address' });
-  if (!username || !username.trim()) return res.status(400).json({ error: 'Username is required' });
-  if (username.trim().length < 3) return res.status(400).json({ error: 'Username must be at least 3 characters' });
   if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  const username = email.trim().toLowerCase();
   try {
     const hash = await bcrypt.hash(password, 12);
     const verifyToken = crypto.randomBytes(32).toString('hex');
@@ -164,7 +174,7 @@ app.post('/api/auth/register', async (req, res) => {
     const user = db.prepare(
       `INSERT INTO users (username, full_name, email, password_hash, email_verified, email_verify_token, email_verify_expires)
        VALUES (?,?,?,?,0,?,?) RETURNING id, username`
-    ).get(username.trim(), full_name.trim(), email.trim().toLowerCase(), hash, verifyToken, verifyExpires);
+    ).get(username, full_name.trim(), email.trim().toLowerCase(), hash, verifyToken, verifyExpires);
     db.prepare('INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)').run(user.id);
 
     const verifyUrl = `${APP_URL}/api/auth/verify-email?token=${verifyToken}`;
@@ -179,8 +189,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ ok: true, message: 'Account created — please check your email to verify.' });
   } catch (e) {
     if (e.message && e.message.includes('UNIQUE')) {
-      if (e.message.toLowerCase().includes('email')) return res.status(409).json({ error: 'An account with this email already exists' });
-      return res.status(409).json({ error: 'Username already taken' });
+      return res.status(409).json({ error: 'An account with this email already exists' });
     }
     console.error(e);
     res.status(500).json({ error: 'Registration failed — please try again' });
@@ -198,19 +207,20 @@ app.get('/api/auth/verify-email', (req, res) => {
 });
 
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body || {};
-  if (!username || !password) return res.status(400).json({ error: 'Username and password are required' });
-  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username.trim());
-  if (!user) return res.status(401).json({ error: 'Invalid username or password' });
+  const { email, password } = req.body || {};
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
+  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email.trim().toLowerCase());
+  if (!user) return res.status(401).json({ error: 'Invalid email or password' });
   const ok = await bcrypt.compare(password, user.password_hash);
-  if (!ok) return res.status(401).json({ error: 'Invalid username or password' });
+  if (!ok) return res.status(401).json({ error: 'Invalid email or password' });
   if (!user.email_verified) return res.status(403).json({ error: 'Please verify your email before signing in. Check your inbox for the verification link.' });
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '30d' });
-  res.json({ token, user: { id: user.id, username: user.username } });
+  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
+  res.json({ token, user: { id: user.id, email: user.email } });
 });
 
 app.get('/api/auth/me', requireAuth, (req, res) => {
-  res.json({ user: { id: req.user.id, username: req.user.username } });
+  const u = db.prepare('SELECT email, is_admin FROM users WHERE id=?').get(req.user.id);
+  res.json({ user: { id: req.user.id, email: u ? u.email : req.user.email, is_admin: u ? u.is_admin : 0 } });
 });
 
 // ── Import ────────────────────────────────────────────────────────────────────
@@ -453,6 +463,33 @@ app.delete('/api/goal-allocations/:id', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+// ── Admin ─────────────────────────────────────────────────────────────────────
+app.get('/api/admin/users', requireAdmin, (req, res) => {
+  const users = db.prepare(
+    'SELECT id, full_name, email, email_verified, is_admin, created_at FROM users ORDER BY id'
+  ).all();
+  res.json(users);
+});
+
+app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+  if (id === req.user.id) return res.status(400).json({ error: 'Cannot delete your own account' });
+  db.prepare('DELETE FROM users WHERE id=?').run(id);
+  res.json({ ok: true });
+});
+
+app.put('/api/admin/users/:id/verify', requireAdmin, (req, res) => {
+  db.prepare('UPDATE users SET email_verified=1, email_verify_token=NULL, email_verify_expires=NULL WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.put('/api/admin/users/:id/toggle-admin', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+  if (id === req.user.id) return res.status(400).json({ error: 'Cannot change your own admin status' });
+  db.prepare('UPDATE users SET is_admin = CASE WHEN is_admin=1 THEN 0 ELSE 1 END WHERE id=?').run(id);
+  res.json({ ok: true });
+});
+
 // ── Page routes ───────────────────────────────────────────────────────────────
 // Serve static files from /public (landing page, login page)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -498,6 +535,7 @@ app.get('/app', (req, res) => {
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {

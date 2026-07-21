@@ -119,8 +119,8 @@
     <div class="panel active" id="panel-login">
       <div class="error-msg" id="login-error"></div>
       <div class="success-msg" id="login-success"></div>
-      <label for="login-username">Username</label>
-      <input type="text" id="login-username" placeholder="your username" autocomplete="username" autocapitalize="none">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
       <label for="login-password">Password</label>
       <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
       <button class="btn" id="login-btn">Sign In</button>
@@ -137,8 +137,6 @@
         <label for="reg-email">Email</label>
         <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
         <div class="field-note">A verification link will be sent to this address.</div>
-        <label for="reg-username">Username</label>
-        <input type="text" id="reg-username" placeholder="choose a username" autocomplete="username" autocapitalize="none">
         <label for="reg-password">Password</label>
         <input type="password" id="reg-password" placeholder="8+ characters" autocomplete="new-password">
         <button class="btn" id="reg-btn">Create Account</button>
@@ -190,15 +188,15 @@
   // Login
   document.getElementById('login-btn').addEventListener('click', function () {
     clearError('login-error');
-    var username = document.getElementById('login-username').value.trim();
+    var email = document.getElementById('login-email').value.trim();
     var password = document.getElementById('login-password').value;
-    if (!username || !password) { showError('login-error', 'Please enter your username and password.'); return; }
+    if (!email || !password) { showError('login-error', 'Please enter your email and password.'); return; }
     var btn = document.getElementById('login-btn');
     btn.disabled = true; btn.textContent = 'Signing in…';
     fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username, password: password })
+      body: JSON.stringify({ email: email, password: password })
     })
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
     .then(function (res) {
@@ -210,7 +208,7 @@
   });
 
   // Allow Enter key in login form
-  ['login-username','login-password'].forEach(function (id) {
+  ['login-email','login-password'].forEach(function (id) {
     document.getElementById(id).addEventListener('keydown', function (e) {
       if (e.key === 'Enter') document.getElementById('login-btn').click();
     });
@@ -221,13 +219,10 @@
     clearError('reg-error');
     var fullname  = document.getElementById('reg-fullname').value.trim();
     var email     = document.getElementById('reg-email').value.trim();
-    var username  = document.getElementById('reg-username').value.trim();
     var password  = document.getElementById('reg-password').value;
     if (!fullname) { showError('reg-error', 'Please enter your full name.'); return; }
     if (!email) { showError('reg-error', 'Please enter your email address.'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('reg-error', 'Please enter a valid email address.'); return; }
-    if (!username) { showError('reg-error', 'Please choose a username.'); return; }
-    if (username.length < 3) { showError('reg-error', 'Username must be at least 3 characters.'); return; }
     if (!password) { showError('reg-error', 'Please choose a password.'); return; }
     if (password.length < 8) { showError('reg-error', 'Password must be at least 8 characters.'); return; }
     var btn = document.getElementById('reg-btn');
@@ -235,7 +230,7 @@
     fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name: fullname, username: username, email: email, password: password })
+      body: JSON.stringify({ full_name: fullname, email: email, password: password })
     })
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
     .then(function (res) {
@@ -249,7 +244,7 @@
     .catch(function () { showError('reg-error', 'Network error — please try again.'); btn.disabled = false; btn.textContent = 'Create Account'; });
   });
 
-  ['reg-fullname','reg-email','reg-username','reg-password'].forEach(function (id) {
+  ['reg-fullname','reg-email','reg-password'].forEach(function (id) {
     document.getElementById(id).addEventListener('keydown', function (e) {
       if (e.key === 'Enter') document.getElementById('reg-btn').click();
     });

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money Mate — Admin</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5fa; color: #1a1a2e; min-height: 100vh; }
+  header {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    padding: 18px 24px; display: flex; align-items: center; justify-content: space-between;
+  }
+  header h1 { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  header a { color: rgba(255,255,255,.8); font-size: 13px; text-decoration: none; }
+  header a:hover { color: #fff; }
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+  .page-title { font-size: 22px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+  .error-banner { background: #fff5f5; border: 1px solid #f5c6cb; border-radius: 10px; padding: 12px 16px; color: #c0392b; font-size: 13px; margin-bottom: 16px; display: none; }
+  .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(108,92,231,.07); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: #f8f7ff; padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #888; border-bottom: 1px solid #eeebff; }
+  tbody tr { border-bottom: 1px solid #f5f5f8; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 12px 16px; vertical-align: middle; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 6px; padding: 2px 7px; text-transform: uppercase; letter-spacing: .05em; }
+  .badge-verified { background: #e8f8ee; color: #229954; }
+  .badge-unverified { background: #fff5e6; color: #d68910; }
+  .badge-admin { background: #e9e6ff; color: #6c5ce7; margin-left: 4px; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn-sm { border: none; border-radius: 7px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .btn-verify { background: #e8f8ee; color: #229954; }
+  .btn-verify:hover { background: #c8f0d8; }
+  .btn-delete { background: #fff5f5; color: #e74c3c; }
+  .btn-delete:hover { background: #fde8e8; }
+  .btn-admin { background: #e9e6ff; color: #6c5ce7; }
+  .btn-admin:hover { background: #d5d0ff; }
+  .empty { padding: 40px; text-align: center; color: #aaa; font-size: 14px; }
+  .loading { padding: 40px; text-align: center; color: #aaa; font-size: 14px; }
+  .name-cell { font-weight: 600; color: #1a1a2e; }
+  .email-cell { color: #666; font-size: 12px; }
+  @media (max-width: 600px) {
+    thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+    .btn-sm { padding: 5px 8px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Money Mate Admin</h1>
+  <a href="/app">← Back to App</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Account Management</div>
+  <div class="page-sub">Manage all registered accounts.</div>
+
+  <div class="error-banner" id="error-banner"></div>
+
+  <div class="card">
+    <div class="loading" id="loading">Loading accounts…</div>
+    <table id="users-table" style="display:none;">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="users-body"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none;">No accounts found.</div>
+  </div>
+</div>
+
+<script>
+  var token = localStorage.getItem('moneymate_token');
+  if (!token) { window.location.replace('/login'); }
+
+  function apiFetch(url, opts) {
+    return fetch(url, Object.assign({
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    }, opts || {}));
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('error-banner');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function formatDate(s) {
+    if (!s) return '—';
+    return new Date(s).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  var users = [];
+
+  function renderTable() {
+    var body = document.getElementById('users-body');
+    body.innerHTML = '';
+    users.forEach(function (u) {
+      var tr = document.createElement('tr');
+      var verifiedBadge = u.email_verified
+        ? '<span class="badge badge-verified">Verified</span>'
+        : '<span class="badge badge-unverified">Unverified</span>';
+      var adminBadge = u.is_admin ? '<span class="badge badge-admin">Admin</span>' : '';
+
+      var actions = '<div class="actions">';
+      if (!u.email_verified) {
+        actions += '<button class="btn-sm btn-verify" data-action="verify" data-id="' + u.id + '">Verify</button>';
+      }
+      actions += '<button class="btn-sm btn-admin" data-action="toggle-admin" data-id="' + u.id + '">' +
+        (u.is_admin ? 'Remove admin' : 'Make admin') + '</button>';
+      actions += '<button class="btn-sm btn-delete" data-action="delete" data-id="' + u.id + '">Delete</button>';
+      actions += '</div>';
+
+      tr.innerHTML =
+        '<td><div class="name-cell">' + escHtml(u.full_name || '—') + '</div><div class="email-cell">' + escHtml(u.email || '—') + '</div></td>' +
+        '<td>' + verifiedBadge + adminBadge + '</td>' +
+        '<td>' + formatDate(u.created_at) + '</td>' +
+        '<td style="color:#bbb;font-size:11px;">#' + u.id + '</td>' +
+        '<td>' + actions + '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function loadUsers() {
+    apiFetch('/api/admin/users')
+      .then(function (r) {
+        if (r.status === 403) { showError('Access denied — admin privileges required.'); document.getElementById('loading').style.display = 'none'; return null; }
+        if (!r.ok) { showError('Failed to load users.'); document.getElementById('loading').style.display = 'none'; return null; }
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data) return;
+        document.getElementById('loading').style.display = 'none';
+        users = data;
+        if (users.length === 0) {
+          document.getElementById('empty').style.display = 'block';
+        } else {
+          document.getElementById('users-table').style.display = 'table';
+          renderTable();
+        }
+      })
+      .catch(function () { showError('Network error — could not load users.'); document.getElementById('loading').style.display = 'none'; });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    var id = btn.dataset.id;
+
+    if (action === 'verify') {
+      apiFetch('/api/admin/users/' + id + '/verify', { method: 'PUT' })
+        .then(function (r) { if (r.ok) loadUsers(); else showError('Failed to verify user.'); });
+    }
+    if (action === 'delete') {
+      if (!confirm('Delete this account? All their data will be permanently removed.')) return;
+      apiFetch('/api/admin/users/' + id, { method: 'DELETE' })
+        .then(function (r) { if (r.ok) loadUsers(); else r.json().then(function (d) { showError(d.error || 'Failed to delete.'); }); });
+    }
+    if (action === 'toggle-admin') {
+      apiFetch('/api/admin/users/' + id + '/toggle-admin', { method: 'PUT' })
+        .then(function (r) { if (r.ok) loadUsers(); else r.json().then(function (d) { showError(d.error || 'Failed.'); }); });
+    }
+  });
+
+  loadUsers();
+</script>
+</body>
+</html>

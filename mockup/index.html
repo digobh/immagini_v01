@@ -962,6 +962,8 @@
     .nav-item:hover:not(.active) { background: #faf9ff; color: #6c5ce7; }
     .nav-icon { width: 20px; height: 20px; margin-bottom: 0; flex-shrink: 0; }
     .nav-icon svg { width: 20px; height: 20px; }
+    /* "More" nav item only needed on mobile; desktop has the gear icon in the header */
+    .nav-settings-item { display: none; }
 
     /* ---- Screen: CSS grid — header full-width, left=content, right=panel cards ---- */
     .screen {
@@ -1305,11 +1307,9 @@
     <div class="navbar">
       <div class="nav-item active" data-nav="home" data-action="show-home"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>Home</div>
       <div class="nav-item" data-nav="insights" data-action="open-insights"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>Insights</div>
-      <div class="nav-item" data-nav="chat" data-action="open-chat"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>Chat</div>
-      <div class="nav-item" data-nav="goals" data-action="open-goals"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg></span>Goals</div>
       <div class="nav-item" data-nav="budget" data-action="open-budget"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 .9-1.5 2-1.5h1c1.3 0 2 .6 2 1.5s-.7 1.4-2 1.6l-1 .2c-1.3.2-2 .7-2 1.7s.7 1.5 2 1.5h1c1.1 0 2-.5 2-1.5"/><path d="M12 6.5v1M12 16v1"/></svg></span>Budget</div>
       <div class="nav-item" data-nav="categories" data-action="open-manage"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg></span>Categories</div>
-      <div class="nav-item" data-nav="faq" data-action="open-faq"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="2.5"/></svg></span>Help</div>
+      <div class="nav-item nav-settings-item" data-nav="settings" data-action="open-settings"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>More</div>
     </div>
 
     <div class="manage-page" id="manage-page" hidden>
@@ -2652,7 +2652,15 @@
   var rescanIdx = 0;
 
   function modalCategoryListHTML(currentCatId, currentSubName) {
-    var html = '<button type="button" class="modal-cat-btn' + (!currentCatId ? ' active' : '') + '" data-action="assign-category" data-cat-id="">Uncategorized</button>';
+    // "+ New category" lives at the TOP so the Add button is always visible
+    var html = '<details class="picker-new-form">' +
+      '<summary>+ New category</summary>' +
+      '<div class="inline-form" style="flex-direction:column;padding:6px 0 10px;gap:6px;">' +
+        '<input type="text" placeholder="Category name" class="modal-new-cat-input" style="width:100%;min-width:0;">' +
+        '<input type="text" placeholder="Subcategory (optional)" class="modal-new-sub-for-cat-input" style="width:100%;min-width:0;">' +
+        '<button type="button" data-action="modal-new-category" style="align-self:flex-start;">Add</button>' +
+      '</div></details>';
+    html += '<button type="button" class="modal-cat-btn' + (!currentCatId ? ' active' : '') + '" data-action="assign-category" data-cat-id="">Uncategorized</button>';
     CATEGORIES.forEach(function (c) {
       var subs = SUBCATEGORIES[c.id] || [];
       var isCurrentCat = c.id === currentCatId;
@@ -2669,9 +2677,6 @@
         '<button type="button" data-action="modal-new-subcategory" data-cat-id="' + c.id + '">Add</button></div></details>';
       html += '</div></details>';
     });
-    html += '<details class="picker-new-form"><summary>+ New category</summary>' +
-      '<div class="inline-form"><input type="text" placeholder="Name" class="modal-new-cat-input">' +
-      '<button type="button" data-action="modal-new-category">Add</button></div></details>';
     return html;
   }
 
@@ -3171,7 +3176,9 @@
       var mncForm = modalNewCatBtn.closest('details.picker-new-form');
       var mncNameInput = mncForm.querySelector('.modal-new-cat-input');
       var mncName = mncNameInput.value.trim();
-      if (!mncName) return;
+      if (!mncName) { mncNameInput.focus(); return; }
+      var mncSubInput = mncForm.querySelector('.modal-new-sub-for-cat-input');
+      var mncSubName = mncSubInput ? mncSubInput.value.trim() : '';
       var mncId = 'cat-' + mncName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       var mncHtml = '<details class="category" id="' + mncId + '"><summary><div class="category-row">' +
         genericCategoryIcon() +
@@ -3183,10 +3190,18 @@
       SUBCATEGORIES[mncId] = [];
       KEYWORDS[mncId] = [];
 
-      if (activeRow) document.getElementById(mncId).querySelector('.category-content').appendChild(activeRow);
+      if (mncSubName) {
+        SUBCATEGORIES[mncId].push(mncSubName);
+        KEYWORDS[mncId].push([]);
+        var mncCatEl = document.getElementById(mncId);
+        var mncSubDetails = findOrCreateSubcategoryDetails(mncCatEl, mncSubName);
+        if (activeRow) mncSubDetails.querySelector('.sub-content').appendChild(activeRow);
+      } else {
+        if (activeRow) document.getElementById(mncId).querySelector('.category-content').appendChild(activeRow);
+      }
       refreshRowBadge(activeRow);
       var mncDesc = activeRow ? descTextOf(activeRow) : '';
-      if (mncDesc && !merchantAlreadyInCategory(mncDesc, mncId)) { showLearnKeywordStep(mncId, null); return; }
+      if (mncDesc && !merchantAlreadyInCategory(mncDesc, mncId)) { showLearnKeywordStep(mncId, mncSubName || null); return; }
       closeCategorizeModal();
       return;
     }
@@ -3626,12 +3641,19 @@
 
     if (e.target.closest('[data-action="open-settings"]')) {
       renderSettingsPage();
-      showOverlay('settings-page', null);
+      showOverlay('settings-page', 'settings');
       return;
     }
     if (e.target.closest('[data-action="close-settings"]')) {
       hideAllOverlays();
       setActiveNav('home');
+      return;
+    }
+    if (e.target.closest('[data-action="do-logout"]')) {
+      if (confirm('Log out of Money Mate?')) {
+        localStorage.removeItem('moneymate_token');
+        window.location.href = '/login';
+      }
       return;
     }
     var themeBtn = e.target.closest('[data-action="apply-theme"]');
@@ -4470,12 +4492,26 @@
       '<div class="settings-row"><span>Export all data</span><span class="settings-value">Coming soon</span></div>' +
       '</div>';
 
+    html += '<div class="settings-section-label" style="margin-top:8px;">Features</div>';
+    html += '<div class="settings-list">' +
+      '<div class="settings-row" data-action="open-chat" style="cursor:pointer;"><span>AI Assistant</span><span class="settings-value" style="color:#6c5ce7;font-weight:600;">Chat ›</span></div>' +
+      '<div class="settings-row" data-action="open-goals" style="cursor:pointer;"><span>Savings Goals</span><span class="settings-value" style="color:#6c5ce7;font-weight:600;">Goals ›</span></div>' +
+      '<div class="settings-row" data-action="open-faq" style="cursor:pointer;"><span>Help &amp; FAQ</span><span class="settings-value" style="color:#6c5ce7;font-weight:600;">Help ›</span></div>' +
+      '</div>';
+
     html += '<div class="settings-section-label" style="margin-top:8px;">About</div>';
     html += '<div class="settings-list">' +
       '<div class="settings-row"><span>App</span><span class="settings-value">Money Mate</span></div>' +
-      '<div class="settings-row"><span>Version</span><span class="settings-value">0.1 (mockup)</span></div>' +
+      '<div class="settings-row"><span>Version</span><span class="settings-value">0.1</span></div>' +
       '<div class="settings-row"><span>Region</span><span class="settings-value">Australia 🇦🇺</span></div>' +
       '</div>';
+
+    html += '<div class="settings-section-label" style="margin-top:8px;">Account</div>';
+    html += '<div class="settings-list">' +
+      '<div class="settings-row" data-action="do-logout" style="cursor:pointer;">' +
+        '<span style="color:#e74c3c;font-weight:600;">Log out</span>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block;flex-shrink:0;"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+      '</div></div>';
 
     document.getElementById('settings-body').innerHTML = html;
   }

@@ -347,17 +347,51 @@
   renderSettingsPage = function () {
     _origRenderSettingsPage();
     var input = document.getElementById('settings-balance-input');
-    if (!input) return;
-    var balEl = document.querySelector('.balance');
-    var current = balEl ? parseFloat(balEl.textContent.replace(/[^0-9.]/g, '')) : 0;
-    if (current > 0) input.value = current.toFixed(2);
+    if (input) {
+      var balEl = document.querySelector('.balance');
+      var current = balEl ? parseFloat(balEl.textContent.replace(/[^0-9.]/g, '')) : 0;
+      if (current > 0) input.value = current.toFixed(2);
+    }
+    // Append admin link if this user is an admin
+    if (IS_ADMIN) {
+      var body = document.getElementById('settings-body');
+      if (body) {
+        var adminSection = document.createElement('div');
+        adminSection.innerHTML =
+          '<div class="settings-section-label" style="margin-top:8px;">Administration</div>' +
+          '<div class="settings-list">' +
+            '<a href="/admin" style="text-decoration:none;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;" class="settings-row">' +
+              '<span>Manage accounts</span>' +
+              '<span class="settings-value" style="color:#6c5ce7;font-weight:600;">Admin ›</span>' +
+            '</a>' +
+          '</div>';
+        body.appendChild(adminSection);
+      }
+    }
   };
 
-  // ── Logout button ─────────────────────────────────────────────────────────────
+  // ── Persist subcategory when a new category+subcategory is created in modal ──
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-action="modal-new-category"]');
+    if (!btn) return;
+    var form = btn.closest('details.picker-new-form');
+    var catInput = form ? form.querySelector('.modal-new-cat-input') : null;
+    var subInput = form ? form.querySelector('.modal-new-sub-for-cat-input') : null;
+    var catName = catInput ? catInput.value.trim() : '';
+    var subName = subInput ? subInput.value.trim() : '';
+    if (!catName || !subName) return;
+    var catId = 'cat-' + catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    apiFetch('/api/subcategories', {
+      method: 'POST',
+      body: JSON.stringify({ category_id: catId, name: subName, keywords: [] })
+    }).catch(function (e) { console.error('subcategory save failed:', e); });
+  });
+
+  // ── Logout button (desktop sidebar only — mobile uses Settings page) ──────────
   function addLogoutButton() {
+    if (!window.matchMedia('(min-width: 760px)').matches) return;
     var navbar = document.querySelector('.navbar');
     if (!navbar) return;
-    // Spacer pushes logout to the bottom of the sidebar on desktop
     var spacer = document.createElement('div');
     spacer.style.cssText = 'flex:1;min-height:8px;';
     navbar.appendChild(spacer);
@@ -393,13 +427,16 @@
     renderMonth();
   }
 
+  var IS_ADMIN = false;
+
   // ── Bootstrap ─────────────────────────────────────────────────────────────────
   apiFetch('/api/auth/me')
     .then(function (r) {
       if (!r.ok) throw new Error('Not authenticated');
       return r.json();
     })
-    .then(function () {
+    .then(function (meData) {
+      IS_ADMIN = !!(meData && meData.user && meData.user.is_admin);
       addLogoutButton();
       // Load saved balance from settings before loading transactions
       return apiFetch('/api/settings').then(function (r) { return r.json(); })
