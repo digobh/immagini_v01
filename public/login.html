@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Immagini — Sign In</title>
+<title>Money Mate — Sign In</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -25,7 +25,7 @@
     padding: 32px 28px 24px;
     text-align: center;
   }
-  .logo { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+  .logo { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
   .tagline { font-size: 13px; color: rgba(255,255,255,.8); margin-top: 4px; }
 
   .tabs {
@@ -81,19 +81,31 @@
   }
   .error-msg.show { display: block; }
 
+  .success-msg {
+    display: none;
+    background: #f0fff4; border: 1px solid #b2dfdb;
+    border-radius: 8px; padding: 14px 16px;
+    font-size: 13px; color: #27ae60; line-height: 1.5;
+    margin-bottom: 16px; text-align: center;
+  }
+  .success-msg.show { display: block; }
+  .success-msg strong { display: block; font-size: 15px; margin-bottom: 4px; }
+
   .switch-hint {
     text-align: center; font-size: 13px; color: #999;
     margin-top: 18px;
   }
   .switch-hint a { color: #6c5ce7; text-decoration: none; font-weight: 600; cursor: pointer; }
   .switch-hint a:hover { text-decoration: underline; }
+
+  .field-note { font-size: 11px; color: #aaa; margin-top: -12px; margin-bottom: 14px; }
 </style>
 </head>
 <body>
 <div class="card">
   <div class="card-head">
-    <div class="logo">Immagini</div>
-    <div class="tagline">Your personal finance tracker</div>
+    <div class="logo">Money Mate</div>
+    <div class="tagline">Your private finance tracker</div>
   </div>
 
   <div class="tabs">
@@ -106,6 +118,7 @@
     <!-- Login panel -->
     <div class="panel active" id="panel-login">
       <div class="error-msg" id="login-error"></div>
+      <div class="success-msg" id="login-success"></div>
       <label for="login-username">Username</label>
       <input type="text" id="login-username" placeholder="your username" autocomplete="username" autocapitalize="none">
       <label for="login-password">Password</label>
@@ -117,14 +130,20 @@
     <!-- Register panel -->
     <div class="panel" id="panel-register">
       <div class="error-msg" id="reg-error"></div>
-      <label for="reg-username">Username</label>
-      <input type="text" id="reg-username" placeholder="choose a username" autocomplete="username" autocapitalize="none">
-      <label for="reg-email">Email <span style="font-weight:400;color:#bbb;">(optional)</span></label>
-      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
-      <label for="reg-password">Password</label>
-      <input type="password" id="reg-password" placeholder="8+ characters" autocomplete="new-password">
-      <button class="btn" id="reg-btn">Create Account</button>
-      <div class="switch-hint">Already have an account? <a data-tab="login">Sign in →</a></div>
+      <div class="success-msg" id="reg-success"></div>
+      <div id="reg-form">
+        <label for="reg-fullname">Full Name</label>
+        <input type="text" id="reg-fullname" placeholder="Your full name" autocomplete="name">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+        <div class="field-note">A verification link will be sent to this address.</div>
+        <label for="reg-username">Username</label>
+        <input type="text" id="reg-username" placeholder="choose a username" autocomplete="username" autocapitalize="none">
+        <label for="reg-password">Password</label>
+        <input type="password" id="reg-password" placeholder="8+ characters" autocomplete="new-password">
+        <button class="btn" id="reg-btn">Create Account</button>
+        <div class="switch-hint">Already have an account? <a data-tab="login">Sign in →</a></div>
+      </div>
     </div>
 
   </div>
@@ -132,8 +151,16 @@
 
 <script>
   // If already logged in, go straight to the app
-  if (localStorage.getItem('immagini_token')) {
+  if (localStorage.getItem('moneymate_token')) {
     window.location.replace('/app');
+  }
+
+  // Check for ?verified=1 query param (redirected from email verification link)
+  if (window.location.search.indexOf('verified=1') !== -1) {
+    document.getElementById('login-success').innerHTML =
+      '<strong>Email verified!</strong>You can now sign in with your credentials.';
+    document.getElementById('login-success').classList.add('show');
+    history.replaceState({}, '', '/login');
   }
 
   // Tab switching
@@ -146,7 +173,7 @@
       document.querySelectorAll('.panel').forEach(function (p) {
         p.classList.toggle('active', p.id === 'panel-' + target);
       });
-      document.querySelectorAll('.error-msg').forEach(function (e) { e.classList.remove('show'); });
+      document.querySelectorAll('.error-msg, .success-msg').forEach(function (e) { e.classList.remove('show'); });
     });
   });
 
@@ -176,7 +203,7 @@
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
     .then(function (res) {
       if (!res.ok) { showError('login-error', res.data.error || 'Login failed.'); btn.disabled = false; btn.textContent = 'Sign In'; return; }
-      localStorage.setItem('immagini_token', res.data.token);
+      localStorage.setItem('moneymate_token', res.data.token);
       window.location.replace('/app');
     })
     .catch(function () { showError('login-error', 'Network error — please try again.'); btn.disabled = false; btn.textContent = 'Sign In'; });
@@ -192,9 +219,13 @@
   // Register
   document.getElementById('reg-btn').addEventListener('click', function () {
     clearError('reg-error');
-    var username = document.getElementById('reg-username').value.trim();
-    var email    = document.getElementById('reg-email').value.trim();
-    var password = document.getElementById('reg-password').value;
+    var fullname  = document.getElementById('reg-fullname').value.trim();
+    var email     = document.getElementById('reg-email').value.trim();
+    var username  = document.getElementById('reg-username').value.trim();
+    var password  = document.getElementById('reg-password').value;
+    if (!fullname) { showError('reg-error', 'Please enter your full name.'); return; }
+    if (!email) { showError('reg-error', 'Please enter your email address.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('reg-error', 'Please enter a valid email address.'); return; }
     if (!username) { showError('reg-error', 'Please choose a username.'); return; }
     if (username.length < 3) { showError('reg-error', 'Username must be at least 3 characters.'); return; }
     if (!password) { showError('reg-error', 'Please choose a password.'); return; }
@@ -204,18 +235,21 @@
     fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username, email: email || null, password: password })
+      body: JSON.stringify({ full_name: fullname, username: username, email: email, password: password })
     })
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
     .then(function (res) {
       if (!res.ok) { showError('reg-error', res.data.error || 'Registration failed.'); btn.disabled = false; btn.textContent = 'Create Account'; return; }
-      localStorage.setItem('immagini_token', res.data.token);
-      window.location.replace('/app');
+      // Hide the form, show success message
+      document.getElementById('reg-form').style.display = 'none';
+      var suc = document.getElementById('reg-success');
+      suc.innerHTML = '<strong>Check your email!</strong>We sent a verification link to <em>' + email + '</em>. Click it to activate your account.';
+      suc.classList.add('show');
     })
     .catch(function () { showError('reg-error', 'Network error — please try again.'); btn.disabled = false; btn.textContent = 'Create Account'; });
   });
 
-  ['reg-username','reg-email','reg-password'].forEach(function (id) {
+  ['reg-fullname','reg-email','reg-username','reg-password'].forEach(function (id) {
     document.getElementById(id).addEventListener('keydown', function (e) {
       if (e.key === 'Enter') document.getElementById('reg-btn').click();
     });

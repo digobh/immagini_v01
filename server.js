@@ -6,11 +6,23 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'immagini-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'moneymate-dev-secret-change-in-production';
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 const DATA_DIR = path.join(__dirname, 'data');
+
+// Email transport: real SMTP when env vars are set, console-only in dev
+const mailer = (process.env.SMTP_HOST)
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    })
+  : { sendMail: (opts) => { console.log('\n[DEV EMAIL] To:', opts.to, '\nSubject:', opts.subject, '\n', opts.text || opts.html); return Promise.resolve({ messageId: 'dev' }); } };
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -21,11 +33,15 @@ db.pragma('foreign_keys = ON');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    username      TEXT    UNIQUE NOT NULL COLLATE NOCASE,
-    email         TEXT    UNIQUE COLLATE NOCASE,
-    password_hash TEXT    NOT NULL,
-    created_at    TEXT    DEFAULT (datetime('now'))
+    id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+    username             TEXT    UNIQUE NOT NULL COLLATE NOCASE,
+    full_name            TEXT,
+    email                TEXT    UNIQUE COLLATE NOCASE,
+    password_hash        TEXT    NOT NULL,
+    email_verified       INTEGER DEFAULT 0,
+    email_verify_token   TEXT,
+    email_verify_expires TEXT,
+    created_at           TEXT    DEFAULT (datetime('now'))
   );
 
   CREATE TABLE IF NOT EXISTS imports (
@@ -85,8 +101,16 @@ db.exec(`
   );
 `);
 
-// Migrate: add balance column to imports if not present
+// Schema migrations
 try { db.exec('ALTER TABLE imports ADD COLUMN balance REAL'); } catch (_) {}
+try { db.exec('ALTER TABLE users ADD COLUMN full_name TEXT'); } catch (_) {}
+try {
+  db.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0');
+  // Pre-existing users are considered verified (they registered before verification existed)
+  db.exec('UPDATE users SET email_verified=1 WHERE email_verified IS NULL OR email_verified=0');
+} catch (_) {}
+try { db.exec('ALTER TABLE users ADD COLUMN email_verify_token TEXT'); } catch (_) {}
+try { db.exec('ALTER TABLE users ADD COLUMN email_verify_expires TEXT'); } catch (_) {}
 
 db.exec(`
 
@@ -126,23 +150,51 @@ function requireAuth(req, res, next) {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
-  const { username, password, email } = req.body || {};
-  if (!username || !password) return res.status(400).json({ error: 'Username and password are required' });
+  const { username, password, email, full_name } = req.body || {};
+  if (!full_name || !full_name.trim()) return res.status(400).json({ error: 'Full name is required' });
+  if (!email || !email.trim()) return res.status(400).json({ error: 'Email is required' });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).json({ error: 'Please enter a valid email address' });
+  if (!username || !username.trim()) return res.status(400).json({ error: 'Username is required' });
   if (username.trim().length < 3) return res.status(400).json({ error: 'Username must be at least 3 characters' });
-  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  if (!password || password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
   try {
     const hash = await bcrypt.hash(password, 12);
+    const verifyToken = crypto.randomBytes(32).toString('hex');
+    const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
     const user = db.prepare(
-      'INSERT INTO users (username, email, password_hash) VALUES (?,?,?) RETURNING id, username'
-    ).get(username.trim(), email?.trim() || null, hash);
+      `INSERT INTO users (username, full_name, email, password_hash, email_verified, email_verify_token, email_verify_expires)
+       VALUES (?,?,?,?,0,?,?) RETURNING id, username`
+    ).get(username.trim(), full_name.trim(), email.trim().toLowerCase(), hash, verifyToken, verifyExpires);
     db.prepare('INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)').run(user.id);
-    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { id: user.id, username: user.username } });
+
+    const verifyUrl = `${APP_URL}/api/auth/verify-email?token=${verifyToken}`;
+    await mailer.sendMail({
+      from: process.env.SMTP_FROM || 'Money Mate <noreply@moneymate.app>',
+      to: email.trim(),
+      subject: 'Verify your Money Mate account',
+      text: `Hi ${full_name.trim()},\n\nThanks for signing up to Money Mate!\n\nPlease verify your email address by clicking the link below:\n\n${verifyUrl}\n\nThis link expires in 24 hours.\n\nIf you didn't create an account, you can ignore this email.\n\nMoney Mate Team`,
+      html: `<p>Hi ${full_name.trim()},</p><p>Thanks for signing up to <strong>Money Mate</strong>!</p><p>Please verify your email address by clicking the link below:</p><p><a href="${verifyUrl}" style="display:inline-block;background:#6c5ce7;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;">Verify Email</a></p><p>This link expires in 24 hours.</p><p>If you didn't create an account, you can ignore this email.</p>`
+    });
+
+    res.json({ ok: true, message: 'Account created — please check your email to verify.' });
   } catch (e) {
-    if (e.message.includes('UNIQUE')) return res.status(409).json({ error: 'Username already taken' });
+    if (e.message && e.message.includes('UNIQUE')) {
+      if (e.message.toLowerCase().includes('email')) return res.status(409).json({ error: 'An account with this email already exists' });
+      return res.status(409).json({ error: 'Username already taken' });
+    }
     console.error(e);
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ error: 'Registration failed — please try again' });
   }
+});
+
+app.get('/api/auth/verify-email', (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).send('Invalid verification link.');
+  const user = db.prepare('SELECT id, email_verify_expires FROM users WHERE email_verify_token=?').get(token);
+  if (!user) return res.status(400).send('Verification link is invalid or has already been used.');
+  if (new Date(user.email_verify_expires) < new Date()) return res.status(400).send('Verification link has expired. Please register again.');
+  db.prepare('UPDATE users SET email_verified=1, email_verify_token=NULL, email_verify_expires=NULL WHERE id=?').run(user.id);
+  res.redirect('/login?verified=1');
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -152,6 +204,7 @@ app.post('/api/auth/login', async (req, res) => {
   if (!user) return res.status(401).json({ error: 'Invalid username or password' });
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'Invalid username or password' });
+  if (!user.email_verified) return res.status(403).json({ error: 'Please verify your email before signing in. Check your inbox for the verification link.' });
   const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '30d' });
   res.json({ token, user: { id: user.id, username: user.username } });
 });
@@ -448,7 +501,7 @@ app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'log
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n✅  Immagini running at http://localhost:${PORT}`);
+  console.log(`\n✅  Money Mate running at http://localhost:${PORT}`);
   console.log(`    App    → http://localhost:${PORT}/app`);
   console.log(`    Login  → http://localhost:${PORT}/login`);
   console.log('\n📡  To share with others while testing:');

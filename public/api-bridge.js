@@ -1,10 +1,10 @@
-// ===== Immagini API Bridge =====
+// ===== Money Mate API Bridge =====
 // Injected by server before the closing script tag of mockup/index.html.
 // Shares the same script scope as the mockup — all mockup vars and functions
 // are accessible here. Overrides key functions to add backend persistence.
 
 (function () {
-  var token = localStorage.getItem('immagini_token');
+  var token = localStorage.getItem('moneymate_token');
   if (!token) { window.location.replace('/login'); return; }
 
   // ── Authenticated fetch helper ────────────────────────────────────────────────
@@ -374,8 +374,8 @@
         '</svg>' +
       '</span>Logout';
     btn.addEventListener('click', function () {
-      if (confirm('Log out of Immagini?')) {
-        localStorage.removeItem('immagini_token');
+      if (confirm('Log out of Money Mate?')) {
+        localStorage.removeItem('moneymate_token');
         window.location.href = '/login';
       }
     });
@@ -420,7 +420,7 @@
         });
     })
     .catch(function () {
-      localStorage.removeItem('immagini_token');
+      localStorage.removeItem('moneymate_token');
       window.location.replace('/login');
     });
 
