@@ -7,17 +7,29 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5fa; color: #1a1a2e; min-height: 100vh; }
-  header {
-    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-    padding: 18px 24px; display: flex; align-items: center; justify-content: space-between;
-  }
+  header { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
   header h1 { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
   header a { color: rgba(255,255,255,.8); font-size: 13px; text-decoration: none; }
   header a:hover { color: #fff; }
-  .container { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
-  .page-title { font-size: 22px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
-  .page-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+  /* Tabs */
+  .tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; padding: 0 24px; }
+  .tab-btn { padding: 14px 20px; font-size: 14px; font-weight: 600; color: #888; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab-btn.active { color: #6c5ce7; border-bottom-color: #6c5ce7; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+  .page-title { font-size: 20px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+
   .error-banner { background: #fff5f5; border: 1px solid #f5c6cb; border-radius: 10px; padding: 12px 16px; color: #c0392b; font-size: 13px; margin-bottom: 16px; display: none; }
+  .success-banner { background: #f0fff4; border: 1px solid #b2dfdb; border-radius: 10px; padding: 12px 16px; color: #229954; font-size: 13px; margin-bottom: 16px; display: none; }
+
+  /* Action bar */
+  .action-bar { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+  .btn-primary { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: #fff; border: none; border-radius: 10px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-primary:hover { opacity: .9; }
+
+  /* Table card */
   .card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(108,92,231,.07); overflow: hidden; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead th { background: #f8f7ff; padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #888; border-bottom: 1px solid #eeebff; }
@@ -36,13 +48,64 @@
   .btn-delete:hover { background: #fde8e8; }
   .btn-admin { background: #e9e6ff; color: #6c5ce7; }
   .btn-admin:hover { background: #d5d0ff; }
+  .btn-detail { background: #f5f5f8; color: #444; }
+  .btn-detail:hover { background: #eee; }
   .empty { padding: 40px; text-align: center; color: #aaa; font-size: 14px; }
   .loading { padding: 40px; text-align: center; color: #aaa; font-size: 14px; }
-  .name-cell { font-weight: 600; color: #1a1a2e; }
+  .name-cell { font-weight: 600; color: #1a1a2e; cursor: pointer; }
+  .name-cell:hover { color: #6c5ce7; text-decoration: underline; }
   .email-cell { color: #666; font-size: 12px; }
-  @media (max-width: 600px) {
+  .phone-cell { color: #888; font-size: 11px; }
+
+  /* Tab panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Newsletter form */
+  .newsletter-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(108,92,231,.07); padding: 24px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; letter-spacing: .02em; }
+  .form-group input, .form-group textarea { width: 100%; border: 1.5px solid #e8e8ef; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #1a1a1a; background: #fafafe; font-family: inherit; outline: none; }
+  .form-group input:focus, .form-group textarea:focus { border-color: #6c5ce7; background: #fff; }
+  .form-group textarea { min-height: 180px; resize: vertical; line-height: 1.5; }
+  .newsletter-meta { font-size: 12px; color: #999; margin-bottom: 18px; padding: 10px 14px; background: #f8f7ff; border-radius: 8px; border: 1px solid #eeebff; }
+  .newsletter-meta strong { color: #6c5ce7; }
+
+  /* Modal overlay */
+  .modal-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); }
+  .modal-overlay[hidden] { display: none; }
+  .modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 18px; font-weight: 800; color: #1a1a2e; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+  .modal-row { display: flex; gap: 12px; }
+  .modal-row .form-group { flex: 1; }
+  .modal-footer-btns { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-cancel { border: 1.5px solid #ddd; background: #f7f8fc; color: #555; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; flex: 1; }
+  .btn-cancel:hover { background: #eee; }
+  .btn-submit { flex: 2; background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: #fff; border: none; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-submit:hover { opacity: .9; }
+  .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* Detail panel */
+  .detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 360px; background: #fff; box-shadow: -4px 0 24px rgba(0,0,0,0.12); z-index: 90; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .25s ease; }
+  .detail-panel.open { transform: translateX(0); }
+  .detail-header { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); padding: 20px 20px 18px; flex-shrink: 0; }
+  .detail-name { font-size: 18px; font-weight: 800; color: #fff; }
+  .detail-email { font-size: 13px; color: rgba(255,255,255,.8); margin-top: 3px; }
+  .detail-close { position: absolute; top: 14px; right: 16px; background: rgba(255,255,255,.18); border: none; color: #fff; width: 30px; height: 30px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .detail-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+  .detail-row { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid #f5f5f8; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #bbb; margin-bottom: 3px; }
+  .detail-value { font-size: 14px; color: #1a1a2e; font-weight: 500; }
+  .detail-value.empty { color: #ccc; font-style: italic; }
+  .detail-actions { flex-shrink: 0; padding: 16px 20px; border-top: 1px solid #f0f0f3; display: flex; gap: 8px; flex-wrap: wrap; }
+  .detail-backdrop { position: fixed; inset: 0; z-index: 89; }
+  .detail-backdrop[hidden] { display: none; }
+
+  @media (max-width: 640px) {
     thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
-    .btn-sm { padding: 5px 8px; font-size: 11px; }
+    .detail-panel { width: 100%; }
   }
 </style>
 </head>
@@ -53,27 +116,137 @@
   <a href="/app">← Back to App</a>
 </header>
 
+<div class="tabs">
+  <button class="tab-btn active" data-tab="users">Users</button>
+  <button class="tab-btn" data-tab="newsletter">Newsletter</button>
+</div>
+
 <div class="container">
-  <div class="page-title">Account Management</div>
-  <div class="page-sub">Manage all registered accounts.</div>
-
   <div class="error-banner" id="error-banner"></div>
+  <div class="success-banner" id="success-banner"></div>
 
-  <div class="card">
-    <div class="loading" id="loading">Loading accounts…</div>
-    <table id="users-table" style="display:none;">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Status</th>
-          <th>Joined</th>
-          <th>ID</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="users-body"></tbody>
-    </table>
-    <div class="empty" id="empty" style="display:none;">No accounts found.</div>
+  <!-- Users panel -->
+  <div class="tab-panel active" id="panel-users">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div>
+        <div class="page-title">Account Management</div>
+        <div class="page-sub">Manage all registered accounts.</div>
+      </div>
+      <button class="btn-primary" id="create-user-btn">+ Create Account</button>
+    </div>
+
+    <div class="card">
+      <div class="loading" id="loading">Loading accounts…</div>
+      <table id="users-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-body"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none;">No accounts found.</div>
+    </div>
+  </div>
+
+  <!-- Newsletter panel -->
+  <div class="tab-panel" id="panel-newsletter">
+    <div class="page-title">Send Newsletter</div>
+    <div class="page-sub" style="margin-bottom:20px;">Compose and send an email to all verified members.</div>
+
+    <div class="newsletter-card">
+      <div class="newsletter-meta" id="newsletter-meta">Loading recipient count…</div>
+      <div class="form-group">
+        <label for="nl-subject">Subject</label>
+        <input type="text" id="nl-subject" placeholder="e.g. What's new in Money Mate">
+      </div>
+      <div class="form-group">
+        <label for="nl-body">Message</label>
+        <textarea id="nl-body" placeholder="Write your message here. Each line becomes a paragraph."></textarea>
+      </div>
+      <div id="nl-preview" style="display:none;margin-bottom:16px;border:1px solid #eeebff;border-radius:10px;padding:16px;background:#f8f7ff;">
+        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Preview</div>
+        <div id="nl-preview-content" style="font-size:14px;color:#1a1a2e;line-height:1.6;"></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-sm btn-detail" id="nl-preview-btn" style="padding:9px 16px;font-size:13px;">Preview</button>
+        <button class="btn-primary" id="nl-send-btn" style="flex:1;">Send to All Members</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User detail panel -->
+<div class="detail-backdrop" id="detail-backdrop" hidden></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-header" style="position:relative;">
+    <button class="detail-close" id="detail-close-btn">×</button>
+    <div class="detail-name" id="dp-name">—</div>
+    <div class="detail-email" id="dp-email">—</div>
+  </div>
+  <div class="detail-body">
+    <div class="detail-row">
+      <div class="detail-label">Phone</div>
+      <div class="detail-value" id="dp-phone">—</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Email Status</div>
+      <div class="detail-value" id="dp-verified">—</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Role</div>
+      <div class="detail-value" id="dp-role">—</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Member Since</div>
+      <div class="detail-value" id="dp-joined">—</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">User ID</div>
+      <div class="detail-value" id="dp-id">—</div>
+    </div>
+  </div>
+  <div class="detail-actions" id="dp-actions"></div>
+</div>
+
+<!-- Create Account modal -->
+<div class="modal-overlay" id="create-modal" hidden>
+  <div class="modal-box">
+    <div class="modal-title">Create Account</div>
+    <div class="modal-sub">Admin-created accounts are pre-verified and can log in immediately.</div>
+    <div class="error-banner" id="create-error" style="display:none;margin-bottom:14px;"></div>
+    <div class="modal-row">
+      <div class="form-group">
+        <label for="c-fullname">Full Name *</label>
+        <input type="text" id="c-fullname" placeholder="Jane Smith">
+      </div>
+      <div class="form-group">
+        <label for="c-phone">Phone</label>
+        <input type="tel" id="c-phone" placeholder="+61 4XX XXX XXX">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="c-email">Email *</label>
+      <input type="email" id="c-email" placeholder="jane@example.com">
+    </div>
+    <div class="form-group">
+      <label for="c-password">Temporary Password *</label>
+      <input type="password" id="c-password" placeholder="8+ characters">
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="c-is-admin" style="width:auto;margin:0;">
+        Grant admin privileges
+      </label>
+    </div>
+    <div class="modal-footer-btns">
+      <button class="btn-cancel" id="create-cancel-btn">Cancel</button>
+      <button class="btn-submit" id="create-submit-btn">Create Account</button>
+    </div>
   </div>
 </div>
 
@@ -91,6 +264,19 @@
     var el = document.getElementById('error-banner');
     el.textContent = msg;
     el.style.display = 'block';
+    document.getElementById('success-banner').style.display = 'none';
+  }
+
+  function showSuccess(msg) {
+    var el = document.getElementById('success-banner');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('error-banner').style.display = 'none';
+    setTimeout(function(){ el.style.display = 'none'; }, 4000);
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   function formatDate(s) {
@@ -98,12 +284,25 @@
     return new Date(s).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
+  // ── Tab switching ──────────────────────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      document.getElementById('error-banner').style.display = 'none';
+      document.getElementById('success-banner').style.display = 'none';
+    });
+  });
+
+  // ── Users ─────────────────────────────────────────────────────────────────────
   var users = [];
 
   function renderTable() {
     var body = document.getElementById('users-body');
     body.innerHTML = '';
-    users.forEach(function (u) {
+    users.forEach(function(u) {
       var tr = document.createElement('tr');
       var verifiedBadge = u.email_verified
         ? '<span class="badge badge-verified">Verified</span>'
@@ -120,7 +319,9 @@
       actions += '</div>';
 
       tr.innerHTML =
-        '<td><div class="name-cell">' + escHtml(u.full_name || '—') + '</div><div class="email-cell">' + escHtml(u.email || '—') + '</div></td>' +
+        '<td><div class="name-cell" data-action="view-detail" data-id="' + u.id + '">' + esc(u.full_name || '—') + '</div>' +
+        '<div class="email-cell">' + esc(u.email || '—') + '</div>' +
+        (u.phone ? '<div class="phone-cell">' + esc(u.phone) + '</div>' : '') + '</td>' +
         '<td>' + verifiedBadge + adminBadge + '</td>' +
         '<td>' + formatDate(u.created_at) + '</td>' +
         '<td style="color:#bbb;font-size:11px;">#' + u.id + '</td>' +
@@ -129,18 +330,14 @@
     });
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
   function loadUsers() {
     apiFetch('/api/admin/users')
-      .then(function (r) {
+      .then(function(r) {
         if (r.status === 403) { showError('Access denied — admin privileges required.'); document.getElementById('loading').style.display = 'none'; return null; }
         if (!r.ok) { showError('Failed to load users.'); document.getElementById('loading').style.display = 'none'; return null; }
         return r.json();
       })
-      .then(function (data) {
+      .then(function(data) {
         if (!data) return;
         document.getElementById('loading').style.display = 'none';
         users = data;
@@ -150,29 +347,202 @@
           document.getElementById('users-table').style.display = 'table';
           renderTable();
         }
+        // Update newsletter meta
+        var verified = users.filter(function(u){ return u.email_verified; }).length;
+        document.getElementById('newsletter-meta').innerHTML =
+          'Sending to <strong>' + verified + '</strong> verified member' + (verified !== 1 ? 's' : '') +
+          ' out of ' + users.length + ' total accounts.';
       })
-      .catch(function () { showError('Network error — could not load users.'); document.getElementById('loading').style.display = 'none'; });
+      .catch(function() { showError('Network error — could not load users.'); document.getElementById('loading').style.display = 'none'; });
   }
 
-  document.addEventListener('click', function (e) {
+  // ── User detail panel ─────────────────────────────────────────────────────────
+  var currentDetailId = null;
+
+  function openDetail(id) {
+    var u = users.filter(function(x){ return x.id === id; })[0];
+    if (!u) return;
+    currentDetailId = id;
+    document.getElementById('dp-name').textContent = u.full_name || '(no name)';
+    document.getElementById('dp-email').textContent = u.email || '';
+    document.getElementById('dp-phone').textContent = u.phone || '—';
+    document.getElementById('dp-phone').className = 'detail-value' + (u.phone ? '' : ' empty');
+    document.getElementById('dp-verified').textContent = u.email_verified ? '✓ Verified' : '⚠ Not verified';
+    document.getElementById('dp-role').textContent = u.is_admin ? 'Administrator' : 'Member';
+    document.getElementById('dp-joined').textContent = formatDate(u.created_at);
+    document.getElementById('dp-id').textContent = '#' + u.id;
+
+    var actionsEl = document.getElementById('dp-actions');
+    actionsEl.innerHTML = '';
+    if (!u.email_verified) {
+      var vBtn = document.createElement('button');
+      vBtn.className = 'btn-sm btn-verify';
+      vBtn.style.cssText = 'padding:8px 14px;font-size:12px;';
+      vBtn.textContent = 'Verify email';
+      vBtn.addEventListener('click', function(){ doVerify(id); });
+      actionsEl.appendChild(vBtn);
+    }
+    var aBtn = document.createElement('button');
+    aBtn.className = 'btn-sm btn-admin';
+    aBtn.style.cssText = 'padding:8px 14px;font-size:12px;';
+    aBtn.textContent = u.is_admin ? 'Remove admin' : 'Make admin';
+    aBtn.addEventListener('click', function(){ doToggleAdmin(id); });
+    actionsEl.appendChild(aBtn);
+
+    var dBtn = document.createElement('button');
+    dBtn.className = 'btn-sm btn-delete';
+    dBtn.style.cssText = 'padding:8px 14px;font-size:12px;';
+    dBtn.textContent = 'Delete account';
+    dBtn.addEventListener('click', function(){ doDelete(id); });
+    actionsEl.appendChild(dBtn);
+
+    document.getElementById('detail-panel').classList.add('open');
+    document.getElementById('detail-backdrop').hidden = false;
+  }
+
+  function closeDetail() {
+    document.getElementById('detail-panel').classList.remove('open');
+    document.getElementById('detail-backdrop').hidden = true;
+    currentDetailId = null;
+  }
+
+  document.getElementById('detail-close-btn').addEventListener('click', closeDetail);
+  document.getElementById('detail-backdrop').addEventListener('click', closeDetail);
+
+  // ── Actions ───────────────────────────────────────────────────────────────────
+  function doVerify(id) {
+    apiFetch('/api/admin/users/' + id + '/verify', { method: 'PUT' })
+      .then(function(r) {
+        if (r.ok) { loadUsers(); closeDetail(); showSuccess('User verified.'); }
+        else showError('Failed to verify user.');
+      });
+  }
+
+  function doDelete(id) {
+    if (!confirm('Delete this account? All their data will be permanently removed.')) return;
+    apiFetch('/api/admin/users/' + id, { method: 'DELETE' })
+      .then(function(r) {
+        if (r.ok) { loadUsers(); closeDetail(); showSuccess('Account deleted.'); }
+        else r.json().then(function(d){ showError(d.error || 'Failed to delete.'); });
+      });
+  }
+
+  function doToggleAdmin(id) {
+    apiFetch('/api/admin/users/' + id + '/toggle-admin', { method: 'PUT' })
+      .then(function(r) {
+        if (r.ok) { loadUsers(); closeDetail(); }
+        else r.json().then(function(d){ showError(d.error || 'Failed.'); });
+      });
+  }
+
+  document.addEventListener('click', function(e) {
     var btn = e.target.closest('[data-action]');
     if (!btn) return;
     var action = btn.dataset.action;
-    var id = btn.dataset.id;
+    var id = parseInt(btn.dataset.id);
 
-    if (action === 'verify') {
-      apiFetch('/api/admin/users/' + id + '/verify', { method: 'PUT' })
-        .then(function (r) { if (r.ok) loadUsers(); else showError('Failed to verify user.'); });
-    }
-    if (action === 'delete') {
-      if (!confirm('Delete this account? All their data will be permanently removed.')) return;
-      apiFetch('/api/admin/users/' + id, { method: 'DELETE' })
-        .then(function (r) { if (r.ok) loadUsers(); else r.json().then(function (d) { showError(d.error || 'Failed to delete.'); }); });
-    }
-    if (action === 'toggle-admin') {
-      apiFetch('/api/admin/users/' + id + '/toggle-admin', { method: 'PUT' })
-        .then(function (r) { if (r.ok) loadUsers(); else r.json().then(function (d) { showError(d.error || 'Failed.'); }); });
-    }
+    if (action === 'view-detail') { openDetail(id); return; }
+    if (action === 'verify') { doVerify(id); return; }
+    if (action === 'delete') { doDelete(id); return; }
+    if (action === 'toggle-admin') { doToggleAdmin(id); return; }
+  });
+
+  // ── Create account modal ──────────────────────────────────────────────────────
+  function openCreateModal() {
+    document.getElementById('c-fullname').value = '';
+    document.getElementById('c-email').value = '';
+    document.getElementById('c-phone').value = '';
+    document.getElementById('c-password').value = '';
+    document.getElementById('c-is-admin').checked = false;
+    document.getElementById('create-error').style.display = 'none';
+    document.getElementById('create-submit-btn').disabled = false;
+    document.getElementById('create-submit-btn').textContent = 'Create Account';
+    document.getElementById('create-modal').hidden = false;
+  }
+
+  document.getElementById('create-user-btn').addEventListener('click', openCreateModal);
+  document.getElementById('create-cancel-btn').addEventListener('click', function(){
+    document.getElementById('create-modal').hidden = true;
+  });
+
+  document.getElementById('create-modal').addEventListener('click', function(e){
+    if (e.target === document.getElementById('create-modal'))
+      document.getElementById('create-modal').hidden = true;
+  });
+
+  document.getElementById('create-submit-btn').addEventListener('click', function() {
+    var fullName = document.getElementById('c-fullname').value.trim();
+    var email    = document.getElementById('c-email').value.trim();
+    var phone    = document.getElementById('c-phone').value.trim();
+    var password = document.getElementById('c-password').value;
+    var isAdmin  = document.getElementById('c-is-admin').checked;
+    var errEl    = document.getElementById('create-error');
+
+    if (!fullName) { errEl.textContent = 'Full name is required.'; errEl.style.display = 'block'; return; }
+    if (!email)    { errEl.textContent = 'Email is required.'; errEl.style.display = 'block'; return; }
+    if (!password || password.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+
+    var btn = document.getElementById('create-submit-btn');
+    btn.disabled = true; btn.textContent = 'Creating…';
+
+    apiFetch('/api/admin/users', {
+      method: 'POST',
+      body: JSON.stringify({ full_name: fullName, email: email, phone: phone || undefined, password: password, is_admin: isAdmin })
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      if (!res.ok) {
+        errEl.textContent = res.data.error || 'Failed to create account.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Create Account';
+        return;
+      }
+      document.getElementById('create-modal').hidden = true;
+      loadUsers();
+      showSuccess('Account created for ' + email + '.');
+    })
+    .catch(function(){ errEl.textContent = 'Network error — please try again.'; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Create Account'; });
+  });
+
+  // ── Newsletter ─────────────────────────────────────────────────────────────────
+  document.getElementById('nl-preview-btn').addEventListener('click', function() {
+    var subject = document.getElementById('nl-subject').value.trim();
+    var body    = document.getElementById('nl-body').value.trim();
+    var previewEl = document.getElementById('nl-preview');
+    var contentEl = document.getElementById('nl-preview-content');
+
+    if (!subject && !body) { previewEl.style.display = 'none'; return; }
+    contentEl.innerHTML = '<strong style="font-size:16px;">' + esc(subject || '(no subject)') + '</strong><hr style="margin:10px 0;border:none;border-top:1px solid #eee;">' +
+      (body || '').split('\n').filter(Boolean).map(function(l){ return '<p>' + esc(l) + '</p>'; }).join('');
+    previewEl.style.display = 'block';
+  });
+
+  document.getElementById('nl-send-btn').addEventListener('click', function() {
+    var subject = document.getElementById('nl-subject').value.trim();
+    var body    = document.getElementById('nl-body').value.trim();
+    if (!subject) { showError('Please enter a subject.'); return; }
+    if (!body)    { showError('Please enter a message body.'); return; }
+
+    var verified = users.filter(function(u){ return u.email_verified; }).length;
+    if (!confirm('Send this newsletter to ' + verified + ' verified member' + (verified !== 1 ? 's' : '') + '?')) return;
+
+    var btn = document.getElementById('nl-send-btn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+
+    apiFetch('/api/admin/newsletter', {
+      method: 'POST',
+      body: JSON.stringify({ subject: subject, body: body })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      btn.disabled = false; btn.textContent = 'Send to All Members';
+      if (data.error) { showError(data.error); return; }
+      showSuccess('Newsletter sent! ' + data.sent + ' delivered' + (data.failed ? ', ' + data.failed + ' failed.' : '.'));
+      document.getElementById('nl-subject').value = '';
+      document.getElementById('nl-body').value = '';
+      document.getElementById('nl-preview').style.display = 'none';
+    })
+    .catch(function(){ btn.disabled = false; btn.textContent = 'Send to All Members'; showError('Network error — please try again.'); });
   });
 
   loadUsers();

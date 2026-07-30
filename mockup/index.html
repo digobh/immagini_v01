@@ -80,6 +80,22 @@
   .legend .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
   .legend .pct { margin-left: auto; color: #999; font-weight: 600; }
 
+  /* ---------- Month money-in/out stats bar ---------- */
+  .month-io-bar { display: none; gap: 10px; margin-top: 12px; }
+  .month-io-bar.visible { display: flex; }
+  .io-stat { flex: 1; background: #fff; border-radius: 12px; padding: 11px 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .io-label { font-size: 10px; color: #bbb; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
+  .io-amount { font-size: 16px; font-weight: 800; }
+  .io-in .io-amount { color: #27ae60; }
+  .io-out .io-amount { color: #e74c3c; }
+  .phone.theme-dark .io-stat { background: #1e1d30; }
+  .phone.theme-dark .io-label { color: #555; }
+  .phone.theme-dark .io-in .io-amount { color: #55efc4; }
+  .phone.theme-dark .io-out .io-amount { color: #ff6b6b; }
+
+  /* Floating pie tooltip (desktop only) */
+  #pie-tooltip { position: fixed; background: rgba(26,26,46,0.88); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; pointer-events: none; display: none; z-index: 9999; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
   /* ---------- Categories via native <details> (no JS required to open) ---------- */
   details.category { background: #fff; border-radius: 14px; margin-bottom: 10px; border: 1px solid #f0f0f3; overflow: hidden; }
   summary { list-style: none; cursor: pointer; }
@@ -613,10 +629,22 @@
   .import-success h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
   .import-success p { font-size: 13px; color: #999; line-height: 1.5; }
 
-  /* ---------- Settings button (top-right of header) ---------- */
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .settings-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
+  /* ---------- Settings / header action buttons ---------- */
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+  .header-btn-group { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .settings-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 32px; height: 32px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; position: relative; }
+  .settings-btn:hover { background: rgba(255,255,255,0.28); }
   .settings-btn svg { width: 17px; height: 17px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  /* Desktop tooltip for header buttons */
+  @media (min-width: 900px) {
+    .settings-btn[title]:hover::after {
+      content: attr(title);
+      position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.75); color: #fff; font-size: 11px; font-weight: 600;
+      padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; z-index: 10;
+    }
+    .header-top { align-items: center; }
+  }
 
   /* ---------- Category icon picker (in Manage categories) ---------- */
   .manage-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -1043,6 +1071,14 @@
 
     /* ---- Manage/categories page: 2-col card grid ---- */
     #manage-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; padding: 14px 16px; }
+
+    /* ---- Pie chart: larger on desktop ---- */
+    .pie-card svg { width: 200px; height: 200px; }
+    .pie-card { gap: 24px; padding: 20px; width: 100%; resize: horizontal; overflow: auto; min-width: 340px; max-width: 100%; }
+    .month-io-bar { margin-top: 14px; }
+    .io-stat { padding: 14px 18px; }
+    .io-label { font-size: 11px; }
+    .io-amount { font-size: 20px; }
   }
 </style>
 </head>
@@ -1056,13 +1092,18 @@
       <div class="header">
         <div class="header-top">
           <div>
-            <div class="greeting">Good morning, Diogo 👋</div>
+            <div class="greeting">Good morning 👋</div>
             <div class="balance">$0.00</div>
             <div class="sub">Import your CSV to get started</div>
           </div>
-          <button type="button" class="settings-btn" data-action="open-settings" aria-label="Settings">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-          </button>
+          <div class="header-btn-group">
+            <button type="button" class="settings-btn" data-action="open-import" aria-label="Import CSV" title="Import CSV">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </button>
+            <button type="button" class="settings-btn" data-action="open-settings" aria-label="Settings" title="Settings">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+          </div>
         </div>
         <div class="month-switcher">
           <button type="button" data-action="prev-month" id="prev-month-btn" aria-label="Previous month">‹</button>
@@ -1107,6 +1148,16 @@
       <div class="section">
         <h2 id="pie-chart-title">This month, by category</h2>
         <div class="pie-card" id="pie-card"></div>
+        <div class="month-io-bar" id="month-io-bar">
+          <div class="io-stat io-in">
+            <div class="io-label">Money In</div>
+            <div class="io-amount" id="money-in-amount">$0.00</div>
+          </div>
+          <div class="io-stat io-out">
+            <div class="io-label">Money Out</div>
+            <div class="io-amount" id="money-out-amount">$0.00</div>
+          </div>
+        </div>
       </div>
 
       <div class="section">
@@ -2206,6 +2257,28 @@
     });
     legendHtml += '</div>';
     pieCard.innerHTML = svgHtml + legendHtml;
+
+    // Pie hover tooltip (desktop only)
+    if (window.matchMedia('(min-width: 900px)').matches) {
+      var tooltip = document.getElementById('pie-tooltip');
+      if (tooltip) {
+        var slices = pieCard.querySelectorAll('.pie-slice');
+        slices.forEach(function(path, i) {
+          var t = totals[i];
+          if (!t) return;
+          var dot = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + t.color + ';margin-right:6px;vertical-align:-1px;"></span>';
+          path.addEventListener('mousemove', function(e) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX + 14) + 'px';
+            tooltip.style.top = (e.clientY - 36) + 'px';
+            tooltip.innerHTML = dot + escapeHtml(t.label) + ' &nbsp;<strong>' + formatMoney(t.amount) + '</strong>&nbsp; <span style="opacity:.7;">' + Math.round(t.amount/grand*100) + '%</span>';
+          });
+          path.addEventListener('mouseleave', function() {
+            tooltip.style.display = 'none';
+          });
+        });
+      }
+    }
   }
 
   // ---- transaction filter ----
@@ -5090,6 +5163,68 @@
   refreshTransferRowBadge('transfer-1');
   wireImportFileInput();
   wireImportDropZone();
+
+  // ---- Middle-mouse autoscroll on desktop ----
+  (function() {
+    var scrollTarget = null;
+    var autoScrolling = false;
+    var originY = 0;
+    var curY = 0;
+
+    function getScrollEl(target) {
+      var el = target;
+      while (el && el !== document.documentElement) {
+        if (el.scrollHeight > el.clientHeight + 2 &&
+            (getComputedStyle(el).overflowY === 'auto' || getComputedStyle(el).overflowY === 'scroll')) {
+          return el;
+        }
+        el = el.parentElement;
+      }
+      return document.getElementById('month-data-sections') || document.documentElement;
+    }
+
+    var rafId = null;
+    function tick() {
+      if (!autoScrolling) return;
+      var dy = curY - originY;
+      var speed = dy * 0.08;
+      if (Math.abs(speed) > 0.5) scrollTarget.scrollTop += speed;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    document.addEventListener('mousedown', function(e) {
+      if (e.button !== 1) return;
+      if (!window.matchMedia('(min-width: 900px)').matches) return;
+      e.preventDefault();
+      scrollTarget = getScrollEl(e.target);
+      autoScrolling = true;
+      originY = e.clientY;
+      curY = e.clientY;
+      document.body.style.cursor = 'ns-resize';
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(tick);
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!autoScrolling) return;
+      curY = e.clientY;
+    });
+
+    document.addEventListener('mouseup', function(e) {
+      if (e.button === 1 || autoScrolling) {
+        autoScrolling = false;
+        scrollTarget = null;
+        document.body.style.cursor = '';
+        cancelAnimationFrame(rafId);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (autoScrolling) { e.preventDefault(); e.stopPropagation(); autoScrolling = false; }
+    }, true);
+  })();
 </script>
+
+<div id="pie-tooltip"></div>
 </body>
 </html>

@@ -71,6 +71,26 @@
     refreshRowBadge(row);
   }
 
+  // ── Update money-in / money-out bar ──────────────────────────────────────────
+  function updateMonthIOStats(txns) {
+    var bar = document.getElementById('month-io-bar');
+    var inEl = document.getElementById('money-in-amount');
+    var outEl = document.getElementById('money-out-amount');
+    if (!bar || !inEl || !outEl) return;
+    var moneyIn = 0, moneyOut = 0;
+    (txns || []).forEach(function(t) {
+      if (t.amount > 0) moneyIn  += t.amount;
+      else              moneyOut += Math.abs(t.amount);
+    });
+    if (moneyIn === 0 && moneyOut === 0) {
+      bar.classList.remove('visible');
+    } else {
+      inEl.textContent  = formatMoney(moneyIn);
+      outEl.textContent = formatMoney(moneyOut);
+      bar.classList.add('visible');
+    }
+  }
+
   // ── Load and render a month's transactions from the server ────────────────────
   function loadMonthTransactions(isoMonth) {
     return apiFetch('/api/transactions?month=' + isoMonth)
@@ -97,6 +117,7 @@
         refreshAllCategoryTotals();
         refreshAllDateGroupHeaders();
         applyTxnFilter();
+        updateMonthIOStats(txns);
       })
       .catch(function (e) { console.error('loadMonthTransactions:', e); });
   }
@@ -352,22 +373,7 @@
       var current = balEl ? parseFloat(balEl.textContent.replace(/[^0-9.]/g, '')) : 0;
       if (current > 0) input.value = current.toFixed(2);
     }
-    // Append admin link if this user is an admin
-    if (IS_ADMIN) {
-      var body = document.getElementById('settings-body');
-      if (body) {
-        var adminSection = document.createElement('div');
-        adminSection.innerHTML =
-          '<div class="settings-section-label" style="margin-top:8px;">Administration</div>' +
-          '<div class="settings-list">' +
-            '<a href="/admin" style="text-decoration:none;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;" class="settings-row">' +
-              '<span>Manage accounts</span>' +
-              '<span class="settings-value" style="color:#6c5ce7;font-weight:600;">Admin ›</span>' +
-            '</a>' +
-          '</div>';
-        body.appendChild(adminSection);
-      }
-    }
+    // Admin panel is at /admin — no link from the app (access by direct URL only)
   };
 
   // ── Persist subcategory when a new category+subcategory is created in modal ──

@@ -112,6 +112,7 @@ try {
 try { db.exec('ALTER TABLE users ADD COLUMN email_verify_token TEXT'); } catch (_) {}
 try { db.exec('ALTER TABLE users ADD COLUMN email_verify_expires TEXT'); } catch (_) {}
 try { db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0'); } catch (_) {}
+try { db.exec('ALTER TABLE users ADD COLUMN phone TEXT'); } catch (_) {}
 // First user is always admin
 try { db.exec('UPDATE users SET is_admin=1 WHERE id=1'); } catch (_) {}
 
@@ -161,7 +162,7 @@ function requireAdmin(req, res, next) {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
-  const { password, email, full_name } = req.body || {};
+  const { password, email, full_name, phone } = req.body || {};
   if (!full_name || !full_name.trim()) return res.status(400).json({ error: 'Full name is required' });
   if (!email || !email.trim()) return res.status(400).json({ error: 'Email is required' });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).json({ error: 'Please enter a valid email address' });
@@ -172,9 +173,9 @@ app.post('/api/auth/register', async (req, res) => {
     const verifyToken = crypto.randomBytes(32).toString('hex');
     const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
     const user = db.prepare(
-      `INSERT INTO users (username, full_name, email, password_hash, email_verified, email_verify_token, email_verify_expires)
-       VALUES (?,?,?,?,0,?,?) RETURNING id, username`
-    ).get(username, full_name.trim(), email.trim().toLowerCase(), hash, verifyToken, verifyExpires);
+      `INSERT INTO users (username, full_name, email, phone, password_hash, email_verified, email_verify_token, email_verify_expires)
+       VALUES (?,?,?,?,?,0,?,?) RETURNING id, username`
+    ).get(username, full_name.trim(), email.trim().toLowerCase(), phone ? phone.trim() : null, hash, verifyToken, verifyExpires);
     db.prepare('INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)').run(user.id);
 
     const verifyUrl = `${APP_URL}/api/auth/verify-email?token=${verifyToken}`;
@@ -219,8 +220,8 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.get('/api/auth/me', requireAuth, (req, res) => {
-  const u = db.prepare('SELECT email, is_admin FROM users WHERE id=?').get(req.user.id);
-  res.json({ user: { id: req.user.id, email: u ? u.email : req.user.email, is_admin: u ? u.is_admin : 0 } });
+  const u = db.prepare('SELECT email, full_name, is_admin FROM users WHERE id=?').get(req.user.id);
+  res.json({ user: { id: req.user.id, email: u ? u.email : req.user.email, full_name: u ? u.full_name : null, is_admin: u ? u.is_admin : 0 } });
 });
 
 // ── Import ────────────────────────────────────────────────────────────────────
@@ -466,9 +467,66 @@ app.delete('/api/goal-allocations/:id', requireAuth, (req, res) => {
 // ── Admin ─────────────────────────────────────────────────────────────────────
 app.get('/api/admin/users', requireAdmin, (req, res) => {
   const users = db.prepare(
-    'SELECT id, full_name, email, email_verified, is_admin, created_at FROM users ORDER BY id'
+    'SELECT id, full_name, email, phone, email_verified, is_admin, created_at FROM users ORDER BY id'
   ).all();
   res.json(users);
+});
+
+app.get('/api/admin/users/:id', requireAdmin, (req, res) => {
+  const u = db.prepare(
+    'SELECT id, full_name, email, phone, email_verified, is_admin, created_at FROM users WHERE id=?'
+  ).get(req.params.id);
+  if (!u) return res.status(404).json({ error: 'User not found' });
+  res.json(u);
+});
+
+app.post('/api/admin/users', requireAdmin, async (req, res) => {
+  const { full_name, email, password, phone, is_admin: makeAdmin } = req.body || {};
+  if (!full_name || !email || !password) return res.status(400).json({ error: 'Name, email, and password are required' });
+  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  try {
+    const hash = await bcrypt.hash(password, 12);
+    const username = email.trim().toLowerCase();
+    const user = db.prepare(
+      `INSERT INTO users (username, full_name, email, phone, password_hash, email_verified, is_admin)
+       VALUES (?,?,?,?,?,1,?) RETURNING id`
+    ).get(username, full_name.trim(), email.trim().toLowerCase(), phone ? phone.trim() : null, hash, makeAdmin ? 1 : 0);
+    db.prepare('INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)').run(user.id);
+    res.json({ ok: true, id: user.id });
+  } catch (e) {
+    if (e.message && e.message.includes('UNIQUE'))
+      return res.status(409).json({ error: 'An account with this email already exists' });
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
+app.post('/api/admin/newsletter', requireAdmin, async (req, res) => {
+  const { subject, body } = req.body || {};
+  if (!subject || !body) return res.status(400).json({ error: 'Subject and body are required' });
+  const recipients = db.prepare('SELECT email, full_name FROM users WHERE email_verified=1').all();
+  if (!recipients.length) return res.json({ ok: true, sent: 0, failed: 0 });
+  let sent = 0, failed = 0;
+  for (const u of recipients) {
+    try {
+      await mailer.sendMail({
+        from: process.env.SMTP_FROM || 'Money Mate <noreply@moneymate.app>',
+        to: u.email,
+        subject: subject,
+        text: body,
+        html: '<div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;color:#1a1a2e;">' +
+          '<div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);padding:20px 24px;border-radius:12px 12px 0 0;">' +
+          '<h2 style="color:#fff;margin:0;font-size:20px;">Money Mate</h2></div>' +
+          '<div style="padding:24px;">' +
+          body.split('\n').map(function(l){ return '<p style="line-height:1.6;margin:0 0 12px;">' + l + '</p>'; }).join('') +
+          '</div></div>'
+      });
+      sent++;
+    } catch (e) {
+      console.error('Newsletter failed for', u.email, ':', e.message);
+      failed++;
+    }
+  }
+  res.json({ ok: true, sent, failed });
 });
 
 app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
