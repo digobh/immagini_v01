@@ -63,12 +63,24 @@
   function placeBillRow(row, catId, subName) {
     var targetId = catId || 'cat-uncategorized';
     var catEl = document.getElementById(targetId) || document.getElementById('cat-uncategorized');
-    if (subName && catEl) {
-      findOrCreateSubcategoryDetails(catEl, subName).querySelector('.sub-content').appendChild(row);
-    } else {
-      catEl.querySelector('.category-content').appendChild(row);
+    if (!catEl) return;
+    try {
+      if (subName) {
+        var subDet  = findOrCreateSubcategoryDetails(catEl, subName);
+        var subCont = subDet ? subDet.querySelector('.sub-content') : null;
+        if (subCont) { subCont.appendChild(row); }
+        else { (catEl.querySelector('.category-content') || catEl).appendChild(row); }
+      } else {
+        (catEl.querySelector('.category-content') || catEl).appendChild(row);
+      }
+    } catch (_) {
+      // Fallback: drop into uncategorized rather than crash the whole load
+      try {
+        var fb = document.getElementById('cat-uncategorized');
+        if (fb) (fb.querySelector('.category-content') || fb).appendChild(row);
+      } catch (_2) {}
     }
-    refreshRowBadge(row);
+    try { refreshRowBadge(row); } catch (_) {}
   }
 
   // ── Update money-in / money-out bar ──────────────────────────────────────────
