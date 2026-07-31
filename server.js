@@ -7,12 +7,15 @@ const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'moneymate-dev-secret-change-in-production';
 const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR    = path.join(__dirname, 'data');
+const BACKUP_DIR  = path.join(DATA_DIR, 'backups');
+const DB_PATH     = path.join(DATA_DIR, 'immagini.db');
 
 // Email transport: real SMTP when env vars are set, console-only in dev
 const mailer = (process.env.SMTP_HOST)
@@ -24,10 +27,11 @@ const mailer = (process.env.SMTP_HOST)
     })
   : { sendMail: (opts) => { console.log('\n[DEV EMAIL] To:', opts.to, '\nSubject:', opts.subject, '\n', opts.text || opts.html); return Promise.resolve({ messageId: 'dev' }); } };
 
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+if (!fs.existsSync(DATA_DIR))   fs.mkdirSync(DATA_DIR,   { recursive: true });
+if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
 
 // ── Database setup ────────────────────────────────────────────────────────────
-const db = new Database(path.join(DATA_DIR, 'immagini.db'));
+const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
@@ -136,6 +140,28 @@ db.exec(`
     amount         REAL    NOT NULL
   );
 `);
+
+// ── Startup backup ────────────────────────────────────────────────────────────
+(function autoBackup() {
+  try {
+    const tag  = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const dest = path.join(BACKUP_DIR, `immagini-${tag}.db`);
+    // Use SQLite backup API so the copy is always consistent (WAL safe)
+    db.backup(dest).catch(() => {}); // non-fatal; ignore errors
+    // Prune backups older than 14 days
+    const files = fs.readdirSync(BACKUP_DIR)
+      .filter(f => f.endsWith('.db'))
+      .map(f => ({ f, t: fs.statSync(path.join(BACKUP_DIR, f)).mtimeMs }))
+      .sort((a, b) => a.t - b.t);
+    const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    files.forEach(({ f, t }) => {
+      if (t < cutoff) try { fs.unlinkSync(path.join(BACKUP_DIR, f)); } catch (_) {}
+    });
+  } catch (_) {}
+})();
+
+// Multer: in-memory storage for DB restore uploads
+const uploadMem = multer({ storage: multer.memoryStorage(), limits: { fileSize: 100 * 1024 * 1024 } });
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '20mb' }));
@@ -546,6 +572,113 @@ app.put('/api/admin/users/:id/toggle-admin', requireAdmin, (req, res) => {
   if (id === req.user.id) return res.status(400).json({ error: 'Cannot change your own admin status' });
   db.prepare('UPDATE users SET is_admin = CASE WHEN is_admin=1 THEN 0 ELSE 1 END WHERE id=?').run(id);
   res.json({ ok: true });
+});
+
+// ── Backup / Restore / Export ─────────────────────────────────────────────────
+
+// Download the live database file (admin only)
+app.get('/api/admin/backup/download', requireAdmin, (req, res) => {
+  // Flush WAL into the main file first so the download is complete
+  db.pragma('wal_checkpoint(TRUNCATE)');
+  const tag = new Date().toISOString().slice(0, 10);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename="moneymate-backup-${tag}.db"`);
+  res.sendFile(DB_PATH);
+});
+
+// List available backups (admin only)
+app.get('/api/admin/backup/list', requireAdmin, (req, res) => {
+  try {
+    const files = fs.readdirSync(BACKUP_DIR)
+      .filter(f => f.endsWith('.db'))
+      .map(f => {
+        const stat = fs.statSync(path.join(BACKUP_DIR, f));
+        return { name: f, size: stat.size, date: stat.mtime.toISOString() };
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    res.json(files);
+  } catch (_) {
+    res.json([]);
+  }
+});
+
+// Download a specific named backup (admin only)
+app.get('/api/admin/backup/download/:name', requireAdmin, (req, res) => {
+  const name = path.basename(req.params.name); // prevent path traversal
+  const file = path.join(BACKUP_DIR, name);
+  if (!fs.existsSync(file)) return res.status(404).json({ error: 'Backup not found' });
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
+  res.sendFile(file);
+});
+
+// Restore database from uploaded .db file (admin only) — DANGEROUS, restarts server
+app.post('/api/admin/backup/restore', requireAdmin, uploadMem.single('db'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (!req.file.originalname.endsWith('.db')) return res.status(400).json({ error: 'File must be a .db file' });
+  try {
+    // Save a safety backup of the current DB before overwriting
+    const tag = new Date().toISOString().replace(/[:.]/g, '-');
+    const safetyPath = path.join(BACKUP_DIR, `pre-restore-${tag}.db`);
+    db.pragma('wal_checkpoint(TRUNCATE)');
+    fs.copyFileSync(DB_PATH, safetyPath);
+
+    // Write the uploaded database to a temp file and validate it
+    const tmpPath = DB_PATH + '.restore_tmp';
+    fs.writeFileSync(tmpPath, req.file.buffer);
+    try {
+      const testDb = new Database(tmpPath, { readonly: true });
+      testDb.prepare('SELECT count(*) FROM sqlite_master').get(); // basic sanity check
+      testDb.close();
+    } catch (e) {
+      fs.unlinkSync(tmpPath);
+      return res.status(400).json({ error: 'Invalid SQLite database file' });
+    }
+
+    // Replace the live database
+    fs.renameSync(tmpPath, DB_PATH);
+    res.json({ ok: true, message: 'Database restored. Restart the server to apply changes.' });
+
+    // Restart gracefully after responding
+    setTimeout(() => process.exit(0), 500);
+  } catch (e) {
+    console.error('Restore failed:', e);
+    res.status(500).json({ error: 'Restore failed: ' + e.message });
+  }
+});
+
+// Export current user's data as JSON (any authenticated user)
+app.get('/api/export', requireAuth, (req, res) => {
+  const uid = req.user.id;
+  const user         = db.prepare('SELECT full_name, email, created_at FROM users WHERE id=?').get(uid);
+  const transactions = db.prepare('SELECT * FROM transactions WHERE user_id=?').all(uid);
+  const categories   = db.prepare('SELECT * FROM user_categories WHERE user_id=?').all(uid);
+  const subcategories= db.prepare('SELECT * FROM subcategories WHERE user_id=?').all(uid);
+  const catKeywords  = db.prepare('SELECT * FROM cat_keywords WHERE user_id=?').all(uid);
+  const goals        = db.prepare('SELECT * FROM goals WHERE user_id=?').all(uid);
+  const allocations  = db.prepare('SELECT * FROM goal_allocations WHERE user_id=?').all(uid);
+  const settings     = db.prepare('SELECT theme, balance FROM user_settings WHERE user_id=?').get(uid);
+  const imports      = db.prepare('SELECT * FROM imports WHERE user_id=?').all(uid);
+
+  const tag = new Date().toISOString().slice(0, 10);
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', `attachment; filename="moneymate-export-${tag}.json"`);
+  res.json({ exported_at: new Date().toISOString(), user, settings, imports, transactions, categories, subcategories, catKeywords, goals, allocations });
+});
+
+// Export current user's transactions as CSV
+app.get('/api/export/csv', requireAuth, (req, res) => {
+  const uid = req.user.id;
+  const txns = db.prepare('SELECT date_str, merchant, amount, category_id, sub_name, notes, is_tax FROM transactions WHERE user_id=? ORDER BY date_str DESC').all(uid);
+  const lines = ['Date,Merchant,Amount,Category,Subcategory,Notes,Tax'];
+  txns.forEach(t => {
+    const esc = v => '"' + String(v || '').replace(/"/g, '""') + '"';
+    lines.push([t.date_str, esc(t.merchant), t.amount, esc(t.category_id), esc(t.sub_name||''), esc(t.notes||''), t.is_tax ? 'Yes' : 'No'].join(','));
+  });
+  const tag = new Date().toISOString().slice(0, 10);
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="transactions-${tag}.csv"`);
+  res.send(lines.join('\n'));
 });
 
 // ── Page routes ───────────────────────────────────────────────────────────────

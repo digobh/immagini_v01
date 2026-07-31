@@ -348,6 +348,33 @@
     }).catch(function (e) { console.error('subcategory save failed:', e); });
   });
 
+  // ── Export data handlers ─────────────────────────────────────────────────────
+  function triggerAuthDownload(url, fallbackName) {
+    fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(r) {
+        var disposition = r.headers.get('Content-Disposition') || '';
+        var match = disposition.match(/filename="(.+?)"/);
+        var filename = match ? match[1] : fallbackName;
+        return r.blob().then(function(b){ return { blob: b, filename: filename }; });
+      })
+      .then(function(d) {
+        var url = URL.createObjectURL(d.blob);
+        var a = document.createElement('a'); a.href = url; a.download = d.filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(function(){ alert('Export failed — please try again.'); });
+  }
+
+  document.addEventListener('click', function(ev) {
+    if (ev.target.closest('[data-action="export-json"]')) {
+      triggerAuthDownload('/api/export', 'moneymate-export.json');
+    }
+    if (ev.target.closest('[data-action="export-csv"]')) {
+      triggerAuthDownload('/api/export/csv', 'transactions.csv');
+    }
+  });
+
   // ── Save-balance handler (settings page) ─────────────────────────────────────
   document.addEventListener('click', function (ev) {
     if (!ev.target.closest('[data-action="save-balance"]')) return;

@@ -103,6 +103,30 @@
   .detail-backdrop { position: fixed; inset: 0; z-index: 89; }
   .detail-backdrop[hidden] { display: none; }
 
+  /* Backup panel */
+  .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .backup-grid { grid-template-columns: 1fr; } }
+  .backup-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(108,92,231,.07); padding: 20px 22px; }
+  .backup-card-title { font-size: 14px; font-weight: 800; color: #1a1a2e; margin-bottom: 4px; }
+  .backup-card-sub { font-size: 12px; color: #999; margin-bottom: 14px; line-height: 1.4; }
+  .btn-download { display: block; width: 100%; background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 8px; }
+  .btn-download:hover { opacity: .9; }
+  .btn-export { display: block; width: 100%; background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 8px; }
+  .btn-export:hover { opacity: .9; }
+  .restore-drop { border: 2px dashed #d5d0ff; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: background .15s; }
+  .restore-drop:hover, .restore-drop.drag-over { background: #f8f7ff; border-color: #6c5ce7; }
+  .restore-drop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .restore-drop-label { font-size: 13px; color: #888; }
+  .restore-drop-label strong { color: #6c5ce7; }
+  .backups-list { list-style: none; margin-top: 6px; }
+  .backups-list li { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f5f5f8; font-size: 12px; }
+  .backups-list li:last-child { border-bottom: none; }
+  .backups-list .bk-name { color: #444; font-family: monospace; }
+  .backups-list .bk-size { color: #bbb; font-size: 11px; margin-left: 8px; }
+  .bk-dl { font-size: 11px; font-weight: 700; color: #6c5ce7; text-decoration: none; }
+  .bk-dl:hover { text-decoration: underline; }
+  .warn-box { background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #7d5100; margin-top: 14px; line-height: 1.5; }
+
   @media (max-width: 640px) {
     thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
     .detail-panel { width: 100%; }
@@ -119,6 +143,7 @@
 <div class="tabs">
   <button class="tab-btn active" data-tab="users">Users</button>
   <button class="tab-btn" data-tab="newsletter">Newsletter</button>
+  <button class="tab-btn" data-tab="backup">Backup &amp; Restore</button>
 </div>
 
 <div class="container">
@@ -176,6 +201,49 @@
         <button class="btn-sm btn-detail" id="nl-preview-btn" style="padding:9px 16px;font-size:13px;">Preview</button>
         <button class="btn-primary" id="nl-send-btn" style="flex:1;">Send to All Members</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Backup & Restore panel -->
+  <div class="tab-panel" id="panel-backup">
+    <div class="page-title">Backup &amp; Restore</div>
+    <div class="page-sub" style="margin-bottom:20px;">Protect your data. Download a backup before making big changes and restore if anything goes wrong.</div>
+
+    <div class="backup-grid">
+      <!-- Download live DB -->
+      <div class="backup-card">
+        <div class="backup-card-title">Download Database Backup</div>
+        <div class="backup-card-sub">Downloads a complete copy of the live database including all users, transactions, and categories.</div>
+        <a class="btn-download" id="dl-live-btn" href="/api/admin/backup/download">⬇ Download Live Database (.db)</a>
+        <div class="backup-card-sub" style="margin-bottom:0;">The server also saves automatic daily backups — listed below.</div>
+      </div>
+
+      <!-- Export data -->
+      <div class="backup-card">
+        <div class="backup-card-title">Export Data</div>
+        <div class="backup-card-sub">Export all your own transactions and settings as portable files you can keep separately.</div>
+        <a class="btn-export" href="/api/export" id="export-json-btn">⬇ Export My Data (JSON)</a>
+        <a class="btn-export" href="/api/export/csv" style="background:linear-gradient(135deg,#0984e3,#74b9ff);">⬇ Export My Transactions (CSV)</a>
+      </div>
+    </div>
+
+    <!-- Saved backups list -->
+    <div class="backup-card" style="margin-bottom:16px;">
+      <div class="backup-card-title">Saved Automatic Backups</div>
+      <div class="backup-card-sub">The server saves a backup each time it starts. Kept for 14 days.</div>
+      <ul class="backups-list" id="backups-list"><li style="color:#bbb;font-size:12px;padding:8px 0;">Loading…</li></ul>
+    </div>
+
+    <!-- Restore -->
+    <div class="backup-card">
+      <div class="backup-card-title">Restore from Backup</div>
+      <div class="backup-card-sub">Upload a previously downloaded <code>.db</code> file to restore the database. A safety backup of the current database is made automatically before restoring.</div>
+      <div class="restore-drop" id="restore-drop" style="position:relative;">
+        <input type="file" id="restore-file" accept=".db">
+        <div class="restore-drop-label" id="restore-label">Drop a <strong>.db file</strong> here or <strong>click to browse</strong></div>
+      </div>
+      <button class="btn-primary" id="restore-btn" style="margin-top:12px;width:100%;opacity:.4;cursor:not-allowed;" disabled>Restore Database</button>
+      <div class="warn-box">⚠ Restoring replaces ALL current data. The server will restart automatically. Make sure you have downloaded a backup of the current state first.</div>
     </div>
   </div>
 </div>
@@ -546,6 +614,128 @@
   });
 
   loadUsers();
+
+  // ── Backup & Restore ──────────────────────────────────────────────────────────
+  function loadBackupList() {
+    fetch('/api/admin/backup/list', { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(r){ return r.json(); })
+      .then(function(files) {
+        var ul = document.getElementById('backups-list');
+        if (!files.length) { ul.innerHTML = '<li style="color:#bbb;font-size:12px;padding:8px 0;">No saved backups yet — they appear here after the server has started at least once with the backup system enabled.</li>'; return; }
+        ul.innerHTML = '';
+        files.forEach(function(f) {
+          var li = document.createElement('li');
+          var kb = f.size > 1024 * 1024 ? (f.size / 1024 / 1024).toFixed(1) + ' MB' : Math.round(f.size / 1024) + ' KB';
+          var dt = new Date(f.date).toLocaleString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+          li.innerHTML = '<span><span class="bk-name">' + esc(f.name) + '</span><span class="bk-size">' + kb + ' · ' + dt + '</span></span>' +
+            '<a class="bk-dl" href="/api/admin/backup/download/' + encodeURIComponent(f.name) + '" download="' + esc(f.name) + '">⬇ Download</a>';
+          ul.appendChild(li);
+        });
+      })
+      .catch(function(){ document.getElementById('backups-list').innerHTML = '<li style="color:#e74c3c;font-size:12px;padding:8px 0;">Failed to load backups.</li>'; });
+  }
+
+  // Load backup list when tab is opened
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    if (btn.dataset.tab === 'backup') {
+      btn.addEventListener('click', loadBackupList);
+    }
+  });
+
+  // Add auth header to download links on click
+  document.getElementById('dl-live-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    var link = document.createElement('a');
+    link.href = '/api/admin/backup/download';
+    fetch('/api/admin/backup/download', { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(r) {
+        var disposition = r.headers.get('Content-Disposition') || '';
+        var match = disposition.match(/filename="(.+?)"/);
+        var filename = match ? match[1] : 'moneymate-backup.db';
+        return r.blob().then(function(b){ return { blob: b, filename: filename }; });
+      })
+      .then(function(d) {
+        var url = URL.createObjectURL(d.blob);
+        var a = document.createElement('a'); a.href = url; a.download = d.filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+  });
+
+  document.getElementById('export-json-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    fetch('/api/export', { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(r) {
+        var disposition = r.headers.get('Content-Disposition') || '';
+        var match = disposition.match(/filename="(.+?)"/);
+        var filename = match ? match[1] : 'moneymate-export.json';
+        return r.blob().then(function(b){ return { blob: b, filename: filename }; });
+      })
+      .then(function(d) {
+        var url = URL.createObjectURL(d.blob);
+        var a = document.createElement('a'); a.href = url; a.download = d.filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+  });
+
+  // Restore file input
+  var restoreFile = null;
+  var restoreInput = document.getElementById('restore-file');
+  var restoreLabel = document.getElementById('restore-label');
+  var restoreBtn   = document.getElementById('restore-btn');
+  var restoreDrop  = document.getElementById('restore-drop');
+
+  restoreInput.addEventListener('change', function() {
+    restoreFile = restoreInput.files[0] || null;
+    if (restoreFile) {
+      restoreLabel.innerHTML = '📁 <strong>' + esc(restoreFile.name) + '</strong> selected (' + Math.round(restoreFile.size / 1024) + ' KB)';
+      restoreBtn.disabled = false;
+      restoreBtn.style.opacity = '1';
+      restoreBtn.style.cursor = 'pointer';
+    } else {
+      restoreLabel.innerHTML = 'Drop a <strong>.db file</strong> here or <strong>click to browse</strong>';
+      restoreBtn.disabled = true;
+      restoreBtn.style.opacity = '.4';
+      restoreBtn.style.cursor = 'not-allowed';
+    }
+  });
+
+  restoreDrop.addEventListener('dragover', function(e){ e.preventDefault(); restoreDrop.classList.add('drag-over'); });
+  restoreDrop.addEventListener('dragleave', function(){ restoreDrop.classList.remove('drag-over'); });
+  restoreDrop.addEventListener('drop', function(e){
+    e.preventDefault(); restoreDrop.classList.remove('drag-over');
+    var f = e.dataTransfer.files[0];
+    if (f && f.name.endsWith('.db')) {
+      restoreFile = f;
+      restoreLabel.innerHTML = '📁 <strong>' + esc(f.name) + '</strong> (' + Math.round(f.size / 1024) + ' KB)';
+      restoreBtn.disabled = false; restoreBtn.style.opacity = '1'; restoreBtn.style.cursor = 'pointer';
+    }
+  });
+
+  restoreBtn.addEventListener('click', function() {
+    if (!restoreFile) return;
+    if (!confirm('This will replace ALL current data with the backup file.\n\nA safety backup of the current database will be made first.\n\nThe server will restart after restoring.\n\nAre you sure?')) return;
+    var formData = new FormData();
+    formData.append('db', restoreFile, restoreFile.name);
+    restoreBtn.disabled = true; restoreBtn.textContent = 'Restoring…';
+    fetch('/api/admin/backup/restore', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        showSuccess('Database restored successfully. The server is restarting — please refresh the page in a few seconds.');
+        restoreBtn.textContent = 'Restore Database';
+      } else {
+        showError(data.error || 'Restore failed.');
+        restoreBtn.disabled = false; restoreBtn.textContent = 'Restore Database';
+      }
+    })
+    .catch(function(){ showError('Network error during restore.'); restoreBtn.disabled = false; restoreBtn.textContent = 'Restore Database'; });
+  });
 </script>
 </body>
 </html>
