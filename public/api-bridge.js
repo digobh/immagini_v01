@@ -114,6 +114,13 @@
         TXN_TAX = {};
         TXN_SPLITS = {};
 
+        // Unhide all category sections — the original renderMonth hides ones
+        // with no hardcoded transactions, but server data may fill any of them.
+        document.querySelectorAll('details.category').forEach(function (d) {
+          d.removeAttribute('hidden');
+          d.hidden = false;
+        });
+
         if (Array.isArray(txns)) {
           txns.forEach(function (t) {
             var row = createBillRow(t);
