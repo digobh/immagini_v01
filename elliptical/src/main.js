@@ -1,5 +1,6 @@
 import { FtmsMachine } from './ble/ftms-device.js';
 import { SimulatedMachine } from './ble/simulator.js';
+import { inspectDevice } from './ble/inspector.js';
 import { CIRCUITS, totalDuration, pctToLevel } from './workout/circuits.js';
 import { WorkoutEngine } from './workout/engine.js';
 import { renderProfile } from './ui/profile-chart.js';
@@ -37,7 +38,21 @@ if (!FtmsMachine.isSupported()) {
   $('ble-warning').textContent =
     'This browser has no Web Bluetooth. Use Chrome or Edge on Android / Windows / macOS, or the Bluefy browser on iPhone/iPad. The simulator works everywhere.';
   $('btn-ble').disabled = true;
+  $('btn-inspect').disabled = true;
 }
+
+$('btn-inspect').onclick = async () => {
+  const pre = $('inspect-out');
+  pre.hidden = false;
+  pre.textContent = 'Pick your machine in the browser dialog…\n';
+  try {
+    const report = await inspectDevice((line) => { pre.textContent += line + '\n'; });
+    $('btn-copy-report').hidden = false;
+    $('btn-copy-report').onclick = () => navigator.clipboard.writeText(report);
+  } catch (e) {
+    pre.textContent += `Error: ${e.message}\n`;
+  }
+};
 
 async function useMachine(m) {
   m.addEventListener('log', (e) => log(e.detail));

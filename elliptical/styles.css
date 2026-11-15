@@ -117,3 +117,6 @@ input[type=range] { accent-color: var(--accent); }
   .difficulty { margin-left: 0; width: 100%; }
   .difficulty input { flex: 1; }
 }
+
+.advanced hr { border: 0; border-top: 1px solid var(--line); margin: 14px 0; }
+.report { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; font-size: 12px; max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-all; }

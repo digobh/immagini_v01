@@ -32,6 +32,13 @@
           </select>
         </label>
         <p class="muted small">Change this only if the machine connects but ignores resistance changes.</p>
+        <hr>
+        <p class="muted small">Machine not in the list? Inspect any Bluetooth device to see which protocol it speaks.</p>
+        <div class="row">
+          <button id="btn-inspect" class="btn">Inspect Bluetooth device</button>
+          <button id="btn-copy-report" class="btn" hidden>Copy report</button>
+        </div>
+        <pre id="inspect-out" class="report" hidden></pre>
       </details>
       <p id="ble-warning" class="warn" hidden></p>
     </section>

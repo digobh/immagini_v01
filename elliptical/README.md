@@ -38,6 +38,16 @@ The app uses the standard Bluetooth **FTMS** (Fitness Machine Service, `0x1826`)
 Circuits store intensity as **% of the machine's range** (see `src/workout/circuits.js`). The engine converts it
 to a real level.
 
+### ProForm Endurance 420E
+
+The 420E is sold as "iFit Bluetooth" enabled. On iFit consoles of that generation this is usually
+iFit's **own** Bluetooth protocol, not standard FTMS. Expect it to be missing from the
+"Connect via Bluetooth" list. To confirm:
+
+1. Open *Advanced → Inspect Bluetooth device*, pick the machine (often named `I_EL…` or `IFIT…`), and read the **VERDICT**.
+2. If the verdict says iFit proprietary, use the QZ bridge described below. Use *Copy report* to share the exact
+   service list if a direct driver is wanted later. QZ is GPL-3.0 like this repo, so its protocol code can be ported.
+
 ### If your ProForm does not show up / ignores resistance
 
 ProForm/iFit models differ:
