@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1116">
+  <title>Elliptical Circuits</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Elliptical Circuits</h1>
+    <span id="status" class="pill pill-off">Not connected</span>
+  </header>
+
+  <main>
+    <!-- 1. Connect -->
+    <section id="connect" class="card">
+      <h2>Connect your machine</h2>
+      <p class="muted">Turn on the elliptical and close the iFit app on any other device (only one app can control it at a time).</p>
+      <div class="row">
+        <button id="btn-ble" class="btn primary">Connect via Bluetooth</button>
+        <button id="btn-sim" class="btn">Use simulator</button>
+      </div>
+      <details class="advanced">
+        <summary>Advanced</summary>
+        <label>Resistance command format
+          <select id="encoding">
+            <option value="auto">Auto (spec default)</option>
+            <option value="u8">uint8 (FTMS 1.0)</option>
+            <option value="s16">sint16</option>
+          </select>
+        </label>
+        <p class="muted small">Change this only if the machine connects but ignores resistance changes.</p>
+        <hr>
+        <p class="muted small">Machine not in the list? Inspect any Bluetooth device to see which protocol it speaks.</p>
+        <div class="row">
+          <button id="btn-inspect" class="btn">Inspect Bluetooth device</button>
+          <button id="btn-copy-report" class="btn" hidden>Copy report</button>
+        </div>
+        <pre id="inspect-out" class="report" hidden></pre>
+      </details>
+      <p id="ble-warning" class="warn" hidden></p>
+    </section>
+
+    <!-- 2. Pick a circuit -->
+    <section id="picker" hidden>
+      <h2>Choose a circuit</h2>
+      <div id="circuit-list" class="grid"></div>
+    </section>
+
+    <!-- 3. Workout -->
+    <section id="workout" hidden>
+      <div class="workout-head">
+        <button id="btn-back" class="btn ghost">← Circuits</button>
+        <h2 id="w-name"></h2>
+        <span id="w-total" class="muted"></span>
+      </div>
+
+      <svg id="w-profile" class="profile big" aria-label="Circuit profile"></svg>
+
+      <div class="now">
+        <div class="now-seg">
+          <div class="muted small">Current</div>
+          <div id="w-seg" class="seg-label">Ready</div>
+          <div id="w-countdown" class="countdown">--:--</div>
+          <div class="muted small">Next: <span id="w-next">–</span></div>
+        </div>
+        <div class="now-level">
+          <div class="muted small">Resistance</div>
+          <div class="level-wrap">
+            <button id="btn-minus" class="btn round" aria-label="Lower resistance">−</button>
+            <div id="w-level" class="level">–</div>
+            <button id="btn-plus" class="btn round" aria-label="Raise resistance">+</button>
+          </div>
+          <div class="muted small">Machine reports: <span id="w-mlevel">–</span></div>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><span class="v" id="m-cadence">–</span><span class="k">Strides/min <em id="m-target"></em></span></div>
+        <div class="metric"><span class="v" id="m-power">–</span><span class="k">Watts</span></div>
+        <div class="metric"><span class="v" id="m-speed">–</span><span class="k">km/h</span></div>
+        <div class="metric"><span class="v" id="m-hr">–</span><span class="k">Heart rate</span></div>
+        <div class="metric"><span class="v" id="m-dist">–</span><span class="k">Distance</span></div>
+        <div class="metric"><span class="v" id="m-kcal">–</span><span class="k">kcal</span></div>
+        <div class="metric"><span class="v" id="m-elapsed">0:00</span><span class="k">Elapsed</span></div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-start" class="btn primary big">Start</button>
+        <button id="btn-skip" class="btn">Skip segment</button>
+        <button id="btn-stop" class="btn danger">End</button>
+        <label class="difficulty">Difficulty <span id="scale-val">100%</span>
+          <input id="scale" type="range" min="60" max="140" step="5" value="100">
+        </label>
+      </div>
+
+      <div id="sim-panel" class="card sim" hidden>
+        <label>Simulator cadence: <strong id="sim-val">0</strong> strides/min (↑/↓ keys)
+          <input id="sim-cadence" type="range" min="0" max="180" step="1" value="0">
+        </label>
+      </div>
+    </section>
+
+    <details id="log-wrap" class="card log">
+      <summary>Connection log</summary>
+      <pre id="log"></pre>
+    </details>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
